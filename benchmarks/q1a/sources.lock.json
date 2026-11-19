@@ -1,0 +1,786 @@
+{
+  "schema": 1,
+  "files": [
+    {
+      "path": "sources/ami/00README_MANUAL.txt",
+      "sha256": "001292e9082f0f403a155dd5e7e4a8d5ac6542dbf37b19a12c7b6030fabdd350",
+      "bytes": 2394,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "00README_MANUAL.txt"
+    },
+    {
+      "path": "sources/ami/LICENCE.txt",
+      "sha256": "d52fd9c7c19eec9f0bec3107554c10937203e261259d73b01637a61501fec7f7",
+      "bytes": 13197,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "LICENCE.txt"
+    },
+    {
+      "path": "sources/ami/abstractive/ES2002a.abssumm.xml",
+      "sha256": "13551d1be5c5a3d72345b18b840d033534a4ee80d50e648dfcaad646f1ba6d91",
+      "bytes": 1691,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "abstractive/ES2002a.abssumm.xml"
+    },
+    {
+      "path": "sources/ami/abstractive/ES2002b.abssumm.xml",
+      "sha256": "a4a1b9aaed89a5488a5f4c8b3d3dd87e94bdd69b60b31c2b592665d71956eb1f",
+      "bytes": 3358,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "abstractive/ES2002b.abssumm.xml"
+    },
+    {
+      "path": "sources/ami/abstractive/ES2003a.abssumm.xml",
+      "sha256": "2f27350c54ee3476925e4f1d935790147a944b63c7c3edacb6601f13f58c1876",
+      "bytes": 1797,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "abstractive/ES2003a.abssumm.xml"
+    },
+    {
+      "path": "sources/ami/abstractive/ES2003b.abssumm.xml",
+      "sha256": "2b9ee9e9cd64bcdfd56de4f4de57b459a4d257803a9d4ebffba1b2db72d484aa",
+      "bytes": 3299,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "abstractive/ES2003b.abssumm.xml"
+    },
+    {
+      "path": "sources/ami/abstractive/ES2004a.abssumm.xml",
+      "sha256": "d3922b70500dc6a3f84be77538583e4073d53a2208d504c04c1b72201e77db6a",
+      "bytes": 2048,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "abstractive/ES2004a.abssumm.xml"
+    },
+    {
+      "path": "sources/ami/abstractive/ES2004c.abssumm.xml",
+      "sha256": "c3e52e95e7350858cf45a0cf7d2fd469da4923c4ff1b9a97e78938fe8ae56af6",
+      "bytes": 2793,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "abstractive/ES2004c.abssumm.xml"
+    },
+    {
+      "path": "sources/ami/abstractive/ES2005a.abssumm.xml",
+      "sha256": "3349b33e408f8fee797f31a507346a7219c3e71940c5a64a27b51f87f55befea",
+      "bytes": 1756,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "abstractive/ES2005a.abssumm.xml"
+    },
+    {
+      "path": "sources/ami/abstractive/ES2005d.abssumm.xml",
+      "sha256": "35fe65263b4859252238a1e9ee9a08e637566cd1de1c2c1686c8dc8bb04109ec",
+      "bytes": 3167,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "abstractive/ES2005d.abssumm.xml"
+    },
+    {
+      "path": "sources/ami/abstractive/ES2006a.abssumm.xml",
+      "sha256": "4bdc5cd9990aa6ebfe94cc4dacd6f9afc255cb0a535bfca18bb9d144dfd74d43",
+      "bytes": 2855,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "abstractive/ES2006a.abssumm.xml"
+    },
+    {
+      "path": "sources/ami/abstractive/ES2006b.abssumm.xml",
+      "sha256": "7ccf918eb0a3c251c24bfc36fb84fd1c2a06fc4438b82adbc912c1079016b9b1",
+      "bytes": 2895,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "abstractive/ES2006b.abssumm.xml"
+    },
+    {
+      "path": "sources/ami/corpusdoc/annot_summlink.html",
+      "sha256": "4b5487e990de022a4f274fbf6bc5d3f187d521712ed624a0b56f013f7b927a02",
+      "bytes": 1086,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "corpusdoc/annot_summlink.html"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2002a.A.dialog-act.xml",
+      "sha256": "d93241138d13614122d5137f6e184f16edac3247b4cde8f3a3fe14ec46168836",
+      "bytes": 10992,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2002a.A.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2002a.B.dialog-act.xml",
+      "sha256": "fd94fe188a80bad10c7c9879e0f0836482c208d21bfc7116623836b737e2b084",
+      "bytes": 51350,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2002a.B.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2002a.C.dialog-act.xml",
+      "sha256": "a1107181388d9ef4e45c8276ca34cee10bc6fc4b0789fe60bbc91fb6dce483a9",
+      "bytes": 4683,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2002a.C.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2002a.D.dialog-act.xml",
+      "sha256": "9adf983bb5cb17306213bb0182eeedd04263baf45a07459f4597a8ce1b117743",
+      "bytes": 42612,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2002a.D.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2002b.A.dialog-act.xml",
+      "sha256": "4cf128d635182804118f6e26a3c7638c4d12903f4f1d329f876361a1c1c0d04f",
+      "bytes": 55205,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2002b.A.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2002b.B.dialog-act.xml",
+      "sha256": "02085787917411dffc7a8c052c553e578606fa84e9977eb3c18e2aa9ed32a3eb",
+      "bytes": 80388,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2002b.B.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2002b.C.dialog-act.xml",
+      "sha256": "d93aa1b0744000c8f437ed371b0df4d24bd4bbcc924a9498e74d74ef20590fc4",
+      "bytes": 19961,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2002b.C.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2002b.D.dialog-act.xml",
+      "sha256": "0a0454ce6778b583dfd653b6dd55bbeff4db928bcfb573e7c05c032353521832",
+      "bytes": 77530,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2002b.D.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2003a.A.dialog-act.xml",
+      "sha256": "b39d4dac4f19271a503f3f11d1abf18fb6f01da2240680300110657ea8b608cc",
+      "bytes": 11209,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2003a.A.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2003a.B.dialog-act.xml",
+      "sha256": "f351ca83b652372e78b6e48b9125714995d0b7cba75c645a6b048d6a06958738",
+      "bytes": 34208,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2003a.B.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2003a.C.dialog-act.xml",
+      "sha256": "6ead197012bd6546f369fe5f6dfba5d506ec195aaeeec18905bc4334478977e7",
+      "bytes": 17249,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2003a.C.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2003a.D.dialog-act.xml",
+      "sha256": "9c07ee5f46b19b68c7216f49f7912170198e2e8e6bef50b02401657b9daa656a",
+      "bytes": 10021,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2003a.D.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2003b.A.dialog-act.xml",
+      "sha256": "41fa54eb947adf3ef2b1fccce0e366e2c39bd778827b5f522dae3f79cdfab70c",
+      "bytes": 33046,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2003b.A.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2003b.B.dialog-act.xml",
+      "sha256": "a76789030b302d5d75d26719053fb57a24335328ed765e2aa407d07e4251dec6",
+      "bytes": 73093,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2003b.B.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2003b.C.dialog-act.xml",
+      "sha256": "f70fdf78447f4803cdf7ff33eca8648ab2ddad8074032637adbab929555e5d30",
+      "bytes": 56673,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2003b.C.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2003b.D.dialog-act.xml",
+      "sha256": "b929b668c164a139e0bbaa690f2e6d54ded1392572c94fa7f7d9ea5b4c00882d",
+      "bytes": 23572,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2003b.D.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2004a.A.dialog-act.xml",
+      "sha256": "cfac83a0fb9f7af510baa6a59b231b5af7a6834036c2f130cac4ec63c8683af0",
+      "bytes": 16435,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2004a.A.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2004a.B.dialog-act.xml",
+      "sha256": "1e72fad9cac244d7e58542e3b9f11ecba1cf605ac50397b0bf2cff4b28761821",
+      "bytes": 43939,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2004a.B.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2004a.C.dialog-act.xml",
+      "sha256": "62e4d55aae4b83666823bdcd1efe828a8ceb2b891881806a245d5444dd11a2b5",
+      "bytes": 18464,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2004a.C.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2004a.D.dialog-act.xml",
+      "sha256": "3db08118d372e85fb9687c786cb0029de7f311100b0f4b7f5c46ddc94082d055",
+      "bytes": 35330,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2004a.D.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2004c.A.dialog-act.xml",
+      "sha256": "c8aaacb2c502966c4c27879e88692f6f3b53be549463bc245f29cf7effdd50c3",
+      "bytes": 41064,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2004c.A.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2004c.B.dialog-act.xml",
+      "sha256": "ddc8a92f9721b8b115d6a58322ab020d04e4f7dcc42175d2782744a3462186f4",
+      "bytes": 60280,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2004c.B.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2004c.C.dialog-act.xml",
+      "sha256": "a28454865a647ebf268265eff8b8f5d3c7a40d8b63c9a9b7093bb4fa50993511",
+      "bytes": 70799,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2004c.C.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2004c.D.dialog-act.xml",
+      "sha256": "e3fefb88d704225e242e0f6d7df6a9763af08daac282aeadd0a9351d88b60c57",
+      "bytes": 51955,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2004c.D.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2005a.A.dialog-act.xml",
+      "sha256": "2bba19589907c81b885b626fd7292ebcf974c80ed12380815e7ad05d88a11c26",
+      "bytes": 5372,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2005a.A.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2005a.B.dialog-act.xml",
+      "sha256": "6e2edeed1f9234fe99d4bde8cb89014686cea616d91eeac6e4e47a69d145d988",
+      "bytes": 5193,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2005a.B.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2005a.C.dialog-act.xml",
+      "sha256": "9464c0f45e4e3b02b79cd0f1aa297cff5c73832e5f867274dbf2632096220007",
+      "bytes": 15010,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2005a.C.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2005a.D.dialog-act.xml",
+      "sha256": "28d9136da3d6b1dc9e8290768f0f7bda4b35fe76278bffb543158c7da0ddf1ae",
+      "bytes": 10016,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2005a.D.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2005d.A.dialog-act.xml",
+      "sha256": "67878297f9007cdc0d1719970ebb18327e4fcd68c4ff7acffc56aa6cc19017e9",
+      "bytes": 31885,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2005d.A.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2005d.B.dialog-act.xml",
+      "sha256": "5fccbc83a4983f540d5b3e2eb37b360c7d0052092d235cd157784ec1bae84439",
+      "bytes": 48553,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2005d.B.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2005d.C.dialog-act.xml",
+      "sha256": "2e6eafe9dd47ee5196b9306a532c8d15389fee6d55ad335c96069c9b11d0d71d",
+      "bytes": 57553,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2005d.C.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2005d.D.dialog-act.xml",
+      "sha256": "81bda7b01336906940f717f6dbf5dc8b566a9a3dc6024c7662ca31855d1befa6",
+      "bytes": 46546,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2005d.D.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2006a.A.dialog-act.xml",
+      "sha256": "aa4e6196b3adf4b9ecdd64edaa3235c9228008df448453bdbc6688b303c6f8f2",
+      "bytes": 28563,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2006a.A.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2006a.B.dialog-act.xml",
+      "sha256": "b0222baf03f349398676b619e2906b30433baded287aee8b6f8610d4f548bb76",
+      "bytes": 23020,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2006a.B.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2006a.C.dialog-act.xml",
+      "sha256": "c60b98cfb336827ba9a25015c0867ab84d6d6d98ce0e684e844643e8bf028bb6",
+      "bytes": 46373,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2006a.C.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2006a.D.dialog-act.xml",
+      "sha256": "25504c87edd5ce8a1fdb866bfeb0ccef69569b578673a80c804caab02c822b99",
+      "bytes": 19026,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2006a.D.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2006b.A.dialog-act.xml",
+      "sha256": "e2f61d00f8a1ef64ab89b3a87a18ae76342db19308a6435be83b1bfb05465b48",
+      "bytes": 54151,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2006b.A.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2006b.B.dialog-act.xml",
+      "sha256": "75bf1bfdb76b5e71ce2926ba50c963481bdc63812acc7b6e156d49034a90a967",
+      "bytes": 46256,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2006b.B.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2006b.C.dialog-act.xml",
+      "sha256": "5eb87e0531f25886fb5cf63d629ca5157f9744a3ab43bfb20c2b391ab0be1755",
+      "bytes": 66749,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2006b.C.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/dialogueActs/ES2006b.D.dialog-act.xml",
+      "sha256": "732bddf362f0cafec6ede0af5eaea1e820d921c182d419462cebd0d4f0ce3c4f",
+      "bytes": 43158,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "dialogueActs/ES2006b.D.dialog-act.xml"
+    },
+    {
+      "path": "sources/ami/extractive/ES2002a.summlink.xml",
+      "sha256": "70fae857eb544069a10548b0d1670643ad4a948497879010e9bf04b31657a80b",
+      "bytes": 16102,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "extractive/ES2002a.summlink.xml"
+    },
+    {
+      "path": "sources/ami/extractive/ES2002b.summlink.xml",
+      "sha256": "819ee5e4eacf30095755fe2c970206623ca26bb1203bcfe3c79f6829a020ce33",
+      "bytes": 89479,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "extractive/ES2002b.summlink.xml"
+    },
+    {
+      "path": "sources/ami/extractive/ES2003a.summlink.xml",
+      "sha256": "e86145ff576ab544c158d927b688fab6f892b5d05b3dbc38bfb9e8dfb1b41b49",
+      "bytes": 19936,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "extractive/ES2003a.summlink.xml"
+    },
+    {
+      "path": "sources/ami/extractive/ES2003b.summlink.xml",
+      "sha256": "6fb7bdf0e850056629aef89f64f8d85fb21ed5788f1f48099d8845ec146ed5fd",
+      "bytes": 64955,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "extractive/ES2003b.summlink.xml"
+    },
+    {
+      "path": "sources/ami/extractive/ES2004a.summlink.xml",
+      "sha256": "d11cd99bede30a3aab1e28d923f535fa545baf96e4dcb1232a62793a6a4a6252",
+      "bytes": 22776,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "extractive/ES2004a.summlink.xml"
+    },
+    {
+      "path": "sources/ami/extractive/ES2004c.summlink.xml",
+      "sha256": "82049b227e6a7ec7e03b5929b8865020731918ec8663aa230d3d00aa4d04db68",
+      "bytes": 49828,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "extractive/ES2004c.summlink.xml"
+    },
+    {
+      "path": "sources/ami/extractive/ES2005a.summlink.xml",
+      "sha256": "cb29e1054ebff78edc653f31d1b105f9e6e8e819e054c75dc10428612847661f",
+      "bytes": 5461,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "extractive/ES2005a.summlink.xml"
+    },
+    {
+      "path": "sources/ami/extractive/ES2005d.summlink.xml",
+      "sha256": "f9c8845ee4aa84a8c760ce52f1cd734cf16c523b6e53130252c44cfc5257ac11",
+      "bytes": 31355,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "extractive/ES2005d.summlink.xml"
+    },
+    {
+      "path": "sources/ami/extractive/ES2006a.summlink.xml",
+      "sha256": "cef1e2725ffcc45f4f6ae40a2264368ae48c3a99753f283ccf438d34300abfe2",
+      "bytes": 25645,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "extractive/ES2006a.summlink.xml"
+    },
+    {
+      "path": "sources/ami/extractive/ES2006b.summlink.xml",
+      "sha256": "9959bf38d112a5481841163dc92f7b4883642ce9d57029be11fb99345e0306b5",
+      "bytes": 68546,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "extractive/ES2006b.summlink.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2002a.A.words.xml",
+      "sha256": "03e7f37c4b3519ee78396779bbc90e2778b7b7ccd7a7388f7fa3a22cb31f7044",
+      "bytes": 25103,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2002a.A.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2002a.B.words.xml",
+      "sha256": "a51156e0b3f1b05d9d1a631206d523c5247d2d6fd851ecfe826317ab261cc17a",
+      "bytes": 130553,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2002a.B.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2002a.C.words.xml",
+      "sha256": "c539fca7b7183a2b56be43f2362432a91a4552512ed03df8c4ce96aee75f3330",
+      "bytes": 8896,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2002a.C.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2002a.D.words.xml",
+      "sha256": "d4f8b66e53de583c839424323f0e05d038a1426e5628042d03dcd2ee72e68b05",
+      "bytes": 100864,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2002a.D.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2002b.A.words.xml",
+      "sha256": "93898e9ec972b01d8e3de9844cf21d811444bc785f961ab463d8345cfdec6a6a",
+      "bytes": 197012,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2002b.A.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2002b.B.words.xml",
+      "sha256": "48f85fbc050aa6e0e72ca3d38f486d5156dfe38f43f4ca80a744cd992c55b840",
+      "bytes": 211582,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2002b.B.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2002b.C.words.xml",
+      "sha256": "f03f094758214fa77caf3094a42f58a28b13885ade0a079fd871299f943b9ae2",
+      "bytes": 69506,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2002b.C.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2002b.D.words.xml",
+      "sha256": "4910c12f32c2218a5816e31260b6d33779656a647eeabc34e4d0430081a7162c",
+      "bytes": 215623,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2002b.D.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2003a.A.words.xml",
+      "sha256": "8ee1e2ba5ab4421e16ebf42d0e221247a83e174fe34aa06e3aadd7a08540e470",
+      "bytes": 48961,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2003a.A.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2003a.B.words.xml",
+      "sha256": "d9af4424014f9e2ae55e1a33fc7fb95a2352903453e3afb51118845cea4c304d",
+      "bytes": 94469,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2003a.B.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2003a.C.words.xml",
+      "sha256": "9393f7af2a0cd95da35d306e4861e2513544c54059b11515ff311cd9b051cff4",
+      "bytes": 39315,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2003a.C.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2003a.D.words.xml",
+      "sha256": "bdcf987020238618bed2941bc906d31aa61aec6732e3104d16f11b7f1a104384",
+      "bytes": 19070,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2003a.D.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2003b.A.words.xml",
+      "sha256": "40d587031566d3e4a82c810728403b590df1852d9beecd50043742d4a8af18d5",
+      "bytes": 131657,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2003b.A.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2003b.B.words.xml",
+      "sha256": "89a94bfe0e8f3c25e396c3f717dec82137981b9e7a1bb888af4aa9c866fb8bf3",
+      "bytes": 219039,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2003b.B.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2003b.C.words.xml",
+      "sha256": "d9431cf57246544d02d2d441dd8112ded56cac6e53f4d62b4c34bdab7a1bed63",
+      "bytes": 152825,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2003b.C.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2003b.D.words.xml",
+      "sha256": "fc35e6ad74a58b8769163b8eb8fc586dbf19b8dd1b2dca17f057c4d04ab936f7",
+      "bytes": 54223,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2003b.D.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2004a.A.words.xml",
+      "sha256": "3b91765c8985e7c2652f1004832c00840e88bad4c3213296192b9fd741d675cc",
+      "bytes": 32225,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2004a.A.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2004a.B.words.xml",
+      "sha256": "0e24646b84f2772bb3ca28e666df5f7ba48cde647589f7ae8f85e2724ff5cbc3",
+      "bytes": 107451,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2004a.B.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2004a.C.words.xml",
+      "sha256": "07c25c4831fdc91cdff736ebf27c1380d0a7ef98e9835e33b15d44797fed7fd1",
+      "bytes": 45192,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2004a.C.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2004a.D.words.xml",
+      "sha256": "e085188b2f4855808911934c309ba965c283e54371044c9086185f27913d44f8",
+      "bytes": 82827,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2004a.D.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2004c.A.words.xml",
+      "sha256": "9088056d2c6e05932d9f38749be9d8a3a93668a6a2e7400c137594271e037ecc",
+      "bytes": 123995,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2004c.A.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2004c.B.words.xml",
+      "sha256": "6ec6884b65f1979d24cb35ff408d77c939b3e00625b8b37b1e57aca2bffd939a",
+      "bytes": 170359,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2004c.B.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2004c.C.words.xml",
+      "sha256": "297f0fd814ded99fcdee863fb5f362ef0431e42579284677c9ebf99833245a23",
+      "bytes": 216577,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2004c.C.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2004c.D.words.xml",
+      "sha256": "a397d6caf48ad4dfea6e555b176cd1003776dc573434fc8d71a9112c899c59ce",
+      "bytes": 162441,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2004c.D.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2005a.A.words.xml",
+      "sha256": "678d6a3aed1cc8715195e2d52811849a9990a6a4f297f9807528327d4e23bcaa",
+      "bytes": 11548,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2005a.A.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2005a.B.words.xml",
+      "sha256": "6688e84d94fbb273961dcd1ae239f031f542029eac946f927b35ea3476f93825",
+      "bytes": 15532,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2005a.B.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2005a.C.words.xml",
+      "sha256": "3380c39fcd75accf138f280cb84809b29338b6bb5c9e0de29b86f3db947ec5fe",
+      "bytes": 31172,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2005a.C.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2005a.D.words.xml",
+      "sha256": "21e12eff9a08258a48f23e57cbd8b90fff5c9a3edd5c0db2e9ca52bdf59ace88",
+      "bytes": 18235,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2005a.D.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2005d.A.words.xml",
+      "sha256": "c2ee0098a4c95172a721d223cfe67ecf069f64e62ee142a783d228e3305084f5",
+      "bytes": 55004,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2005d.A.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2005d.B.words.xml",
+      "sha256": "a1ab7beef4554d167cb4729b6868f7faef93fabf67f7cd889e41d1e976bf4c28",
+      "bytes": 132959,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2005d.B.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2005d.C.words.xml",
+      "sha256": "bc7e86c681421e8450d6f36fca36593d1eaeeacb1528c6f9e771c36dc79f5d1f",
+      "bytes": 124325,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2005d.C.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2005d.D.words.xml",
+      "sha256": "7c116b51aa107d358e2460d5ddc026eb978dde1f736e52530edb23f0183307f3",
+      "bytes": 102644,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2005d.D.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2006a.A.words.xml",
+      "sha256": "2a5da1c5d4b842f761b3f48f28f6e2c5866ba8818bdb3688715298208c1739ea",
+      "bytes": 56175,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2006a.A.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2006a.B.words.xml",
+      "sha256": "c226845eedacba22fc36bc746372407a7ceed23ebd7f598dd0f3e4ac25c3f238",
+      "bytes": 61044,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2006a.B.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2006a.C.words.xml",
+      "sha256": "47cb989a09e0f44d049e96fc7aefe094d27e132dfaab13dad2201141f18a8b09",
+      "bytes": 117523,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2006a.C.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2006a.D.words.xml",
+      "sha256": "59ab5d10627ca20bb67caf04b77d16b2623503842d033f084158eb7c3d1ad12d",
+      "bytes": 46798,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2006a.D.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2006b.A.words.xml",
+      "sha256": "18882c83ef4e7ce418d00438becf4ebcd04ea49a3355883f3b1df786c6e9c816",
+      "bytes": 156281,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2006b.A.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2006b.B.words.xml",
+      "sha256": "ed8edb3093d31c173fcd74bc28578b8722a46a25662ca744700758c7f3642442",
+      "bytes": 173532,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2006b.B.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2006b.C.words.xml",
+      "sha256": "1bd2b35f211f2c45b57d1c101c682dc13185f984ce36c1b48dcab57295c98fb0",
+      "bytes": 167556,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2006b.C.words.xml"
+    },
+    {
+      "path": "sources/ami/words/ES2006b.D.words.xml",
+      "sha256": "30a64ae8b8a95c38a6c86a05a48a837959a616ef13c56666d5b3f1ceceb4c68b",
+      "bytes": 128990,
+      "download_url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "archive_member": "words/ES2006b.D.words.xml"
+    },
+    {
+      "path": "sources/locomo10.json",
+      "sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+      "bytes": 2805274,
+      "download_url": "https://raw.githubusercontent.com/snap-research/locomo/main/data/locomo10.json"
+    },
+    {
+      "path": "sources/locomo_LICENSE.txt",
+      "sha256": "41003d4a74749c0220e33dd415042164b5a1093ed401f36277234f772d22d3d0",
+      "bytes": 19347,
+      "download_url": "https://raw.githubusercontent.com/snap-research/locomo/main/LICENSE.txt"
+    },
+    {
+      "path": "sources/locomo_README.MD",
+      "sha256": "9f8e6fd00a3400aa687109f40ed53715f0a2c028ee3f8c465bdfa96475640e8a",
+      "bytes": 7109,
+      "download_url": "https://raw.githubusercontent.com/snap-research/locomo/main/README.MD"
+    },
+    {
+      "path": "sources/meetingbank_README.md",
+      "sha256": "106fbc9d1fd3622c935ad64acb5ce353372a658e584b1af431f958470047002e",
+      "bytes": 3316,
+      "download_url": "https://huggingface.co/datasets/huuuyeah/meetingbank/raw/main/README.md"
+    },
+    {
+      "path": "sources/meetingbank_rows.json",
+      "sha256": "d5e39baab9d61a80b97c4721b994e7c5677fceffbc0c93420052435391a6db6e",
+      "bytes": 396475,
+      "download_url": "https://datasets-server.huggingface.co/rows?dataset=huuuyeah/meetingbank&config=default&split=test&offset=0&length=30"
+    },
+    {
+      "path": "sources/qmsum_Bed003.json",
+      "sha256": "959b0a710628f786f64c35f1462717f234b03ba34f2e170d3bb13be72f3321f8",
+      "bytes": 153132,
+      "download_url": "https://raw.githubusercontent.com/Yale-LILY/QMSum/main/data/ALL/test/Bed003.json"
+    },
+    {
+      "path": "sources/qmsum_Bed008.json",
+      "sha256": "d05c8b6dbc35244a277147f85778bb02b7ad7eae0f03700ac68d084d296fc84a",
+      "bytes": 125694,
+      "download_url": "https://raw.githubusercontent.com/Yale-LILY/QMSum/main/data/ALL/test/Bed008.json"
+    },
+    {
+      "path": "sources/qmsum_Bed016.json",
+      "sha256": "c8f8cb9ad047361dd3f364e28aa44d150d2b9c730434ef88c0dece6ce34a9756",
+      "bytes": 102160,
+      "download_url": "https://raw.githubusercontent.com/Yale-LILY/QMSum/main/data/ALL/test/Bed016.json"
+    },
+    {
+      "path": "sources/qmsum_LICENSE",
+      "sha256": "8308d90c6321345cbd4adc8b479ddbece28ddbdca44f3f0b9bf033c3999a4a80",
+      "bytes": 1066,
+      "download_url": "https://raw.githubusercontent.com/Yale-LILY/QMSum/main/LICENSE"
+    },
+    {
+      "path": "sources/qmsum_README.md",
+      "sha256": "b3b08634fe1cafc16ba6d5a4d26deb25c43cd2e676fed28921323195ce3592b2",
+      "bytes": 5959,
+      "download_url": "https://raw.githubusercontent.com/Yale-LILY/QMSum/main/README.md"
+    }
+  ]
+}

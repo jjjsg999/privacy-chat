@@ -1,0 +1,517 @@
+{
+  "schema": 1,
+  "selection_version": "q1c-fixed-source-v1",
+  "authorization": "NONE",
+  "approved_spending_cap_usd": "0",
+  "manifest_sha256": "cfb40c1b5038f04a246ffadadbb2b5db4096061f56b533550400584d5bfa31e7",
+  "pilot_ids": [
+    "ami_ES2002a",
+    "qmsum_Bed003_q000",
+    "meetingbank_000",
+    "fictional_01"
+  ],
+  "holdout_ids": [
+    "ami_ES2005a",
+    "ami_ES2005d",
+    "ami_ES2006a",
+    "ami_ES2006b",
+    "fictional_07",
+    "fictional_08",
+    "locomo_conv-43",
+    "locomo_conv-44",
+    "meetingbank_002",
+    "qmsum_Bed016_q000"
+  ],
+  "model_id": "~anthropic/claude-sonnet-latest",
+  "resolved_model": "unknown: mutable alias; not queried",
+  "generation": {
+    "max_tokens": 6000,
+    "temperature": "not sent",
+    "top_p": "not sent",
+    "seed": "not sent",
+    "reasoning": "not sent; provider default unknown",
+    "stream": "not sent"
+  },
+  "role_background": false,
+  "repairs_scheduled": 0,
+  "judge_calls_scheduled": 0,
+  "cases": [
+    {
+      "id": "ami_ES2002a",
+      "dataset": "AMI",
+      "split": "development",
+      "source_id": "ES2002a",
+      "source_group": "ES2002",
+      "raw_input_file": "inputs/ami_ES2002a.json",
+      "reference_file": "references/ami_ES2002a.json",
+      "input_sha256": "2276cd2521b80003df4b5cefa025c5644260cc332d562b176a010c977d3347da",
+      "reference_sha256": "5d4f908628014b26bb33120a76ca1911151053126d76b58ff78241c946cbf5d5",
+      "lanes": [
+        "action"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "ami_ES2002b",
+      "dataset": "AMI",
+      "split": "development",
+      "source_id": "ES2002b",
+      "source_group": "ES2002",
+      "raw_input_file": "inputs/ami_ES2002b.json",
+      "reference_file": "references/ami_ES2002b.json",
+      "input_sha256": "b7672ca10150bf679c924a3ad3ae50fe02daea28bc858c7ff264ef6ddf4596fd",
+      "reference_sha256": "c78628350e2e6596e42276835e2047eb017f55606d4b5fca0f7a494d7cda6fb4",
+      "lanes": [
+        "action"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "ami_ES2003a",
+      "dataset": "AMI",
+      "split": "development",
+      "source_id": "ES2003a",
+      "source_group": "ES2003",
+      "raw_input_file": "inputs/ami_ES2003a.json",
+      "reference_file": "references/ami_ES2003a.json",
+      "input_sha256": "4b053167139ebb126b1a75b3156aaba9d9e3949ab188f10c61d9739f9f1084a3",
+      "reference_sha256": "46dd14ae48b503a58c928ec06f46caa30be5a8a3f458674ccdb91672641d5e84",
+      "lanes": [
+        "action"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "ami_ES2003b",
+      "dataset": "AMI",
+      "split": "development",
+      "source_id": "ES2003b",
+      "source_group": "ES2003",
+      "raw_input_file": "inputs/ami_ES2003b.json",
+      "reference_file": "references/ami_ES2003b.json",
+      "input_sha256": "477c755c825b84435869ca5cfe66dc0ad0025fdb4be4f17a9e91f34461a7f1de",
+      "reference_sha256": "af6c966d235a7b7d00c124987c09518160b49a169e9e9b9ed35878d9ab9956f6",
+      "lanes": [
+        "action"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "ami_ES2004a",
+      "dataset": "AMI",
+      "split": "development",
+      "source_id": "ES2004a",
+      "source_group": "ES2004",
+      "raw_input_file": "inputs/ami_ES2004a.json",
+      "reference_file": "references/ami_ES2004a.json",
+      "input_sha256": "0cb2e74a496faed5971268ee30249a87573a445e1d9894cb61d811a5570367f6",
+      "reference_sha256": "bcdc34bbd4e3e20a019c0bb48433a1cbd9d762abfba9ee8b796cbc553a9bdf3b",
+      "lanes": [
+        "action"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "ami_ES2004c",
+      "dataset": "AMI",
+      "split": "development",
+      "source_id": "ES2004c",
+      "source_group": "ES2004",
+      "raw_input_file": "inputs/ami_ES2004c.json",
+      "reference_file": "references/ami_ES2004c.json",
+      "input_sha256": "89c0df02f598dab073829c7052e5f17ff0fc4beabbeb643703860fd4c70b9339",
+      "reference_sha256": "b27ed518de824f06d51030c30099d951134cd63b9ac52ada40818059b4403cb6",
+      "lanes": [
+        "action"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "ami_ES2005a",
+      "dataset": "AMI",
+      "split": "holdout",
+      "source_id": "ES2005a",
+      "source_group": "ES2005",
+      "raw_input_file": "inputs/ami_ES2005a.json",
+      "reference_file": "references/ami_ES2005a.json",
+      "input_sha256": "59217ba3da436e1181312b83803e4ac13c1d02bcc9fac3282855d2302776f77c",
+      "reference_sha256": "59f90c255004faa476cf64932dcac5e7e561dadcd72329903fc1a912ef39f6e9",
+      "lanes": [
+        "action"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "ami_ES2005d",
+      "dataset": "AMI",
+      "split": "holdout",
+      "source_id": "ES2005d",
+      "source_group": "ES2005",
+      "raw_input_file": "inputs/ami_ES2005d.json",
+      "reference_file": "references/ami_ES2005d.json",
+      "input_sha256": "06cd705a781f767a92e6db3b0ed303b4f7ae74273152fa2f3fbc75c50f082b73",
+      "reference_sha256": "bddae03cbe0b2049ff973856785812f702fb353ca24477312403f3b4339e13e8",
+      "lanes": [
+        "action"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "ami_ES2006a",
+      "dataset": "AMI",
+      "split": "holdout",
+      "source_id": "ES2006a",
+      "source_group": "ES2006",
+      "raw_input_file": "inputs/ami_ES2006a.json",
+      "reference_file": "references/ami_ES2006a.json",
+      "input_sha256": "7908fc28b6d0c585a6923a77e570a0d751e8fda0b514f1bcc717bcc33a9e3356",
+      "reference_sha256": "462919c960cbbd239d586a0184837de32c1912410dd7e89f8988ec5df2fd4f79",
+      "lanes": [
+        "action"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "ami_ES2006b",
+      "dataset": "AMI",
+      "split": "holdout",
+      "source_id": "ES2006b",
+      "source_group": "ES2006",
+      "raw_input_file": "inputs/ami_ES2006b.json",
+      "reference_file": "references/ami_ES2006b.json",
+      "input_sha256": "2fba82d7497f467ecee7e431867d1d4d4eab2779d3c5835294eba60c7f6fc2dd",
+      "reference_sha256": "2088ebd1f199ec672839f0c593739b513df995ccfd56190b5b7f07dd1bd5fe71",
+      "lanes": [
+        "action"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "fictional_01",
+      "dataset": "Fictional",
+      "split": "development",
+      "source_id": "fictional_01",
+      "source_group": "fictional_01",
+      "raw_input_file": "inputs/fictional_01.json",
+      "reference_file": "references/fictional_01.json",
+      "input_sha256": "49b1e16a35e8931a0a8b3bd311843ec9ce53de8c62a497999c9e3dcabd93b68b",
+      "reference_sha256": "5f06ecd794a2e63634752231a1ffa6eddd97c6cbc7cf2a39a7fb6cd58cd06278",
+      "lanes": [
+        "action",
+        "insight",
+        "longitudinal"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "fictional_02",
+      "dataset": "Fictional",
+      "split": "development",
+      "source_id": "fictional_02",
+      "source_group": "fictional_02",
+      "raw_input_file": "inputs/fictional_02.json",
+      "reference_file": "references/fictional_02.json",
+      "input_sha256": "1230b205fe4e2c3c9be2cba9b75d2b815b3efe404dbd9b1a63caae872a4a8b86",
+      "reference_sha256": "dfc26b6d8e4b7866edd21f7cb483c83751a743faa786d0613dc28790097a7ac8",
+      "lanes": [
+        "action",
+        "insight",
+        "longitudinal"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "fictional_03",
+      "dataset": "Fictional",
+      "split": "development",
+      "source_id": "fictional_03",
+      "source_group": "fictional_03",
+      "raw_input_file": "inputs/fictional_03.json",
+      "reference_file": "references/fictional_03.json",
+      "input_sha256": "d0b708297e229eed409c789c1189b7e04e5667cabde4afbe837c292792743906",
+      "reference_sha256": "4626d7dd18da164875b39a20f298cf234dd124c60cfa5bd3d9b42ff6e57f5b22",
+      "lanes": [
+        "action",
+        "insight",
+        "longitudinal"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "fictional_04",
+      "dataset": "Fictional",
+      "split": "development",
+      "source_id": "fictional_04",
+      "source_group": "fictional_04",
+      "raw_input_file": "inputs/fictional_04.json",
+      "reference_file": "references/fictional_04.json",
+      "input_sha256": "4063025437faccd71082f4c9486c26d366a3dd17d71e57f4f7603a4f2f65535c",
+      "reference_sha256": "50186bfe35b5e8b5b1ca41719ca8fdf10bab85447f2ed9bc0cc53c594d2f9029",
+      "lanes": [
+        "action",
+        "insight",
+        "longitudinal"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "fictional_05",
+      "dataset": "Fictional",
+      "split": "development",
+      "source_id": "fictional_05",
+      "source_group": "fictional_05",
+      "raw_input_file": "inputs/fictional_05.json",
+      "reference_file": "references/fictional_05.json",
+      "input_sha256": "05f50745a927b8f77f3b2261f73c02e7196b4ddf9d4ac56cccc0e697f25ec641",
+      "reference_sha256": "173e0dcc7ab44f25cb8821f34960e44ef1959842ce402e9e8f76b66a3320bf61",
+      "lanes": [
+        "action",
+        "insight",
+        "longitudinal"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "fictional_06",
+      "dataset": "Fictional",
+      "split": "development",
+      "source_id": "fictional_06",
+      "source_group": "fictional_06",
+      "raw_input_file": "inputs/fictional_06.json",
+      "reference_file": "references/fictional_06.json",
+      "input_sha256": "feb1783a87bc8092156fa0d87a0578318620009b42fa96fca5fc7f23d0f172d3",
+      "reference_sha256": "2e61e946bfd929691fc645b13f37333c24463addc67a20ab38ae0b07d9ee6adc",
+      "lanes": [
+        "action",
+        "insight",
+        "longitudinal"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "fictional_07",
+      "dataset": "Fictional",
+      "split": "holdout",
+      "source_id": "fictional_07",
+      "source_group": "fictional_07",
+      "raw_input_file": "inputs/fictional_07.json",
+      "reference_file": "references/fictional_07.json",
+      "input_sha256": "99053221aa03fead7283afb40b81f10dd9b5f3890b9f5d10e9a4cf6258891703",
+      "reference_sha256": "bf210fee1c61637514a440404e9de6d64c8b8c1223c10e5fccb57854717e9f76",
+      "lanes": [
+        "action",
+        "insight",
+        "longitudinal"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "fictional_08",
+      "dataset": "Fictional",
+      "split": "holdout",
+      "source_id": "fictional_08",
+      "source_group": "fictional_08",
+      "raw_input_file": "inputs/fictional_08.json",
+      "reference_file": "references/fictional_08.json",
+      "input_sha256": "8622a4bb71b7ab1044e5dad59b2f1a85fefe8e40f5e75e9f3f9ff546b163cb53",
+      "reference_sha256": "1f6ee197c276dd7ab72ee4924823f4818d883d69e2cb78296099dd350a82ef56",
+      "lanes": [
+        "action",
+        "insight",
+        "longitudinal"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "locomo_conv-26",
+      "dataset": "LoCoMo",
+      "split": "development",
+      "source_id": "conv-26:qa[7]",
+      "source_group": "conv-26",
+      "raw_input_file": "inputs/locomo_conv-26.json",
+      "reference_file": "references/locomo_conv-26.json",
+      "input_sha256": "d542f1b121aa476815ec85e1fa924eed6a1c8b1d722f850d8fd592f9b6d80817",
+      "reference_sha256": "f3e3d19cb54cf977c6fd868fe04f77c3744ace2e41198f1f7803ca8b8ef8144f",
+      "lanes": [
+        "longitudinal"
+      ],
+      "adapter_status": "unsupported episodic QA"
+    },
+    {
+      "id": "locomo_conv-30",
+      "dataset": "LoCoMo",
+      "split": "development",
+      "source_id": "conv-30:qa[3]",
+      "source_group": "conv-30",
+      "raw_input_file": "inputs/locomo_conv-30.json",
+      "reference_file": "references/locomo_conv-30.json",
+      "input_sha256": "c81a36a5249b456a7adaa537e76e425ff65e91b276cd7ae904c3fad1b8cb911d",
+      "reference_sha256": "87a59c89b9bc9678ba4ed3bbe4d5ceaf4449c1ec974dc7214a88e0d117604ac0",
+      "lanes": [
+        "longitudinal"
+      ],
+      "adapter_status": "unsupported episodic QA"
+    },
+    {
+      "id": "locomo_conv-41",
+      "dataset": "LoCoMo",
+      "split": "development",
+      "source_id": "conv-41:qa[2]",
+      "source_group": "conv-41",
+      "raw_input_file": "inputs/locomo_conv-41.json",
+      "reference_file": "references/locomo_conv-41.json",
+      "input_sha256": "41588155e4400d393832c4b793ec7a695a957346f6fcb0188dc0a217982ee947",
+      "reference_sha256": "23b445af1a655a8546a9314b3324f6d83e6526816490ce2a3b73d5da79e6e8dd",
+      "lanes": [
+        "longitudinal"
+      ],
+      "adapter_status": "unsupported episodic QA"
+    },
+    {
+      "id": "locomo_conv-42",
+      "dataset": "LoCoMo",
+      "split": "development",
+      "source_id": "conv-42:qa[5]",
+      "source_group": "conv-42",
+      "raw_input_file": "inputs/locomo_conv-42.json",
+      "reference_file": "references/locomo_conv-42.json",
+      "input_sha256": "f4e1a192be012bb4d4235a7c3eea1ed299d8f2cb88ce5da86d5649b835ff1dd1",
+      "reference_sha256": "896ba09a8307c06cd9db10e9ef75cd45351b01ad85775f3081914e0a482b6b63",
+      "lanes": [
+        "longitudinal"
+      ],
+      "adapter_status": "unsupported episodic QA"
+    },
+    {
+      "id": "locomo_conv-43",
+      "dataset": "LoCoMo",
+      "split": "holdout",
+      "source_id": "conv-43:qa[11]",
+      "source_group": "conv-43",
+      "raw_input_file": "inputs/locomo_conv-43.json",
+      "reference_file": "references/locomo_conv-43.json",
+      "input_sha256": "7d1a93486c3f24b3c8958a49a3c72710d959c4a6ba1e2b283c59620bb58d10e8",
+      "reference_sha256": "7fba1068cccd9d34f3ebcc2c89d302666edf400663cf9293e42ace06fcaa9dd0",
+      "lanes": [
+        "longitudinal"
+      ],
+      "adapter_status": "unsupported episodic QA"
+    },
+    {
+      "id": "locomo_conv-44",
+      "dataset": "LoCoMo",
+      "split": "holdout",
+      "source_id": "conv-44:qa[7]",
+      "source_group": "conv-44",
+      "raw_input_file": "inputs/locomo_conv-44.json",
+      "reference_file": "references/locomo_conv-44.json",
+      "input_sha256": "e15f0e4e41e6d2b725fc66a89bb57fdc3002e7a11c0fcb346fe5ccdf823d9bf3",
+      "reference_sha256": "59e192a950cb8889569055243a26982e0600b582197f267fc2e9ae58ddf65270",
+      "lanes": [
+        "longitudinal"
+      ],
+      "adapter_status": "unsupported episodic QA"
+    },
+    {
+      "id": "meetingbank_000",
+      "dataset": "MeetingBank",
+      "split": "development",
+      "source_id": "SeattleCityCouncil_06132016_Res 31669",
+      "source_group": "SeattleCityCouncil_06132016",
+      "raw_input_file": "inputs/meetingbank_000.json",
+      "reference_file": "references/meetingbank_000.json",
+      "input_sha256": "badd4625cadb0ffb548fbfd4a0b7d6616d401c8b9b47ec557ecaede541a5c691",
+      "reference_sha256": "93ac5ae62f956096d9af49b8540bbe4179816c207a663f3e319ceb239e60f202",
+      "lanes": [
+        "insight"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "meetingbank_001",
+      "dataset": "MeetingBank",
+      "split": "development",
+      "source_id": "BostonCC_12152021_2021-1239",
+      "source_group": "BostonCC_12152021",
+      "raw_input_file": "inputs/meetingbank_001.json",
+      "reference_file": "references/meetingbank_001.json",
+      "input_sha256": "6886474a08af917c939085429ebfd113d761f176f1d653e04b0a53e8b13417cf",
+      "reference_sha256": "959de8f72793088e57bd46c1449fd54ebd77eeea4f2986487b3bd3cadac740df",
+      "lanes": [
+        "insight"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "meetingbank_002",
+      "dataset": "MeetingBank",
+      "split": "holdout",
+      "source_id": "LongBeachCC_04072015_15-0296",
+      "source_group": "LongBeachCC_04072015",
+      "raw_input_file": "inputs/meetingbank_002.json",
+      "reference_file": "references/meetingbank_002.json",
+      "input_sha256": "cd4e7efa3d7bf07eb089809c92dc0c1294a16e0880564b7c4a6671f0bc4f932e",
+      "reference_sha256": "8a5559c820e5dda1a57d7610666744d8139516c8fb58b6488dbd3c13ff3401de",
+      "lanes": [
+        "insight"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "qmsum_Bed003_q000",
+      "dataset": "QMSum",
+      "split": "development",
+      "source_id": "Bed003:specific_query_list[0]",
+      "source_group": "Bed003",
+      "raw_input_file": "inputs/qmsum_Bed003_q000.json",
+      "reference_file": "references/qmsum_Bed003_q000.json",
+      "input_sha256": "4923ee99d01a7abf73922355cce31d8702e5b72767026f3b057ca5d37080ed1f",
+      "reference_sha256": "de483ef7c62d9dac2669c7ceffef810aa0b1ad884ff8147bd243591782abf2e0",
+      "lanes": [
+        "insight"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "qmsum_Bed008_q000",
+      "dataset": "QMSum",
+      "split": "development",
+      "source_id": "Bed008:specific_query_list[0]",
+      "source_group": "Bed008",
+      "raw_input_file": "inputs/qmsum_Bed008_q000.json",
+      "reference_file": "references/qmsum_Bed008_q000.json",
+      "input_sha256": "85e354f08dd47068fcf3c0829d0510fa4a60fd0ae3013a0b1c6c5b05699a3da1",
+      "reference_sha256": "3f750cc52aab8b7c1a2a178e52de4aa3b319fb262b1c147765050fc536f8bbe1",
+      "lanes": [
+        "insight"
+      ],
+      "adapter_status": "extraction compatible"
+    },
+    {
+      "id": "qmsum_Bed016_q000",
+      "dataset": "QMSum",
+      "split": "holdout",
+      "source_id": "Bed016:specific_query_list[0]",
+      "source_group": "Bed016",
+      "raw_input_file": "inputs/qmsum_Bed016_q000.json",
+      "reference_file": "references/qmsum_Bed016_q000.json",
+      "input_sha256": "1511019282d9b9b8476288ca12760320c4e2938dcd53aaaff6076cb6b9d1f7af",
+      "reference_sha256": "3ab4d192538b2db2cff1bc6127d5aa4fb2ef53c51d0d8b4ee4c4c9486057364e",
+      "lanes": [
+        "insight"
+      ],
+      "adapter_status": "extraction compatible"
+    }
+  ],
+  "component_sha256": {
+    "meeting_extraction.py": "0062b6ac8249be8986c07ab79009bb406ad40f214d3f082244e19acdf2cc0d82",
+    "meeting_extraction_v2.py": "7913f15e38e5b479cecd671861794b3d5890613144fe1346236a5b741dbe4ecc",
+    "prompts/meeting_extraction.md": "e0df8199680ef9aab285bb9ca07c2acc79e784d44ebf09d2e59eebc03640e8e2",
+    "prompts/meeting_extraction_v2.md": "711fcdd6cc7c11ddecf7f53769841ed1996faa193dd597fd6057b7286c0851de",
+    "engine.py": "41721978cd8f84a19633ab26b67ab3dda437bf7c3a5100fc0de33f2f294043a5",
+    "privacy_engine.py": "14ed89d32e24926a2463c49b8d8a6875c485e5b1296e7fd9520d33104f45397a",
+    "benchmarks/q1a/harness.py": "76fc89e5943f5fbcd2de2066b852c32af987005deba699d580d42957b8fb7b05",
+    "benchmarks/q1a/sandbox.py": "72290e35a67bbc607065db5d19fa6fd5410412ffc0cfc53035b2dc9f67facbed",
+    "benchmarks/q1bc/shadow.py": "28a99e573d914476c0f0e96cfe1b8c1370accd859195f7297be6b79096c65967"
+  }
+}

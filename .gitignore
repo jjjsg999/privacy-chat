@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+data/
+# Private memory snapshots (including orphan versions) and durable dev reservations.
+data/memory/
+data/dev_budget/
+config.json
+sensitive_terms.txt
+
+# Q1A local public corpora, normalized fixture copies, and evaluation outputs.
+benchmarks/q1a/sources/
+benchmarks/q1a/inputs/
+benchmarks/q1a/references/
+benchmarks/q1a/outputs/
+benchmarks/q1bc/outputs/

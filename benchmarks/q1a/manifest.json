@@ -1,0 +1,1673 @@
+{
+  "schema": 1,
+  "stage": "Q1A.1",
+  "status": "complete",
+  "target_cases": 30,
+  "fulfilled_cases": 30,
+  "blocked_cases": 0,
+  "model_calls": 0,
+  "selection_version": "q1a-v1-fixed-source-rules",
+  "split_rule": "Fixed source groups; 20 development / 10 holdout; no model-output selection",
+  "counts_by_dataset": {
+    "AMI": {
+      "target": 10,
+      "fulfilled": 10,
+      "blocked": 0
+    },
+    "QMSum": {
+      "target": 3,
+      "fulfilled": 3,
+      "blocked": 0
+    },
+    "MeetingBank": {
+      "target": 3,
+      "fulfilled": 3,
+      "blocked": 0
+    },
+    "LoCoMo": {
+      "target": 6,
+      "fulfilled": 6,
+      "blocked": 0
+    },
+    "Fictional": {
+      "target": 8,
+      "fulfilled": 8,
+      "blocked": 0
+    }
+  },
+  "counts_by_lane": {
+    "action_decision": {
+      "fulfilled": 10,
+      "blocked": 0,
+      "development": 6,
+      "holdout": 4
+    },
+    "fictional_banking_transformation": {
+      "fulfilled": 8,
+      "blocked": 0,
+      "development": 6,
+      "holdout": 2
+    },
+    "longitudinal_memory": {
+      "fulfilled": 6,
+      "blocked": 0,
+      "development": 4,
+      "holdout": 2
+    },
+    "salience_insight": {
+      "fulfilled": 6,
+      "blocked": 0,
+      "development": 4,
+      "holdout": 2
+    }
+  },
+  "sources": {
+    "AMI": {
+      "url": "https://groups.inf.ed.ac.uk/ami/download/",
+      "license": "CC BY 4.0",
+      "license_evidence": "sources/ami/LICENCE.txt",
+      "attribution": "AMI Meeting Corpus; AMI Consortium; Carletta et al., The AMI Meeting Corpus: A Pre-announcement (2005)",
+      "revision": "manual NXT annotations v1.6.2; 10-Apr-2017",
+      "terms": "Retain attribution and license; normalized XML-to-turn transformation indicated.",
+      "verification": {
+        "status": "verified before corpus acquisition",
+        "license_evidence_sha256": "d52fd9c7c19eec9f0bec3107554c10937203e261259d73b01637a61501fec7f7",
+        "verified_on": "2026-10-19"
+      }
+    },
+    "QMSum": {
+      "url": "https://github.com/Yale-LILY/QMSum",
+      "license": "MIT (repository); underlying meeting rights retained",
+      "license_evidence": "sources/qmsum_LICENSE",
+      "attribution": "Zhong et al. (2021), QMSum: A New Benchmark for Query-based Multi-domain Meeting Summarization; Yale-LILY",
+      "revision": "data/ALL/test; source content SHA256 pinned per file",
+      "terms": "Retain Yale-LILY MIT notice; selected Academic/ICSI transcript provenance is not a new rights grant for underlying recordings.",
+      "verification": {
+        "status": "verified before corpus acquisition",
+        "license_evidence_sha256": "8308d90c6321345cbd4adc8b479ddbece28ddbdca44f3f0b9bf033c3999a4a80",
+        "verified_on": "2026-10-19"
+      }
+    },
+    "MeetingBank": {
+      "url": "https://meetingbank.github.io/dataset/",
+      "license": "CC BY-NC-SA 4.0",
+      "license_evidence": "sources/meetingbank_README.md",
+      "attribution": "Hu, Ganter, Deilamsalehy, Dernoncourt, Foroosh and Liu (2023), MeetingBank: A Benchmark Dataset for Meeting Summarization",
+      "revision": "official-site-linked huuuyeah/meetingbank, test rows 0..29; response SHA256 pinned",
+      "terms": "Noncommercial diagnostic use only; attribution; adaptations retain CC BY-NC-SA 4.0. Municipal source rights are not independently adjudicated.",
+      "verification": {
+        "status": "verified before corpus acquisition",
+        "license_evidence_sha256": "106fbc9d1fd3622c935ad64acb5ce353372a658e584b1af431f958470047002e",
+        "verified_on": "2026-10-19"
+      }
+    },
+    "LoCoMo": {
+      "url": "https://github.com/snap-research/locomo",
+      "license": "CC BY-NC 4.0",
+      "license_evidence": "sources/locomo_LICENSE.txt",
+      "attribution": "Maharana, Lee, Tulyakov, Bansal, Barbieri and Fang (2024), Evaluating Very Long-Term Conversational Memory of LLM Agents",
+      "revision": "data/locomo10.json; SHA256 pinned",
+      "terms": "Noncommercial diagnostic use only; retain attribution, source and modification notice. Agent-generated dialogues with annotated QA, not natural human meetings.",
+      "verification": {
+        "status": "verified before corpus acquisition",
+        "license_evidence_sha256": "41003d4a74749c0220e33dd415042164b5a1093ed401f36277234f772d22d3d0",
+        "verified_on": "2026-10-19"
+      }
+    },
+    "Fictional": {
+      "url": "local:benchmarks/q1a/fictional_facts.json",
+      "license": "Project-authored fictional diagnostic fixtures; no third-party corpus",
+      "license_evidence": "fictional_facts.json",
+      "attribution": "Privacy LLM Q1A benchmark; wholly fictional facts and deterministic dialogue rendering, 2026-10-19",
+      "revision": "facts-first v1; source SHA256 pinned",
+      "terms": "No real employer, client or stakeholder information. Answer keys are authored expectations, not human corpus annotations.",
+      "verification": {
+        "status": "verified before corpus acquisition",
+        "license_evidence_sha256": "d13baf3bb1fc0a922fb4e14984d4cae533398928c37f03823ea9e893ecb4f8f2",
+        "verified_on": "2026-10-19"
+      }
+    }
+  },
+  "cases": [
+    {
+      "id": "ami_ES2002a",
+      "dataset": "AMI",
+      "evaluation_lane": "action_decision",
+      "status": "fulfilled",
+      "source_id": "ES2002a",
+      "source_group": "ES2002",
+      "split": "development",
+      "url": "https://groups.inf.ed.ac.uk/ami/download/",
+      "license": "CC BY 4.0",
+      "license_evidence": "sources/ami/LICENCE.txt",
+      "attribution": "AMI Meeting Corpus; AMI Consortium; Carletta et al., The AMI Meeting Corpus: A Pre-announcement (2005)",
+      "revision": "manual NXT annotations v1.6.2; 10-Apr-2017",
+      "terms": "Retain attribution and license; normalized XML-to-turn transformation indicated.",
+      "raw_input_file": "inputs/ami_ES2002a.json",
+      "reference_file": "references/ami_ES2002a.json",
+      "source_files": [
+        {
+          "path": "sources/ami/abstractive/ES2002a.abssumm.xml",
+          "sha256": "13551d1be5c5a3d72345b18b840d033534a4ee80d50e648dfcaad646f1ba6d91"
+        },
+        {
+          "path": "sources/ami/extractive/ES2002a.summlink.xml",
+          "sha256": "70fae857eb544069a10548b0d1670643ad4a948497879010e9bf04b31657a80b"
+        },
+        {
+          "path": "sources/ami/words/ES2002a.A.words.xml",
+          "sha256": "03e7f37c4b3519ee78396779bbc90e2778b7b7ccd7a7388f7fa3a22cb31f7044"
+        },
+        {
+          "path": "sources/ami/words/ES2002a.B.words.xml",
+          "sha256": "a51156e0b3f1b05d9d1a631206d523c5247d2d6fd851ecfe826317ab261cc17a"
+        },
+        {
+          "path": "sources/ami/words/ES2002a.C.words.xml",
+          "sha256": "c539fca7b7183a2b56be43f2362432a91a4552512ed03df8c4ce96aee75f3330"
+        },
+        {
+          "path": "sources/ami/words/ES2002a.D.words.xml",
+          "sha256": "d4f8b66e53de583c839424323f0e05d038a1426e5628042d03dcd2ee72e68b05"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2002a.A.dialog-act.xml",
+          "sha256": "d93241138d13614122d5137f6e184f16edac3247b4cde8f3a3fe14ec46168836"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2002a.B.dialog-act.xml",
+          "sha256": "fd94fe188a80bad10c7c9879e0f0836482c208d21bfc7116623836b737e2b084"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2002a.C.dialog-act.xml",
+          "sha256": "a1107181388d9ef4e45c8276ca34cee10bc6fc4b0789fe60bbc91fb6dce483a9"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2002a.D.dialog-act.xml",
+          "sha256": "9adf983bb5cb17306213bb0182eeedd04263baf45a07459f4597a8ce1b117743"
+        }
+      ],
+      "input_sha256": "2276cd2521b80003df4b5cefa025c5644260cc332d562b176a010c977d3347da",
+      "reference_sha256": "5d4f908628014b26bb33120a76ca1911151053126d76b58ff78241c946cbf5d5",
+      "estimated_input_size": {
+        "characters": 67753,
+        "words": 7009,
+        "tokens_heuristic_chars_over_4": 16939
+      },
+      "verifiable": [
+        "Original human abstractive action/decision text and NXT IDs",
+        "Original summary-to-dialogue links where supplied"
+      ],
+      "not_verifiable": [
+        "No exhaustive task-negative truth: empty action section does not prove absence of all commitments",
+        "No field-level owner/date annotations; do not invent these from abstractive text",
+        "Whitespace normalized; timings and speaker letters preserved"
+      ]
+    },
+    {
+      "id": "ami_ES2002b",
+      "dataset": "AMI",
+      "evaluation_lane": "action_decision",
+      "status": "fulfilled",
+      "source_id": "ES2002b",
+      "source_group": "ES2002",
+      "split": "development",
+      "url": "https://groups.inf.ed.ac.uk/ami/download/",
+      "license": "CC BY 4.0",
+      "license_evidence": "sources/ami/LICENCE.txt",
+      "attribution": "AMI Meeting Corpus; AMI Consortium; Carletta et al., The AMI Meeting Corpus: A Pre-announcement (2005)",
+      "revision": "manual NXT annotations v1.6.2; 10-Apr-2017",
+      "terms": "Retain attribution and license; normalized XML-to-turn transformation indicated.",
+      "raw_input_file": "inputs/ami_ES2002b.json",
+      "reference_file": "references/ami_ES2002b.json",
+      "source_files": [
+        {
+          "path": "sources/ami/abstractive/ES2002b.abssumm.xml",
+          "sha256": "a4a1b9aaed89a5488a5f4c8b3d3dd87e94bdd69b60b31c2b592665d71956eb1f"
+        },
+        {
+          "path": "sources/ami/extractive/ES2002b.summlink.xml",
+          "sha256": "819ee5e4eacf30095755fe2c970206623ca26bb1203bcfe3c79f6829a020ce33"
+        },
+        {
+          "path": "sources/ami/words/ES2002b.A.words.xml",
+          "sha256": "93898e9ec972b01d8e3de9844cf21d811444bc785f961ab463d8345cfdec6a6a"
+        },
+        {
+          "path": "sources/ami/words/ES2002b.B.words.xml",
+          "sha256": "48f85fbc050aa6e0e72ca3d38f486d5156dfe38f43f4ca80a744cd992c55b840"
+        },
+        {
+          "path": "sources/ami/words/ES2002b.C.words.xml",
+          "sha256": "f03f094758214fa77caf3094a42f58a28b13885ade0a079fd871299f943b9ae2"
+        },
+        {
+          "path": "sources/ami/words/ES2002b.D.words.xml",
+          "sha256": "4910c12f32c2218a5816e31260b6d33779656a647eeabc34e4d0430081a7162c"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2002b.A.dialog-act.xml",
+          "sha256": "4cf128d635182804118f6e26a3c7638c4d12903f4f1d329f876361a1c1c0d04f"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2002b.B.dialog-act.xml",
+          "sha256": "02085787917411dffc7a8c052c553e578606fa84e9977eb3c18e2aa9ed32a3eb"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2002b.C.dialog-act.xml",
+          "sha256": "d93aa1b0744000c8f437ed371b0df4d24bd4bbcc924a9498e74d74ef20590fc4"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2002b.D.dialog-act.xml",
+          "sha256": "0a0454ce6778b583dfd653b6dd55bbeff4db928bcfb573e7c05c032353521832"
+        }
+      ],
+      "input_sha256": "b7672ca10150bf679c924a3ad3ae50fe02daea28bc858c7ff264ef6ddf4596fd",
+      "reference_sha256": "c78628350e2e6596e42276835e2047eb017f55606d4b5fca0f7a494d7cda6fb4",
+      "estimated_input_size": {
+        "characters": 159127,
+        "words": 16896,
+        "tokens_heuristic_chars_over_4": 39782
+      },
+      "verifiable": [
+        "Original human abstractive action/decision text and NXT IDs",
+        "Original summary-to-dialogue links where supplied"
+      ],
+      "not_verifiable": [
+        "No exhaustive task-negative truth: empty action section does not prove absence of all commitments",
+        "No field-level owner/date annotations; do not invent these from abstractive text",
+        "Whitespace normalized; timings and speaker letters preserved"
+      ]
+    },
+    {
+      "id": "ami_ES2003a",
+      "dataset": "AMI",
+      "evaluation_lane": "action_decision",
+      "status": "fulfilled",
+      "source_id": "ES2003a",
+      "source_group": "ES2003",
+      "split": "development",
+      "url": "https://groups.inf.ed.ac.uk/ami/download/",
+      "license": "CC BY 4.0",
+      "license_evidence": "sources/ami/LICENCE.txt",
+      "attribution": "AMI Meeting Corpus; AMI Consortium; Carletta et al., The AMI Meeting Corpus: A Pre-announcement (2005)",
+      "revision": "manual NXT annotations v1.6.2; 10-Apr-2017",
+      "terms": "Retain attribution and license; normalized XML-to-turn transformation indicated.",
+      "raw_input_file": "inputs/ami_ES2003a.json",
+      "reference_file": "references/ami_ES2003a.json",
+      "source_files": [
+        {
+          "path": "sources/ami/abstractive/ES2003a.abssumm.xml",
+          "sha256": "2f27350c54ee3476925e4f1d935790147a944b63c7c3edacb6601f13f58c1876"
+        },
+        {
+          "path": "sources/ami/extractive/ES2003a.summlink.xml",
+          "sha256": "e86145ff576ab544c158d927b688fab6f892b5d05b3dbc38bfb9e8dfb1b41b49"
+        },
+        {
+          "path": "sources/ami/words/ES2003a.A.words.xml",
+          "sha256": "8ee1e2ba5ab4421e16ebf42d0e221247a83e174fe34aa06e3aadd7a08540e470"
+        },
+        {
+          "path": "sources/ami/words/ES2003a.B.words.xml",
+          "sha256": "d9af4424014f9e2ae55e1a33fc7fb95a2352903453e3afb51118845cea4c304d"
+        },
+        {
+          "path": "sources/ami/words/ES2003a.C.words.xml",
+          "sha256": "9393f7af2a0cd95da35d306e4861e2513544c54059b11515ff311cd9b051cff4"
+        },
+        {
+          "path": "sources/ami/words/ES2003a.D.words.xml",
+          "sha256": "bdcf987020238618bed2941bc906d31aa61aec6732e3104d16f11b7f1a104384"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2003a.A.dialog-act.xml",
+          "sha256": "b39d4dac4f19271a503f3f11d1abf18fb6f01da2240680300110657ea8b608cc"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2003a.B.dialog-act.xml",
+          "sha256": "f351ca83b652372e78b6e48b9125714995d0b7cba75c645a6b048d6a06958738"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2003a.C.dialog-act.xml",
+          "sha256": "6ead197012bd6546f369fe5f6dfba5d506ec195aaeeec18905bc4334478977e7"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2003a.D.dialog-act.xml",
+          "sha256": "9c07ee5f46b19b68c7216f49f7912170198e2e8e6bef50b02401657b9daa656a"
+        }
+      ],
+      "input_sha256": "4b053167139ebb126b1a75b3156aaba9d9e3949ab188f10c61d9739f9f1084a3",
+      "reference_sha256": "46dd14ae48b503a58c928ec06f46caa30be5a8a3f458674ccdb91672641d5e84",
+      "estimated_input_size": {
+        "characters": 48076,
+        "words": 5073,
+        "tokens_heuristic_chars_over_4": 12019
+      },
+      "verifiable": [
+        "Original human abstractive action/decision text and NXT IDs",
+        "Original summary-to-dialogue links where supplied"
+      ],
+      "not_verifiable": [
+        "No exhaustive task-negative truth: empty action section does not prove absence of all commitments",
+        "No field-level owner/date annotations; do not invent these from abstractive text",
+        "Whitespace normalized; timings and speaker letters preserved"
+      ]
+    },
+    {
+      "id": "ami_ES2003b",
+      "dataset": "AMI",
+      "evaluation_lane": "action_decision",
+      "status": "fulfilled",
+      "source_id": "ES2003b",
+      "source_group": "ES2003",
+      "split": "development",
+      "url": "https://groups.inf.ed.ac.uk/ami/download/",
+      "license": "CC BY 4.0",
+      "license_evidence": "sources/ami/LICENCE.txt",
+      "attribution": "AMI Meeting Corpus; AMI Consortium; Carletta et al., The AMI Meeting Corpus: A Pre-announcement (2005)",
+      "revision": "manual NXT annotations v1.6.2; 10-Apr-2017",
+      "terms": "Retain attribution and license; normalized XML-to-turn transformation indicated.",
+      "raw_input_file": "inputs/ami_ES2003b.json",
+      "reference_file": "references/ami_ES2003b.json",
+      "source_files": [
+        {
+          "path": "sources/ami/abstractive/ES2003b.abssumm.xml",
+          "sha256": "2b9ee9e9cd64bcdfd56de4f4de57b459a4d257803a9d4ebffba1b2db72d484aa"
+        },
+        {
+          "path": "sources/ami/extractive/ES2003b.summlink.xml",
+          "sha256": "6fb7bdf0e850056629aef89f64f8d85fb21ed5788f1f48099d8845ec146ed5fd"
+        },
+        {
+          "path": "sources/ami/words/ES2003b.A.words.xml",
+          "sha256": "40d587031566d3e4a82c810728403b590df1852d9beecd50043742d4a8af18d5"
+        },
+        {
+          "path": "sources/ami/words/ES2003b.B.words.xml",
+          "sha256": "89a94bfe0e8f3c25e396c3f717dec82137981b9e7a1bb888af4aa9c866fb8bf3"
+        },
+        {
+          "path": "sources/ami/words/ES2003b.C.words.xml",
+          "sha256": "d9431cf57246544d02d2d441dd8112ded56cac6e53f4d62b4c34bdab7a1bed63"
+        },
+        {
+          "path": "sources/ami/words/ES2003b.D.words.xml",
+          "sha256": "fc35e6ad74a58b8769163b8eb8fc586dbf19b8dd1b2dca17f057c4d04ab936f7"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2003b.A.dialog-act.xml",
+          "sha256": "41fa54eb947adf3ef2b1fccce0e366e2c39bd778827b5f522dae3f79cdfab70c"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2003b.B.dialog-act.xml",
+          "sha256": "a76789030b302d5d75d26719053fb57a24335328ed765e2aa407d07e4251dec6"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2003b.C.dialog-act.xml",
+          "sha256": "f70fdf78447f4803cdf7ff33eca8648ab2ddad8074032637adbab929555e5d30"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2003b.D.dialog-act.xml",
+          "sha256": "b929b668c164a139e0bbaa690f2e6d54ded1392572c94fa7f7d9ea5b4c00882d"
+        }
+      ],
+      "input_sha256": "477c755c825b84435869ca5cfe66dc0ad0025fdb4be4f17a9e91f34461a7f1de",
+      "reference_sha256": "af6c966d235a7b7d00c124987c09518160b49a169e9e9b9ed35878d9ab9956f6",
+      "estimated_input_size": {
+        "characters": 128959,
+        "words": 13586,
+        "tokens_heuristic_chars_over_4": 32240
+      },
+      "verifiable": [
+        "Original human abstractive action/decision text and NXT IDs",
+        "Original summary-to-dialogue links where supplied"
+      ],
+      "not_verifiable": [
+        "No exhaustive task-negative truth: empty action section does not prove absence of all commitments",
+        "No field-level owner/date annotations; do not invent these from abstractive text",
+        "Whitespace normalized; timings and speaker letters preserved"
+      ]
+    },
+    {
+      "id": "ami_ES2004a",
+      "dataset": "AMI",
+      "evaluation_lane": "action_decision",
+      "status": "fulfilled",
+      "source_id": "ES2004a",
+      "source_group": "ES2004",
+      "split": "development",
+      "url": "https://groups.inf.ed.ac.uk/ami/download/",
+      "license": "CC BY 4.0",
+      "license_evidence": "sources/ami/LICENCE.txt",
+      "attribution": "AMI Meeting Corpus; AMI Consortium; Carletta et al., The AMI Meeting Corpus: A Pre-announcement (2005)",
+      "revision": "manual NXT annotations v1.6.2; 10-Apr-2017",
+      "terms": "Retain attribution and license; normalized XML-to-turn transformation indicated.",
+      "raw_input_file": "inputs/ami_ES2004a.json",
+      "reference_file": "references/ami_ES2004a.json",
+      "source_files": [
+        {
+          "path": "sources/ami/abstractive/ES2004a.abssumm.xml",
+          "sha256": "d3922b70500dc6a3f84be77538583e4073d53a2208d504c04c1b72201e77db6a"
+        },
+        {
+          "path": "sources/ami/extractive/ES2004a.summlink.xml",
+          "sha256": "d11cd99bede30a3aab1e28d923f535fa545baf96e4dcb1232a62793a6a4a6252"
+        },
+        {
+          "path": "sources/ami/words/ES2004a.A.words.xml",
+          "sha256": "3b91765c8985e7c2652f1004832c00840e88bad4c3213296192b9fd741d675cc"
+        },
+        {
+          "path": "sources/ami/words/ES2004a.B.words.xml",
+          "sha256": "0e24646b84f2772bb3ca28e666df5f7ba48cde647589f7ae8f85e2724ff5cbc3"
+        },
+        {
+          "path": "sources/ami/words/ES2004a.C.words.xml",
+          "sha256": "07c25c4831fdc91cdff736ebf27c1380d0a7ef98e9835e33b15d44797fed7fd1"
+        },
+        {
+          "path": "sources/ami/words/ES2004a.D.words.xml",
+          "sha256": "e085188b2f4855808911934c309ba965c283e54371044c9086185f27913d44f8"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2004a.A.dialog-act.xml",
+          "sha256": "cfac83a0fb9f7af510baa6a59b231b5af7a6834036c2f130cac4ec63c8683af0"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2004a.B.dialog-act.xml",
+          "sha256": "1e72fad9cac244d7e58542e3b9f11ecba1cf605ac50397b0bf2cff4b28761821"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2004a.C.dialog-act.xml",
+          "sha256": "62e4d55aae4b83666823bdcd1efe828a8ceb2b891881806a245d5444dd11a2b5"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2004a.D.dialog-act.xml",
+          "sha256": "3db08118d372e85fb9687c786cb0029de7f311100b0f4b7f5c46ddc94082d055"
+        }
+      ],
+      "input_sha256": "0cb2e74a496faed5971268ee30249a87573a445e1d9894cb61d811a5570367f6",
+      "reference_sha256": "bcdc34bbd4e3e20a019c0bb48433a1cbd9d762abfba9ee8b796cbc553a9bdf3b",
+      "estimated_input_size": {
+        "characters": 72455,
+        "words": 7348,
+        "tokens_heuristic_chars_over_4": 18114
+      },
+      "verifiable": [
+        "Original human abstractive action/decision text and NXT IDs",
+        "Original summary-to-dialogue links where supplied"
+      ],
+      "not_verifiable": [
+        "No exhaustive task-negative truth: empty action section does not prove absence of all commitments",
+        "No field-level owner/date annotations; do not invent these from abstractive text",
+        "Whitespace normalized; timings and speaker letters preserved"
+      ]
+    },
+    {
+      "id": "ami_ES2004c",
+      "dataset": "AMI",
+      "evaluation_lane": "action_decision",
+      "status": "fulfilled",
+      "source_id": "ES2004c",
+      "source_group": "ES2004",
+      "split": "development",
+      "url": "https://groups.inf.ed.ac.uk/ami/download/",
+      "license": "CC BY 4.0",
+      "license_evidence": "sources/ami/LICENCE.txt",
+      "attribution": "AMI Meeting Corpus; AMI Consortium; Carletta et al., The AMI Meeting Corpus: A Pre-announcement (2005)",
+      "revision": "manual NXT annotations v1.6.2; 10-Apr-2017",
+      "terms": "Retain attribution and license; normalized XML-to-turn transformation indicated.",
+      "raw_input_file": "inputs/ami_ES2004c.json",
+      "reference_file": "references/ami_ES2004c.json",
+      "source_files": [
+        {
+          "path": "sources/ami/abstractive/ES2004c.abssumm.xml",
+          "sha256": "c3e52e95e7350858cf45a0cf7d2fd469da4923c4ff1b9a97e78938fe8ae56af6"
+        },
+        {
+          "path": "sources/ami/extractive/ES2004c.summlink.xml",
+          "sha256": "82049b227e6a7ec7e03b5929b8865020731918ec8663aa230d3d00aa4d04db68"
+        },
+        {
+          "path": "sources/ami/words/ES2004c.A.words.xml",
+          "sha256": "9088056d2c6e05932d9f38749be9d8a3a93668a6a2e7400c137594271e037ecc"
+        },
+        {
+          "path": "sources/ami/words/ES2004c.B.words.xml",
+          "sha256": "6ec6884b65f1979d24cb35ff408d77c939b3e00625b8b37b1e57aca2bffd939a"
+        },
+        {
+          "path": "sources/ami/words/ES2004c.C.words.xml",
+          "sha256": "297f0fd814ded99fcdee863fb5f362ef0431e42579284677c9ebf99833245a23"
+        },
+        {
+          "path": "sources/ami/words/ES2004c.D.words.xml",
+          "sha256": "a397d6caf48ad4dfea6e555b176cd1003776dc573434fc8d71a9112c899c59ce"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2004c.A.dialog-act.xml",
+          "sha256": "c8aaacb2c502966c4c27879e88692f6f3b53be549463bc245f29cf7effdd50c3"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2004c.B.dialog-act.xml",
+          "sha256": "ddc8a92f9721b8b115d6a58322ab020d04e4f7dcc42175d2782744a3462186f4"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2004c.C.dialog-act.xml",
+          "sha256": "a28454865a647ebf268265eff8b8f5d3c7a40d8b63c9a9b7093bb4fa50993511"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2004c.D.dialog-act.xml",
+          "sha256": "e3fefb88d704225e242e0f6d7df6a9763af08daac282aeadd0a9351d88b60c57"
+        }
+      ],
+      "input_sha256": "89c0df02f598dab073829c7052e5f17ff0fc4beabbeb643703860fd4c70b9339",
+      "reference_sha256": "b27ed518de824f06d51030c30099d951134cd63b9ac52ada40818059b4403cb6",
+      "estimated_input_size": {
+        "characters": 154579,
+        "words": 16349,
+        "tokens_heuristic_chars_over_4": 38645
+      },
+      "verifiable": [
+        "Original human abstractive action/decision text and NXT IDs",
+        "Original summary-to-dialogue links where supplied"
+      ],
+      "not_verifiable": [
+        "No exhaustive task-negative truth: empty action section does not prove absence of all commitments",
+        "No field-level owner/date annotations; do not invent these from abstractive text",
+        "Whitespace normalized; timings and speaker letters preserved"
+      ]
+    },
+    {
+      "id": "ami_ES2005a",
+      "dataset": "AMI",
+      "evaluation_lane": "action_decision",
+      "status": "fulfilled",
+      "source_id": "ES2005a",
+      "source_group": "ES2005",
+      "split": "holdout",
+      "url": "https://groups.inf.ed.ac.uk/ami/download/",
+      "license": "CC BY 4.0",
+      "license_evidence": "sources/ami/LICENCE.txt",
+      "attribution": "AMI Meeting Corpus; AMI Consortium; Carletta et al., The AMI Meeting Corpus: A Pre-announcement (2005)",
+      "revision": "manual NXT annotations v1.6.2; 10-Apr-2017",
+      "terms": "Retain attribution and license; normalized XML-to-turn transformation indicated.",
+      "raw_input_file": "inputs/ami_ES2005a.json",
+      "reference_file": "references/ami_ES2005a.json",
+      "source_files": [
+        {
+          "path": "sources/ami/abstractive/ES2005a.abssumm.xml",
+          "sha256": "3349b33e408f8fee797f31a507346a7219c3e71940c5a64a27b51f87f55befea"
+        },
+        {
+          "path": "sources/ami/extractive/ES2005a.summlink.xml",
+          "sha256": "cb29e1054ebff78edc653f31d1b105f9e6e8e819e054c75dc10428612847661f"
+        },
+        {
+          "path": "sources/ami/words/ES2005a.A.words.xml",
+          "sha256": "678d6a3aed1cc8715195e2d52811849a9990a6a4f297f9807528327d4e23bcaa"
+        },
+        {
+          "path": "sources/ami/words/ES2005a.B.words.xml",
+          "sha256": "6688e84d94fbb273961dcd1ae239f031f542029eac946f927b35ea3476f93825"
+        },
+        {
+          "path": "sources/ami/words/ES2005a.C.words.xml",
+          "sha256": "3380c39fcd75accf138f280cb84809b29338b6bb5c9e0de29b86f3db947ec5fe"
+        },
+        {
+          "path": "sources/ami/words/ES2005a.D.words.xml",
+          "sha256": "21e12eff9a08258a48f23e57cbd8b90fff5c9a3edd5c0db2e9ca52bdf59ace88"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2005a.A.dialog-act.xml",
+          "sha256": "2bba19589907c81b885b626fd7292ebcf974c80ed12380815e7ad05d88a11c26"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2005a.B.dialog-act.xml",
+          "sha256": "6e2edeed1f9234fe99d4bde8cb89014686cea616d91eeac6e4e47a69d145d988"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2005a.C.dialog-act.xml",
+          "sha256": "9464c0f45e4e3b02b79cd0f1aa297cff5c73832e5f867274dbf2632096220007"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2005a.D.dialog-act.xml",
+          "sha256": "28d9136da3d6b1dc9e8290768f0f7bda4b35fe76278bffb543158c7da0ddf1ae"
+        }
+      ],
+      "input_sha256": "59217ba3da436e1181312b83803e4ac13c1d02bcc9fac3282855d2302776f77c",
+      "reference_sha256": "59f90c255004faa476cf64932dcac5e7e561dadcd72329903fc1a912ef39f6e9",
+      "estimated_input_size": {
+        "characters": 21320,
+        "words": 2154,
+        "tokens_heuristic_chars_over_4": 5330
+      },
+      "verifiable": [
+        "Original human abstractive action/decision text and NXT IDs",
+        "Original summary-to-dialogue links where supplied"
+      ],
+      "not_verifiable": [
+        "No exhaustive task-negative truth: empty action section does not prove absence of all commitments",
+        "No field-level owner/date annotations; do not invent these from abstractive text",
+        "Whitespace normalized; timings and speaker letters preserved"
+      ]
+    },
+    {
+      "id": "ami_ES2005d",
+      "dataset": "AMI",
+      "evaluation_lane": "action_decision",
+      "status": "fulfilled",
+      "source_id": "ES2005d",
+      "source_group": "ES2005",
+      "split": "holdout",
+      "url": "https://groups.inf.ed.ac.uk/ami/download/",
+      "license": "CC BY 4.0",
+      "license_evidence": "sources/ami/LICENCE.txt",
+      "attribution": "AMI Meeting Corpus; AMI Consortium; Carletta et al., The AMI Meeting Corpus: A Pre-announcement (2005)",
+      "revision": "manual NXT annotations v1.6.2; 10-Apr-2017",
+      "terms": "Retain attribution and license; normalized XML-to-turn transformation indicated.",
+      "raw_input_file": "inputs/ami_ES2005d.json",
+      "reference_file": "references/ami_ES2005d.json",
+      "source_files": [
+        {
+          "path": "sources/ami/abstractive/ES2005d.abssumm.xml",
+          "sha256": "35fe65263b4859252238a1e9ee9a08e637566cd1de1c2c1686c8dc8bb04109ec"
+        },
+        {
+          "path": "sources/ami/extractive/ES2005d.summlink.xml",
+          "sha256": "f9c8845ee4aa84a8c760ce52f1cd734cf16c523b6e53130252c44cfc5257ac11"
+        },
+        {
+          "path": "sources/ami/words/ES2005d.A.words.xml",
+          "sha256": "c2ee0098a4c95172a721d223cfe67ecf069f64e62ee142a783d228e3305084f5"
+        },
+        {
+          "path": "sources/ami/words/ES2005d.B.words.xml",
+          "sha256": "a1ab7beef4554d167cb4729b6868f7faef93fabf67f7cd889e41d1e976bf4c28"
+        },
+        {
+          "path": "sources/ami/words/ES2005d.C.words.xml",
+          "sha256": "bc7e86c681421e8450d6f36fca36593d1eaeeacb1528c6f9e771c36dc79f5d1f"
+        },
+        {
+          "path": "sources/ami/words/ES2005d.D.words.xml",
+          "sha256": "7c116b51aa107d358e2460d5ddc026eb978dde1f736e52530edb23f0183307f3"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2005d.A.dialog-act.xml",
+          "sha256": "67878297f9007cdc0d1719970ebb18327e4fcd68c4ff7acffc56aa6cc19017e9"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2005d.B.dialog-act.xml",
+          "sha256": "5fccbc83a4983f540d5b3e2eb37b360c7d0052092d235cd157784ec1bae84439"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2005d.C.dialog-act.xml",
+          "sha256": "2e6eafe9dd47ee5196b9306a532c8d15389fee6d55ad335c96069c9b11d0d71d"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2005d.D.dialog-act.xml",
+          "sha256": "81bda7b01336906940f717f6dbf5dc8b566a9a3dc6024c7662ca31855d1befa6"
+        }
+      ],
+      "input_sha256": "06cd705a781f767a92e6db3b0ed303b4f7ae74273152fa2f3fbc75c50f082b73",
+      "reference_sha256": "bddae03cbe0b2049ff973856785812f702fb353ca24477312403f3b4339e13e8",
+      "estimated_input_size": {
+        "characters": 109081,
+        "words": 11095,
+        "tokens_heuristic_chars_over_4": 27271
+      },
+      "verifiable": [
+        "Original human abstractive action/decision text and NXT IDs",
+        "Original summary-to-dialogue links where supplied"
+      ],
+      "not_verifiable": [
+        "No exhaustive task-negative truth: empty action section does not prove absence of all commitments",
+        "No field-level owner/date annotations; do not invent these from abstractive text",
+        "Whitespace normalized; timings and speaker letters preserved"
+      ]
+    },
+    {
+      "id": "ami_ES2006a",
+      "dataset": "AMI",
+      "evaluation_lane": "action_decision",
+      "status": "fulfilled",
+      "source_id": "ES2006a",
+      "source_group": "ES2006",
+      "split": "holdout",
+      "url": "https://groups.inf.ed.ac.uk/ami/download/",
+      "license": "CC BY 4.0",
+      "license_evidence": "sources/ami/LICENCE.txt",
+      "attribution": "AMI Meeting Corpus; AMI Consortium; Carletta et al., The AMI Meeting Corpus: A Pre-announcement (2005)",
+      "revision": "manual NXT annotations v1.6.2; 10-Apr-2017",
+      "terms": "Retain attribution and license; normalized XML-to-turn transformation indicated.",
+      "raw_input_file": "inputs/ami_ES2006a.json",
+      "reference_file": "references/ami_ES2006a.json",
+      "source_files": [
+        {
+          "path": "sources/ami/abstractive/ES2006a.abssumm.xml",
+          "sha256": "4bdc5cd9990aa6ebfe94cc4dacd6f9afc255cb0a535bfca18bb9d144dfd74d43"
+        },
+        {
+          "path": "sources/ami/extractive/ES2006a.summlink.xml",
+          "sha256": "cef1e2725ffcc45f4f6ae40a2264368ae48c3a99753f283ccf438d34300abfe2"
+        },
+        {
+          "path": "sources/ami/words/ES2006a.A.words.xml",
+          "sha256": "2a5da1c5d4b842f761b3f48f28f6e2c5866ba8818bdb3688715298208c1739ea"
+        },
+        {
+          "path": "sources/ami/words/ES2006a.B.words.xml",
+          "sha256": "c226845eedacba22fc36bc746372407a7ceed23ebd7f598dd0f3e4ac25c3f238"
+        },
+        {
+          "path": "sources/ami/words/ES2006a.C.words.xml",
+          "sha256": "47cb989a09e0f44d049e96fc7aefe094d27e132dfaab13dad2201141f18a8b09"
+        },
+        {
+          "path": "sources/ami/words/ES2006a.D.words.xml",
+          "sha256": "59ab5d10627ca20bb67caf04b77d16b2623503842d033f084158eb7c3d1ad12d"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2006a.A.dialog-act.xml",
+          "sha256": "aa4e6196b3adf4b9ecdd64edaa3235c9228008df448453bdbc6688b303c6f8f2"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2006a.B.dialog-act.xml",
+          "sha256": "b0222baf03f349398676b619e2906b30433baded287aee8b6f8610d4f548bb76"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2006a.C.dialog-act.xml",
+          "sha256": "c60b98cfb336827ba9a25015c0867ab84d6d6d98ce0e684e844643e8bf028bb6"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2006a.D.dialog-act.xml",
+          "sha256": "25504c87edd5ce8a1fdb866bfeb0ccef69569b578673a80c804caab02c822b99"
+        }
+      ],
+      "input_sha256": "7908fc28b6d0c585a6923a77e570a0d751e8fda0b514f1bcc717bcc33a9e3356",
+      "reference_sha256": "462919c960cbbd239d586a0184837de32c1912410dd7e89f8988ec5df2fd4f79",
+      "estimated_input_size": {
+        "characters": 69837,
+        "words": 7176,
+        "tokens_heuristic_chars_over_4": 17460
+      },
+      "verifiable": [
+        "Original human abstractive action/decision text and NXT IDs",
+        "Original summary-to-dialogue links where supplied"
+      ],
+      "not_verifiable": [
+        "No exhaustive task-negative truth: empty action section does not prove absence of all commitments",
+        "No field-level owner/date annotations; do not invent these from abstractive text",
+        "Whitespace normalized; timings and speaker letters preserved"
+      ]
+    },
+    {
+      "id": "ami_ES2006b",
+      "dataset": "AMI",
+      "evaluation_lane": "action_decision",
+      "status": "fulfilled",
+      "source_id": "ES2006b",
+      "source_group": "ES2006",
+      "split": "holdout",
+      "url": "https://groups.inf.ed.ac.uk/ami/download/",
+      "license": "CC BY 4.0",
+      "license_evidence": "sources/ami/LICENCE.txt",
+      "attribution": "AMI Meeting Corpus; AMI Consortium; Carletta et al., The AMI Meeting Corpus: A Pre-announcement (2005)",
+      "revision": "manual NXT annotations v1.6.2; 10-Apr-2017",
+      "terms": "Retain attribution and license; normalized XML-to-turn transformation indicated.",
+      "raw_input_file": "inputs/ami_ES2006b.json",
+      "reference_file": "references/ami_ES2006b.json",
+      "source_files": [
+        {
+          "path": "sources/ami/abstractive/ES2006b.abssumm.xml",
+          "sha256": "7ccf918eb0a3c251c24bfc36fb84fd1c2a06fc4438b82adbc912c1079016b9b1"
+        },
+        {
+          "path": "sources/ami/extractive/ES2006b.summlink.xml",
+          "sha256": "9959bf38d112a5481841163dc92f7b4883642ce9d57029be11fb99345e0306b5"
+        },
+        {
+          "path": "sources/ami/words/ES2006b.A.words.xml",
+          "sha256": "18882c83ef4e7ce418d00438becf4ebcd04ea49a3355883f3b1df786c6e9c816"
+        },
+        {
+          "path": "sources/ami/words/ES2006b.B.words.xml",
+          "sha256": "ed8edb3093d31c173fcd74bc28578b8722a46a25662ca744700758c7f3642442"
+        },
+        {
+          "path": "sources/ami/words/ES2006b.C.words.xml",
+          "sha256": "1bd2b35f211f2c45b57d1c101c682dc13185f984ce36c1b48dcab57295c98fb0"
+        },
+        {
+          "path": "sources/ami/words/ES2006b.D.words.xml",
+          "sha256": "30a64ae8b8a95c38a6c86a05a48a837959a616ef13c56666d5b3f1ceceb4c68b"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2006b.A.dialog-act.xml",
+          "sha256": "e2f61d00f8a1ef64ab89b3a87a18ae76342db19308a6435be83b1bfb05465b48"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2006b.B.dialog-act.xml",
+          "sha256": "75bf1bfdb76b5e71ce2926ba50c963481bdc63812acc7b6e156d49034a90a967"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2006b.C.dialog-act.xml",
+          "sha256": "5eb87e0531f25886fb5cf63d629ca5157f9744a3ab43bfb20c2b391ab0be1755"
+        },
+        {
+          "path": "sources/ami/dialogueActs/ES2006b.D.dialog-act.xml",
+          "sha256": "732bddf362f0cafec6ede0af5eaea1e820d921c182d419462cebd0d4f0ce3c4f"
+        }
+      ],
+      "input_sha256": "2fba82d7497f467ecee7e431867d1d4d4eab2779d3c5835294eba60c7f6fc2dd",
+      "reference_sha256": "2088ebd1f199ec672839f0c593739b513df995ccfd56190b5b7f07dd1bd5fe71",
+      "estimated_input_size": {
+        "characters": 142119,
+        "words": 15013,
+        "tokens_heuristic_chars_over_4": 35530
+      },
+      "verifiable": [
+        "Original human abstractive action/decision text and NXT IDs",
+        "Original summary-to-dialogue links where supplied"
+      ],
+      "not_verifiable": [
+        "No exhaustive task-negative truth: empty action section does not prove absence of all commitments",
+        "No field-level owner/date annotations; do not invent these from abstractive text",
+        "Whitespace normalized; timings and speaker letters preserved"
+      ]
+    },
+    {
+      "id": "qmsum_Bed003_q000",
+      "dataset": "QMSum",
+      "evaluation_lane": "salience_insight",
+      "status": "fulfilled",
+      "source_id": "Bed003:specific_query_list[0]",
+      "source_group": "Bed003",
+      "split": "development",
+      "url": "https://github.com/Yale-LILY/QMSum",
+      "license": "MIT (repository); underlying meeting rights retained",
+      "license_evidence": "sources/qmsum_LICENSE",
+      "attribution": "Zhong et al. (2021), QMSum: A New Benchmark for Query-based Multi-domain Meeting Summarization; Yale-LILY",
+      "revision": "data/ALL/test; source content SHA256 pinned per file",
+      "terms": "Retain Yale-LILY MIT notice; selected Academic/ICSI transcript provenance is not a new rights grant for underlying recordings.",
+      "raw_input_file": "inputs/qmsum_Bed003_q000.json",
+      "reference_file": "references/qmsum_Bed003_q000.json",
+      "source_files": [
+        {
+          "path": "sources/qmsum_Bed003.json",
+          "sha256": "959b0a710628f786f64c35f1462717f234b03ba34f2e170d3bb13be72f3321f8"
+        }
+      ],
+      "input_sha256": "4923ee99d01a7abf73922355cce31d8702e5b72767026f3b057ca5d37080ed1f",
+      "reference_sha256": "de483ef7c62d9dac2669c7ceffef810aa0b1ad884ff8147bd243591782abf2e0",
+      "estimated_input_size": {
+        "characters": 118719,
+        "words": 20248,
+        "tokens_heuristic_chars_over_4": 29680
+      },
+      "verifiable": [
+        "Human query-specific summary and relevant utterance ranges"
+      ],
+      "not_verifiable": [
+        "Not an action/owner/date truth set",
+        "Full meeting supplied; gold spans, topics and other summaries excluded"
+      ]
+    },
+    {
+      "id": "qmsum_Bed008_q000",
+      "dataset": "QMSum",
+      "evaluation_lane": "salience_insight",
+      "status": "fulfilled",
+      "source_id": "Bed008:specific_query_list[0]",
+      "source_group": "Bed008",
+      "split": "development",
+      "url": "https://github.com/Yale-LILY/QMSum",
+      "license": "MIT (repository); underlying meeting rights retained",
+      "license_evidence": "sources/qmsum_LICENSE",
+      "attribution": "Zhong et al. (2021), QMSum: A New Benchmark for Query-based Multi-domain Meeting Summarization; Yale-LILY",
+      "revision": "data/ALL/test; source content SHA256 pinned per file",
+      "terms": "Retain Yale-LILY MIT notice; selected Academic/ICSI transcript provenance is not a new rights grant for underlying recordings.",
+      "raw_input_file": "inputs/qmsum_Bed008_q000.json",
+      "reference_file": "references/qmsum_Bed008_q000.json",
+      "source_files": [
+        {
+          "path": "sources/qmsum_Bed008.json",
+          "sha256": "d05c8b6dbc35244a277147f85778bb02b7ad7eae0f03700ac68d084d296fc84a"
+        }
+      ],
+      "input_sha256": "85e354f08dd47068fcf3c0829d0510fa4a60fd0ae3013a0b1c6c5b05699a3da1",
+      "reference_sha256": "3f750cc52aab8b7c1a2a178e52de4aa3b319fb262b1c147765050fc536f8bbe1",
+      "estimated_input_size": {
+        "characters": 97222,
+        "words": 17199,
+        "tokens_heuristic_chars_over_4": 24306
+      },
+      "verifiable": [
+        "Human query-specific summary and relevant utterance ranges"
+      ],
+      "not_verifiable": [
+        "Not an action/owner/date truth set",
+        "Full meeting supplied; gold spans, topics and other summaries excluded"
+      ]
+    },
+    {
+      "id": "qmsum_Bed016_q000",
+      "dataset": "QMSum",
+      "evaluation_lane": "salience_insight",
+      "status": "fulfilled",
+      "source_id": "Bed016:specific_query_list[0]",
+      "source_group": "Bed016",
+      "split": "holdout",
+      "url": "https://github.com/Yale-LILY/QMSum",
+      "license": "MIT (repository); underlying meeting rights retained",
+      "license_evidence": "sources/qmsum_LICENSE",
+      "attribution": "Zhong et al. (2021), QMSum: A New Benchmark for Query-based Multi-domain Meeting Summarization; Yale-LILY",
+      "revision": "data/ALL/test; source content SHA256 pinned per file",
+      "terms": "Retain Yale-LILY MIT notice; selected Academic/ICSI transcript provenance is not a new rights grant for underlying recordings.",
+      "raw_input_file": "inputs/qmsum_Bed016_q000.json",
+      "reference_file": "references/qmsum_Bed016_q000.json",
+      "source_files": [
+        {
+          "path": "sources/qmsum_Bed016.json",
+          "sha256": "c8f8cb9ad047361dd3f364e28aa44d150d2b9c730434ef88c0dece6ce34a9756"
+        }
+      ],
+      "input_sha256": "1511019282d9b9b8476288ca12760320c4e2938dcd53aaaff6076cb6b9d1f7af",
+      "reference_sha256": "3ab4d192538b2db2cff1bc6127d5aa4fb2ef53c51d0d8b4ee4c4c9486057364e",
+      "estimated_input_size": {
+        "characters": 77545,
+        "words": 13194,
+        "tokens_heuristic_chars_over_4": 19387
+      },
+      "verifiable": [
+        "Human query-specific summary and relevant utterance ranges"
+      ],
+      "not_verifiable": [
+        "Not an action/owner/date truth set",
+        "Full meeting supplied; gold spans, topics and other summaries excluded"
+      ]
+    },
+    {
+      "id": "meetingbank_000",
+      "dataset": "MeetingBank",
+      "evaluation_lane": "salience_insight",
+      "status": "fulfilled",
+      "source_id": "SeattleCityCouncil_06132016_Res 31669",
+      "source_group": "SeattleCityCouncil_06132016",
+      "split": "development",
+      "url": "https://meetingbank.github.io/dataset/",
+      "license": "CC BY-NC-SA 4.0",
+      "license_evidence": "sources/meetingbank_README.md",
+      "attribution": "Hu, Ganter, Deilamsalehy, Dernoncourt, Foroosh and Liu (2023), MeetingBank: A Benchmark Dataset for Meeting Summarization",
+      "revision": "official-site-linked huuuyeah/meetingbank, test rows 0..29; response SHA256 pinned",
+      "terms": "Noncommercial diagnostic use only; attribution; adaptations retain CC BY-NC-SA 4.0. Municipal source rights are not independently adjudicated.",
+      "raw_input_file": "inputs/meetingbank_000.json",
+      "reference_file": "references/meetingbank_000.json",
+      "source_files": [
+        {
+          "path": "sources/meetingbank_rows.json",
+          "sha256": "d5e39baab9d61a80b97c4721b994e7c5677fceffbc0c93420052435391a6db6e"
+        }
+      ],
+      "input_sha256": "badd4625cadb0ffb548fbfd4a0b7d6616d401c8b9b47ec557ecaede541a5c691",
+      "reference_sha256": "93ac5ae62f956096d9af49b8540bbe4179816c207a663f3e319ceb239e60f202",
+      "estimated_input_size": {
+        "characters": 7171,
+        "words": 1192,
+        "tokens_heuristic_chars_over_4": 1793
+      },
+      "verifiable": [
+        "Professional municipal reference summary of the segment"
+      ],
+      "not_verifiable": [
+        "Summary may describe agenda language rather than all spoken detail",
+        "No action owner/date labels",
+        "Processed transcript lacks reliable speaker/timing information; no audio fetched"
+      ]
+    },
+    {
+      "id": "meetingbank_001",
+      "dataset": "MeetingBank",
+      "evaluation_lane": "salience_insight",
+      "status": "fulfilled",
+      "source_id": "BostonCC_12152021_2021-1239",
+      "source_group": "BostonCC_12152021",
+      "split": "development",
+      "url": "https://meetingbank.github.io/dataset/",
+      "license": "CC BY-NC-SA 4.0",
+      "license_evidence": "sources/meetingbank_README.md",
+      "attribution": "Hu, Ganter, Deilamsalehy, Dernoncourt, Foroosh and Liu (2023), MeetingBank: A Benchmark Dataset for Meeting Summarization",
+      "revision": "official-site-linked huuuyeah/meetingbank, test rows 0..29; response SHA256 pinned",
+      "terms": "Noncommercial diagnostic use only; attribution; adaptations retain CC BY-NC-SA 4.0. Municipal source rights are not independently adjudicated.",
+      "raw_input_file": "inputs/meetingbank_001.json",
+      "reference_file": "references/meetingbank_001.json",
+      "source_files": [
+        {
+          "path": "sources/meetingbank_rows.json",
+          "sha256": "d5e39baab9d61a80b97c4721b994e7c5677fceffbc0c93420052435391a6db6e"
+        }
+      ],
+      "input_sha256": "6886474a08af917c939085429ebfd113d761f176f1d653e04b0a53e8b13417cf",
+      "reference_sha256": "959de8f72793088e57bd46c1449fd54ebd77eeea4f2986487b3bd3cadac740df",
+      "estimated_input_size": {
+        "characters": 2840,
+        "words": 443,
+        "tokens_heuristic_chars_over_4": 710
+      },
+      "verifiable": [
+        "Professional municipal reference summary of the segment"
+      ],
+      "not_verifiable": [
+        "Summary may describe agenda language rather than all spoken detail",
+        "No action owner/date labels",
+        "Processed transcript lacks reliable speaker/timing information; no audio fetched"
+      ]
+    },
+    {
+      "id": "meetingbank_002",
+      "dataset": "MeetingBank",
+      "evaluation_lane": "salience_insight",
+      "status": "fulfilled",
+      "source_id": "LongBeachCC_04072015_15-0296",
+      "source_group": "LongBeachCC_04072015",
+      "split": "holdout",
+      "url": "https://meetingbank.github.io/dataset/",
+      "license": "CC BY-NC-SA 4.0",
+      "license_evidence": "sources/meetingbank_README.md",
+      "attribution": "Hu, Ganter, Deilamsalehy, Dernoncourt, Foroosh and Liu (2023), MeetingBank: A Benchmark Dataset for Meeting Summarization",
+      "revision": "official-site-linked huuuyeah/meetingbank, test rows 0..29; response SHA256 pinned",
+      "terms": "Noncommercial diagnostic use only; attribution; adaptations retain CC BY-NC-SA 4.0. Municipal source rights are not independently adjudicated.",
+      "raw_input_file": "inputs/meetingbank_002.json",
+      "reference_file": "references/meetingbank_002.json",
+      "source_files": [
+        {
+          "path": "sources/meetingbank_rows.json",
+          "sha256": "d5e39baab9d61a80b97c4721b994e7c5677fceffbc0c93420052435391a6db6e"
+        }
+      ],
+      "input_sha256": "cd4e7efa3d7bf07eb089809c92dc0c1294a16e0880564b7c4a6671f0bc4f932e",
+      "reference_sha256": "8a5559c820e5dda1a57d7610666744d8139516c8fb58b6488dbd3c13ff3401de",
+      "estimated_input_size": {
+        "characters": 1399,
+        "words": 239,
+        "tokens_heuristic_chars_over_4": 350
+      },
+      "verifiable": [
+        "Professional municipal reference summary of the segment"
+      ],
+      "not_verifiable": [
+        "Summary may describe agenda language rather than all spoken detail",
+        "No action owner/date labels",
+        "Processed transcript lacks reliable speaker/timing information; no audio fetched"
+      ]
+    },
+    {
+      "id": "locomo_conv-26",
+      "dataset": "LoCoMo",
+      "evaluation_lane": "longitudinal_memory",
+      "status": "fulfilled",
+      "source_id": "conv-26:qa[7]",
+      "source_group": "conv-26",
+      "split": "development",
+      "url": "https://github.com/snap-research/locomo",
+      "license": "CC BY-NC 4.0",
+      "license_evidence": "sources/locomo_LICENSE.txt",
+      "attribution": "Maharana, Lee, Tulyakov, Bansal, Barbieri and Fang (2024), Evaluating Very Long-Term Conversational Memory of LLM Agents",
+      "revision": "data/locomo10.json; SHA256 pinned",
+      "terms": "Noncommercial diagnostic use only; retain attribution, source and modification notice. Agent-generated dialogues with annotated QA, not natural human meetings.",
+      "raw_input_file": "inputs/locomo_conv-26.json",
+      "reference_file": "references/locomo_conv-26.json",
+      "source_files": [
+        {
+          "path": "sources/locomo10.json",
+          "sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4"
+        }
+      ],
+      "input_sha256": "d542f1b121aa476815ec85e1fa924eed6a1c8b1d722f850d8fd592f9b6d80817",
+      "reference_sha256": "f3e3d19cb54cf977c6fd868fe04f77c3744ace2e41198f1f7803ca8b8ef8144f",
+      "estimated_input_size": {
+        "characters": 11918,
+        "words": 1834,
+        "tokens_heuristic_chars_over_4": 2980
+      },
+      "verifiable": [
+        "Published annotated QA answer and original dialogue evidence IDs",
+        "Original session timestamps and speaker identities"
+      ],
+      "not_verifiable": [
+        "Agent-generated conversation; not an action-task truth set",
+        "No generated observations or generated session summaries used",
+        "Bounded window selected by reference coverage; all turns in fixed window supplied without evidence highlighting",
+        "Text-only: images, generated captions and image search metadata omitted"
+      ]
+    },
+    {
+      "id": "locomo_conv-30",
+      "dataset": "LoCoMo",
+      "evaluation_lane": "longitudinal_memory",
+      "status": "fulfilled",
+      "source_id": "conv-30:qa[3]",
+      "source_group": "conv-30",
+      "split": "development",
+      "url": "https://github.com/snap-research/locomo",
+      "license": "CC BY-NC 4.0",
+      "license_evidence": "sources/locomo_LICENSE.txt",
+      "attribution": "Maharana, Lee, Tulyakov, Bansal, Barbieri and Fang (2024), Evaluating Very Long-Term Conversational Memory of LLM Agents",
+      "revision": "data/locomo10.json; SHA256 pinned",
+      "terms": "Noncommercial diagnostic use only; retain attribution, source and modification notice. Agent-generated dialogues with annotated QA, not natural human meetings.",
+      "raw_input_file": "inputs/locomo_conv-30.json",
+      "reference_file": "references/locomo_conv-30.json",
+      "source_files": [
+        {
+          "path": "sources/locomo10.json",
+          "sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4"
+        }
+      ],
+      "input_sha256": "c81a36a5249b456a7adaa537e76e425ff65e91b276cd7ae904c3fad1b8cb911d",
+      "reference_sha256": "87a59c89b9bc9678ba4ed3bbe4d5ceaf4449c1ec974dc7214a88e0d117604ac0",
+      "estimated_input_size": {
+        "characters": 10484,
+        "words": 1662,
+        "tokens_heuristic_chars_over_4": 2621
+      },
+      "verifiable": [
+        "Published annotated QA answer and original dialogue evidence IDs",
+        "Original session timestamps and speaker identities"
+      ],
+      "not_verifiable": [
+        "Agent-generated conversation; not an action-task truth set",
+        "No generated observations or generated session summaries used",
+        "Bounded window selected by reference coverage; all turns in fixed window supplied without evidence highlighting",
+        "Text-only: images, generated captions and image search metadata omitted"
+      ]
+    },
+    {
+      "id": "locomo_conv-41",
+      "dataset": "LoCoMo",
+      "evaluation_lane": "longitudinal_memory",
+      "status": "fulfilled",
+      "source_id": "conv-41:qa[2]",
+      "source_group": "conv-41",
+      "split": "development",
+      "url": "https://github.com/snap-research/locomo",
+      "license": "CC BY-NC 4.0",
+      "license_evidence": "sources/locomo_LICENSE.txt",
+      "attribution": "Maharana, Lee, Tulyakov, Bansal, Barbieri and Fang (2024), Evaluating Very Long-Term Conversational Memory of LLM Agents",
+      "revision": "data/locomo10.json; SHA256 pinned",
+      "terms": "Noncommercial diagnostic use only; retain attribution, source and modification notice. Agent-generated dialogues with annotated QA, not natural human meetings.",
+      "raw_input_file": "inputs/locomo_conv-41.json",
+      "reference_file": "references/locomo_conv-41.json",
+      "source_files": [
+        {
+          "path": "sources/locomo10.json",
+          "sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4"
+        }
+      ],
+      "input_sha256": "41588155e4400d393832c4b793ec7a695a957346f6fcb0188dc0a217982ee947",
+      "reference_sha256": "23b445af1a655a8546a9314b3324f6d83e6526816490ce2a3b73d5da79e6e8dd",
+      "estimated_input_size": {
+        "characters": 11634,
+        "words": 1767,
+        "tokens_heuristic_chars_over_4": 2909
+      },
+      "verifiable": [
+        "Published annotated QA answer and original dialogue evidence IDs",
+        "Original session timestamps and speaker identities"
+      ],
+      "not_verifiable": [
+        "Agent-generated conversation; not an action-task truth set",
+        "No generated observations or generated session summaries used",
+        "Bounded window selected by reference coverage; all turns in fixed window supplied without evidence highlighting",
+        "Text-only: images, generated captions and image search metadata omitted"
+      ]
+    },
+    {
+      "id": "locomo_conv-42",
+      "dataset": "LoCoMo",
+      "evaluation_lane": "longitudinal_memory",
+      "status": "fulfilled",
+      "source_id": "conv-42:qa[5]",
+      "source_group": "conv-42",
+      "split": "development",
+      "url": "https://github.com/snap-research/locomo",
+      "license": "CC BY-NC 4.0",
+      "license_evidence": "sources/locomo_LICENSE.txt",
+      "attribution": "Maharana, Lee, Tulyakov, Bansal, Barbieri and Fang (2024), Evaluating Very Long-Term Conversational Memory of LLM Agents",
+      "revision": "data/locomo10.json; SHA256 pinned",
+      "terms": "Noncommercial diagnostic use only; retain attribution, source and modification notice. Agent-generated dialogues with annotated QA, not natural human meetings.",
+      "raw_input_file": "inputs/locomo_conv-42.json",
+      "reference_file": "references/locomo_conv-42.json",
+      "source_files": [
+        {
+          "path": "sources/locomo10.json",
+          "sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4"
+        }
+      ],
+      "input_sha256": "f4e1a192be012bb4d4235a7c3eea1ed299d8f2cb88ce5da86d5649b835ff1dd1",
+      "reference_sha256": "896ba09a8307c06cd9db10e9ef75cd45351b01ad85775f3081914e0a482b6b63",
+      "estimated_input_size": {
+        "characters": 11498,
+        "words": 1746,
+        "tokens_heuristic_chars_over_4": 2875
+      },
+      "verifiable": [
+        "Published annotated QA answer and original dialogue evidence IDs",
+        "Original session timestamps and speaker identities"
+      ],
+      "not_verifiable": [
+        "Agent-generated conversation; not an action-task truth set",
+        "No generated observations or generated session summaries used",
+        "Bounded window selected by reference coverage; all turns in fixed window supplied without evidence highlighting",
+        "Text-only: images, generated captions and image search metadata omitted"
+      ]
+    },
+    {
+      "id": "locomo_conv-43",
+      "dataset": "LoCoMo",
+      "evaluation_lane": "longitudinal_memory",
+      "status": "fulfilled",
+      "source_id": "conv-43:qa[11]",
+      "source_group": "conv-43",
+      "split": "holdout",
+      "url": "https://github.com/snap-research/locomo",
+      "license": "CC BY-NC 4.0",
+      "license_evidence": "sources/locomo_LICENSE.txt",
+      "attribution": "Maharana, Lee, Tulyakov, Bansal, Barbieri and Fang (2024), Evaluating Very Long-Term Conversational Memory of LLM Agents",
+      "revision": "data/locomo10.json; SHA256 pinned",
+      "terms": "Noncommercial diagnostic use only; retain attribution, source and modification notice. Agent-generated dialogues with annotated QA, not natural human meetings.",
+      "raw_input_file": "inputs/locomo_conv-43.json",
+      "reference_file": "references/locomo_conv-43.json",
+      "source_files": [
+        {
+          "path": "sources/locomo10.json",
+          "sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4"
+        }
+      ],
+      "input_sha256": "7d1a93486c3f24b3c8958a49a3c72710d959c4a6ba1e2b283c59620bb58d10e8",
+      "reference_sha256": "7fba1068cccd9d34f3ebcc2c89d302666edf400663cf9293e42ace06fcaa9dd0",
+      "estimated_input_size": {
+        "characters": 12709,
+        "words": 1965,
+        "tokens_heuristic_chars_over_4": 3178
+      },
+      "verifiable": [
+        "Published annotated QA answer and original dialogue evidence IDs",
+        "Original session timestamps and speaker identities"
+      ],
+      "not_verifiable": [
+        "Agent-generated conversation; not an action-task truth set",
+        "No generated observations or generated session summaries used",
+        "Bounded window selected by reference coverage; all turns in fixed window supplied without evidence highlighting",
+        "Text-only: images, generated captions and image search metadata omitted"
+      ]
+    },
+    {
+      "id": "locomo_conv-44",
+      "dataset": "LoCoMo",
+      "evaluation_lane": "longitudinal_memory",
+      "status": "fulfilled",
+      "source_id": "conv-44:qa[7]",
+      "source_group": "conv-44",
+      "split": "holdout",
+      "url": "https://github.com/snap-research/locomo",
+      "license": "CC BY-NC 4.0",
+      "license_evidence": "sources/locomo_LICENSE.txt",
+      "attribution": "Maharana, Lee, Tulyakov, Bansal, Barbieri and Fang (2024), Evaluating Very Long-Term Conversational Memory of LLM Agents",
+      "revision": "data/locomo10.json; SHA256 pinned",
+      "terms": "Noncommercial diagnostic use only; retain attribution, source and modification notice. Agent-generated dialogues with annotated QA, not natural human meetings.",
+      "raw_input_file": "inputs/locomo_conv-44.json",
+      "reference_file": "references/locomo_conv-44.json",
+      "source_files": [
+        {
+          "path": "sources/locomo10.json",
+          "sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4"
+        }
+      ],
+      "input_sha256": "e15f0e4e41e6d2b725fc66a89bb57fdc3002e7a11c0fcb346fe5ccdf823d9bf3",
+      "reference_sha256": "59e192a950cb8889569055243a26982e0600b582197f267fc2e9ae58ddf65270",
+      "estimated_input_size": {
+        "characters": 12443,
+        "words": 1923,
+        "tokens_heuristic_chars_over_4": 3111
+      },
+      "verifiable": [
+        "Published annotated QA answer and original dialogue evidence IDs",
+        "Original session timestamps and speaker identities"
+      ],
+      "not_verifiable": [
+        "Agent-generated conversation; not an action-task truth set",
+        "No generated observations or generated session summaries used",
+        "Bounded window selected by reference coverage; all turns in fixed window supplied without evidence highlighting",
+        "Text-only: images, generated captions and image search metadata omitted"
+      ]
+    },
+    {
+      "id": "fictional_01",
+      "dataset": "Fictional",
+      "evaluation_lane": "fictional_banking_transformation",
+      "status": "fulfilled",
+      "source_id": "fictional_01",
+      "source_group": "fictional_01",
+      "split": "development",
+      "url": "local:benchmarks/q1a/fictional_facts.json",
+      "license": "Project-authored fictional diagnostic fixtures; no third-party corpus",
+      "license_evidence": "fictional_facts.json",
+      "attribution": "Privacy LLM Q1A benchmark; wholly fictional facts and deterministic dialogue rendering, 2026-10-19",
+      "revision": "facts-first v1; source SHA256 pinned",
+      "terms": "No real employer, client or stakeholder information. Answer keys are authored expectations, not human corpus annotations.",
+      "raw_input_file": "inputs/fictional_01.json",
+      "reference_file": "references/fictional_01.json",
+      "source_files": [
+        {
+          "path": "fictional_facts.json",
+          "sha256": "d13baf3bb1fc0a922fb4e14984d4cae533398928c37f03823ea9e893ecb4f8f2"
+        }
+      ],
+      "input_sha256": "49b1e16a35e8931a0a8b3bd311843ec9ce53de8c62a497999c9e3dcabd93b68b",
+      "reference_sha256": "5f06ecd794a2e63634752231a1ffa6eddd97c6cbc7cf2a39a7fb6cd58cd06278",
+      "estimated_input_size": {
+        "characters": 1384,
+        "words": 171,
+        "tokens_heuristic_chars_over_4": 346
+      },
+      "verifiable": [
+        "Authored commitments, explicitly unknown fields, decisions versus discussion",
+        "Ordered project states, risk development and confirmed speaker aliases"
+      ],
+      "not_verifiable": [
+        "Fictional authored answer key, not external human annotation",
+        "Template-rendered dialogue tests mechanics; cannot establish natural-meeting usefulness"
+      ]
+    },
+    {
+      "id": "fictional_02",
+      "dataset": "Fictional",
+      "evaluation_lane": "fictional_banking_transformation",
+      "status": "fulfilled",
+      "source_id": "fictional_02",
+      "source_group": "fictional_02",
+      "split": "development",
+      "url": "local:benchmarks/q1a/fictional_facts.json",
+      "license": "Project-authored fictional diagnostic fixtures; no third-party corpus",
+      "license_evidence": "fictional_facts.json",
+      "attribution": "Privacy LLM Q1A benchmark; wholly fictional facts and deterministic dialogue rendering, 2026-10-19",
+      "revision": "facts-first v1; source SHA256 pinned",
+      "terms": "No real employer, client or stakeholder information. Answer keys are authored expectations, not human corpus annotations.",
+      "raw_input_file": "inputs/fictional_02.json",
+      "reference_file": "references/fictional_02.json",
+      "source_files": [
+        {
+          "path": "fictional_facts.json",
+          "sha256": "d13baf3bb1fc0a922fb4e14984d4cae533398928c37f03823ea9e893ecb4f8f2"
+        }
+      ],
+      "input_sha256": "1230b205fe4e2c3c9be2cba9b75d2b815b3efe404dbd9b1a63caae872a4a8b86",
+      "reference_sha256": "dfc26b6d8e4b7866edd21f7cb483c83751a743faa786d0613dc28790097a7ac8",
+      "estimated_input_size": {
+        "characters": 1989,
+        "words": 251,
+        "tokens_heuristic_chars_over_4": 498
+      },
+      "verifiable": [
+        "Authored commitments, explicitly unknown fields, decisions versus discussion",
+        "Ordered project states, risk development and confirmed speaker aliases"
+      ],
+      "not_verifiable": [
+        "Fictional authored answer key, not external human annotation",
+        "Template-rendered dialogue tests mechanics; cannot establish natural-meeting usefulness"
+      ]
+    },
+    {
+      "id": "fictional_03",
+      "dataset": "Fictional",
+      "evaluation_lane": "fictional_banking_transformation",
+      "status": "fulfilled",
+      "source_id": "fictional_03",
+      "source_group": "fictional_03",
+      "split": "development",
+      "url": "local:benchmarks/q1a/fictional_facts.json",
+      "license": "Project-authored fictional diagnostic fixtures; no third-party corpus",
+      "license_evidence": "fictional_facts.json",
+      "attribution": "Privacy LLM Q1A benchmark; wholly fictional facts and deterministic dialogue rendering, 2026-10-19",
+      "revision": "facts-first v1; source SHA256 pinned",
+      "terms": "No real employer, client or stakeholder information. Answer keys are authored expectations, not human corpus annotations.",
+      "raw_input_file": "inputs/fictional_03.json",
+      "reference_file": "references/fictional_03.json",
+      "source_files": [
+        {
+          "path": "fictional_facts.json",
+          "sha256": "d13baf3bb1fc0a922fb4e14984d4cae533398928c37f03823ea9e893ecb4f8f2"
+        }
+      ],
+      "input_sha256": "d0b708297e229eed409c789c1189b7e04e5667cabde4afbe837c292792743906",
+      "reference_sha256": "4626d7dd18da164875b39a20f298cf234dd124c60cfa5bd3d9b42ff6e57f5b22",
+      "estimated_input_size": {
+        "characters": 1934,
+        "words": 246,
+        "tokens_heuristic_chars_over_4": 484
+      },
+      "verifiable": [
+        "Authored commitments, explicitly unknown fields, decisions versus discussion",
+        "Ordered project states, risk development and confirmed speaker aliases"
+      ],
+      "not_verifiable": [
+        "Fictional authored answer key, not external human annotation",
+        "Template-rendered dialogue tests mechanics; cannot establish natural-meeting usefulness"
+      ]
+    },
+    {
+      "id": "fictional_04",
+      "dataset": "Fictional",
+      "evaluation_lane": "fictional_banking_transformation",
+      "status": "fulfilled",
+      "source_id": "fictional_04",
+      "source_group": "fictional_04",
+      "split": "development",
+      "url": "local:benchmarks/q1a/fictional_facts.json",
+      "license": "Project-authored fictional diagnostic fixtures; no third-party corpus",
+      "license_evidence": "fictional_facts.json",
+      "attribution": "Privacy LLM Q1A benchmark; wholly fictional facts and deterministic dialogue rendering, 2026-10-19",
+      "revision": "facts-first v1; source SHA256 pinned",
+      "terms": "No real employer, client or stakeholder information. Answer keys are authored expectations, not human corpus annotations.",
+      "raw_input_file": "inputs/fictional_04.json",
+      "reference_file": "references/fictional_04.json",
+      "source_files": [
+        {
+          "path": "fictional_facts.json",
+          "sha256": "d13baf3bb1fc0a922fb4e14984d4cae533398928c37f03823ea9e893ecb4f8f2"
+        }
+      ],
+      "input_sha256": "4063025437faccd71082f4c9486c26d366a3dd17d71e57f4f7603a4f2f65535c",
+      "reference_sha256": "50186bfe35b5e8b5b1ca41719ca8fdf10bab85447f2ed9bc0cc53c594d2f9029",
+      "estimated_input_size": {
+        "characters": 1406,
+        "words": 176,
+        "tokens_heuristic_chars_over_4": 352
+      },
+      "verifiable": [
+        "Authored commitments, explicitly unknown fields, decisions versus discussion",
+        "Ordered project states, risk development and confirmed speaker aliases"
+      ],
+      "not_verifiable": [
+        "Fictional authored answer key, not external human annotation",
+        "Template-rendered dialogue tests mechanics; cannot establish natural-meeting usefulness"
+      ]
+    },
+    {
+      "id": "fictional_05",
+      "dataset": "Fictional",
+      "evaluation_lane": "fictional_banking_transformation",
+      "status": "fulfilled",
+      "source_id": "fictional_05",
+      "source_group": "fictional_05",
+      "split": "development",
+      "url": "local:benchmarks/q1a/fictional_facts.json",
+      "license": "Project-authored fictional diagnostic fixtures; no third-party corpus",
+      "license_evidence": "fictional_facts.json",
+      "attribution": "Privacy LLM Q1A benchmark; wholly fictional facts and deterministic dialogue rendering, 2026-10-19",
+      "revision": "facts-first v1; source SHA256 pinned",
+      "terms": "No real employer, client or stakeholder information. Answer keys are authored expectations, not human corpus annotations.",
+      "raw_input_file": "inputs/fictional_05.json",
+      "reference_file": "references/fictional_05.json",
+      "source_files": [
+        {
+          "path": "fictional_facts.json",
+          "sha256": "d13baf3bb1fc0a922fb4e14984d4cae533398928c37f03823ea9e893ecb4f8f2"
+        }
+      ],
+      "input_sha256": "05f50745a927b8f77f3b2261f73c02e7196b4ddf9d4ac56cccc0e697f25ec641",
+      "reference_sha256": "173e0dcc7ab44f25cb8821f34960e44ef1959842ce402e9e8f76b66a3320bf61",
+      "estimated_input_size": {
+        "characters": 1389,
+        "words": 174,
+        "tokens_heuristic_chars_over_4": 348
+      },
+      "verifiable": [
+        "Authored commitments, explicitly unknown fields, decisions versus discussion",
+        "Ordered project states, risk development and confirmed speaker aliases"
+      ],
+      "not_verifiable": [
+        "Fictional authored answer key, not external human annotation",
+        "Template-rendered dialogue tests mechanics; cannot establish natural-meeting usefulness"
+      ]
+    },
+    {
+      "id": "fictional_06",
+      "dataset": "Fictional",
+      "evaluation_lane": "fictional_banking_transformation",
+      "status": "fulfilled",
+      "source_id": "fictional_06",
+      "source_group": "fictional_06",
+      "split": "development",
+      "url": "local:benchmarks/q1a/fictional_facts.json",
+      "license": "Project-authored fictional diagnostic fixtures; no third-party corpus",
+      "license_evidence": "fictional_facts.json",
+      "attribution": "Privacy LLM Q1A benchmark; wholly fictional facts and deterministic dialogue rendering, 2026-10-19",
+      "revision": "facts-first v1; source SHA256 pinned",
+      "terms": "No real employer, client or stakeholder information. Answer keys are authored expectations, not human corpus annotations.",
+      "raw_input_file": "inputs/fictional_06.json",
+      "reference_file": "references/fictional_06.json",
+      "source_files": [
+        {
+          "path": "fictional_facts.json",
+          "sha256": "d13baf3bb1fc0a922fb4e14984d4cae533398928c37f03823ea9e893ecb4f8f2"
+        }
+      ],
+      "input_sha256": "feb1783a87bc8092156fa0d87a0578318620009b42fa96fca5fc7f23d0f172d3",
+      "reference_sha256": "2e61e946bfd929691fc645b13f37333c24463addc67a20ab38ae0b07d9ee6adc",
+      "estimated_input_size": {
+        "characters": 1966,
+        "words": 248,
+        "tokens_heuristic_chars_over_4": 492
+      },
+      "verifiable": [
+        "Authored commitments, explicitly unknown fields, decisions versus discussion",
+        "Ordered project states, risk development and confirmed speaker aliases"
+      ],
+      "not_verifiable": [
+        "Fictional authored answer key, not external human annotation",
+        "Template-rendered dialogue tests mechanics; cannot establish natural-meeting usefulness"
+      ]
+    },
+    {
+      "id": "fictional_07",
+      "dataset": "Fictional",
+      "evaluation_lane": "fictional_banking_transformation",
+      "status": "fulfilled",
+      "source_id": "fictional_07",
+      "source_group": "fictional_07",
+      "split": "holdout",
+      "url": "local:benchmarks/q1a/fictional_facts.json",
+      "license": "Project-authored fictional diagnostic fixtures; no third-party corpus",
+      "license_evidence": "fictional_facts.json",
+      "attribution": "Privacy LLM Q1A benchmark; wholly fictional facts and deterministic dialogue rendering, 2026-10-19",
+      "revision": "facts-first v1; source SHA256 pinned",
+      "terms": "No real employer, client or stakeholder information. Answer keys are authored expectations, not human corpus annotations.",
+      "raw_input_file": "inputs/fictional_07.json",
+      "reference_file": "references/fictional_07.json",
+      "source_files": [
+        {
+          "path": "fictional_facts.json",
+          "sha256": "d13baf3bb1fc0a922fb4e14984d4cae533398928c37f03823ea9e893ecb4f8f2"
+        }
+      ],
+      "input_sha256": "99053221aa03fead7283afb40b81f10dd9b5f3890b9f5d10e9a4cf6258891703",
+      "reference_sha256": "bf210fee1c61637514a440404e9de6d64c8b8c1223c10e5fccb57854717e9f76",
+      "estimated_input_size": {
+        "characters": 1405,
+        "words": 176,
+        "tokens_heuristic_chars_over_4": 352
+      },
+      "verifiable": [
+        "Authored commitments, explicitly unknown fields, decisions versus discussion",
+        "Ordered project states, risk development and confirmed speaker aliases"
+      ],
+      "not_verifiable": [
+        "Fictional authored answer key, not external human annotation",
+        "Template-rendered dialogue tests mechanics; cannot establish natural-meeting usefulness"
+      ]
+    },
+    {
+      "id": "fictional_08",
+      "dataset": "Fictional",
+      "evaluation_lane": "fictional_banking_transformation",
+      "status": "fulfilled",
+      "source_id": "fictional_08",
+      "source_group": "fictional_08",
+      "split": "holdout",
+      "url": "local:benchmarks/q1a/fictional_facts.json",
+      "license": "Project-authored fictional diagnostic fixtures; no third-party corpus",
+      "license_evidence": "fictional_facts.json",
+      "attribution": "Privacy LLM Q1A benchmark; wholly fictional facts and deterministic dialogue rendering, 2026-10-19",
+      "revision": "facts-first v1; source SHA256 pinned",
+      "terms": "No real employer, client or stakeholder information. Answer keys are authored expectations, not human corpus annotations.",
+      "raw_input_file": "inputs/fictional_08.json",
+      "reference_file": "references/fictional_08.json",
+      "source_files": [
+        {
+          "path": "fictional_facts.json",
+          "sha256": "d13baf3bb1fc0a922fb4e14984d4cae533398928c37f03823ea9e893ecb4f8f2"
+        }
+      ],
+      "input_sha256": "8622a4bb71b7ab1044e5dad59b2f1a85fefe8e40f5e75e9f3f9ff546b163cb53",
+      "reference_sha256": "1f6ee197c276dd7ab72ee4924823f4818d883d69e2cb78296099dd350a82ef56",
+      "estimated_input_size": {
+        "characters": 2006,
+        "words": 250,
+        "tokens_heuristic_chars_over_4": 502
+      },
+      "verifiable": [
+        "Authored commitments, explicitly unknown fields, decisions versus discussion",
+        "Ordered project states, risk development and confirmed speaker aliases"
+      ],
+      "not_verifiable": [
+        "Fictional authored answer key, not external human annotation",
+        "Template-rendered dialogue tests mechanics; cannot establish natural-meeting usefulness"
+      ]
+    }
+  ],
+  "limitations": [
+    "Diagnostic convenience sample; no statistical generalization",
+    "Lanes must not be pooled as action-task accuracy",
+    "References are evaluator-only; local separation is not encryption or access control",
+    "No model run authorized or executed; normalized inputs are not production session objects"
+  ],
+  "completed_on": "2026-10-20 Asia/Singapore",
+  "offline_checks": [
+    {
+      "check": "sources",
+      "status": "passed",
+      "runs": 1,
+      "result_file": "outputs/check_sources.json"
+    },
+    {
+      "check": "leakage",
+      "status": "passed",
+      "runs": 1,
+      "result_file": "outputs/check_leakage.json"
+    }
+  ]
+}
