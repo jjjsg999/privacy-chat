@@ -81,7 +81,19 @@ async function api(url, options) {
   return data;
 }
 function status(text, error = false) { $('status').textContent = text; $('status').classList.toggle('error', error); }
-function render(session) {
+// Auto-scroll: while a reply streams the view follows the newest text only if you are at (or near) the bottom.
+// Scroll up to read and it stays put; "Jump to latest" or scrolling back down resumes following.
+const NEAR_BOTTOM = 80;
+let follow = true;
+const distanceFromBottom = () => $('messages').scrollHeight - $('messages').scrollTop - $('messages').clientHeight;
+const scrollToBottom = () => { $('messages').scrollTop = $('messages').scrollHeight; };  // instant, not animated
+const updateJump = () => { $('jump-latest').hidden = !(controller && !follow); };
+$('messages').addEventListener('scroll', () => { follow = distanceFromBottom() <= NEAR_BOTTOM; updateJump(); }, {passive: true});
+$('jump-latest').onclick = () => { follow = true; scrollToBottom(); updateJump(); };
+
+// options.keepScroll: redraw without moving the view (used when you were reading above the stream).
+function render(session, options = {}) {
+  const keep = options.keepScroll ? $('messages').scrollTop : null;
   current = session;
   $('chat-title').textContent = session?.title || 'New conversation';
   $('messages').replaceChildren();
@@ -156,7 +168,7 @@ function render(session) {
     if (actions) article.append(actions);
     $('messages').append(article);
   }
-  $('messages').scrollTop = $('messages').scrollHeight;
+  if (keep === null) { follow = true; scrollToBottom(); } else $('messages').scrollTop = keep;
   $('export').hidden = !session?.messages?.length;
   pane.sync(session?.id);
 }
@@ -361,7 +373,9 @@ async function streamTurn(message, files = [], editIndex = null) {
     frame = 0; renderMessageBody(body, text, null, -1);
     const writing = splitArtifacts(text).filter(part => part.kind === 'artifact').pop();
     if (writing) pane.live(writing);  // show the artifact's source in the pane while it is written
- $('messages').scrollTop = $('messages').scrollHeight; };
+    if (follow) scrollToBottom();     // only while you are at the bottom; otherwise leave what you are reading alone
+    updateJump();
+  };
   $('send').hidden = true; $('stop').hidden = false;
   try {
     const response = await fetch('/api/chat/stream', {method: 'POST', headers: {'Content-Type': 'application/json'},
@@ -395,10 +409,12 @@ async function streamTurn(message, files = [], editIndex = null) {
   } finally {
     if (frame) cancelAnimationFrame(frame);
     $('stop').hidden = true; $('send').hidden = false; controller = null;
+    updateJump();
     pane.endLive();  // the streaming source view gives way to the saved result (or restores the earlier pane)
   }
+  const stayPut = {keepScroll: !follow};  // if you scrolled up to read, the final redraw must not move you
   if (final) {
-    render(final); status('');
+    render(final, stayPut); status('');
     // A reply that produced an artifact opens it in the pane (the latest one if there are several).
     const made = splitArtifacts(final.messages[final.messages.length - 1]?.content).filter(part => part.kind === 'artifact').pop();
     if (made) pane.open(made.id, -1, final.id);
@@ -416,7 +432,7 @@ async function streamTurn(message, files = [], editIndex = null) {
       if (!saved) await sleep(300);
     }
   }
-  if (saved) render(saved); else render(previous);
+  if (saved) render(saved, stayPut); else render(previous, stayPut);
   status(failure ? failure : (saved ? 'Stopped. The partial reply was saved.' : 'Stopped.'), !!failure);
   return {saved: !!saved};
 }
