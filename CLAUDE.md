@@ -85,7 +85,8 @@ Do not run paid model calls as part of routine verification. Tests should mock p
 - Treat meeting transcripts as noisy evidence. Preserve the executive-intelligence focus and use the full stored transcript for meeting Q&A. Do not invent facts.
 - Load meeting prompts from disk at runtime. Keep titles stable once generated.
 - Never commit `.env`, `config.json`, `sensitive_terms.txt`, `data/`, personal transcripts, API credentials, or temporary run artifacts. Review `git status` and staged filenames before every commit.
-- Do not rewrite Git history or force-push without an explicit request. Push only when asked.
+- Commit locally without asking. When a change set is finished and the tests pass, stage files by name, review the staged names, scan for secrets, and commit with a clear message (write it to a file and use `git commit -F`; see `HANDOFF_PHASE2.md` section 9). The user accepts this for convenience; GitHub is their safeguard.
+- Do not push, amend, rebase, reset or rewrite Git history unless the user asks. Never force-push without an explicit request.
 - Add small offline tests for new backend behavior and mock the provider; do not make paid calls in tests. Real-model checks happen only when the user asks, with a cheap or free model, and test conversations created in the real data folder are deleted afterwards.
 - Do not weaken the `/artifact-frame` policy, add `allow-same-origin` to the artifact iframe, or send images to a model without an explicit, scoped decision.
 

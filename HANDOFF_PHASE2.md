@@ -233,7 +233,7 @@ Browser/computer control, multi-agent orchestration, multi-user accounts and hos
 
 ## 9. Working agreements and dev playbook
 
-Rules (see `CLAUDE.md`): never read or print `data/`, `.env`, `config.json`, `sensitive_terms.txt`; stage files by name, review staged names and scan for secrets before every commit; commit only when asked and push only when asked; no history rewriting; do not weaken the artifact sandbox; Memory stays retired unless asked.
+Rules (see `CLAUDE.md`): never read or print `data/`, `.env`, `config.json`, `sensitive_terms.txt`; stage files by name, review staged names and scan for secrets before every commit; **commit locally without asking** once a change set is finished and tests pass (the user's standing decision; GitHub is their safeguard), but **push only when asked**; no history rewriting, amending or resetting unless asked; do not weaken the artifact sandbox; Memory stays retired unless asked.
 
 Environment:
 - Windows, PowerShell, Python 3.12 venv at `.venv`. Run tests: `.\.venv\Scripts\python.exe -m unittest discover -s tests` (88 tests, all mocked, about 15 s).
