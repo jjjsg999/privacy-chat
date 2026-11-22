@@ -9,7 +9,7 @@ Put the standalone content in a block whose tags are on their own lines:
 TYPE is one of:
 - html: one complete, self-contained page. Use inline CSS and inline JavaScript only. External files, fonts, images, CDNs and network requests are blocked, so do not use them.
 - svg: one complete <svg> element with a viewBox.
-- mermaid: Mermaid diagram source only.
+- mermaid: Mermaid diagram source only. Put every node label in double quotes, for example A["Detector (regex)"], and use <br/> for a line break, never \n. Unquoted parentheses in a label are a syntax error.
 - markdown: a formatted document.
 - code: a complete file. Add language="python" (or the right language).
 

@@ -93,14 +93,34 @@ function frameDocument(artifact, scripts) {
       'table{border-collapse:collapse}td,th{border:1px solid #dedfd7;padding:6px 10px}blockquote{border-left:3px solid #9cbfad;margin-left:0;padding-left:14px;color:#6d7770}img{max-width:100%}</style>' + html;
   }
   if (artifact.type === 'mermaid') {
-    const head = PAGE_HEAD + '<style>body{margin:0;padding:16px;background:#fff}pre.mermaid{margin:0;text-align:center}</style>';
+    const head = PAGE_HEAD + '<style>body{margin:0;padding:16px;background:#fff;font:14px system-ui,sans-serif}#d{text-align:center}#d svg{max-width:100%;height:auto}p.err{color:#a13c2c;text-align:left}</style>';
     if (!mermaidSource) return head + '<p>The Mermaid library is not installed (static/vendor/mermaid.min.js).</p>';
+    // Try the source as written, then a repaired copy. Parsing first avoids Mermaid's own error graphic.
+    const sources = [artifact.content];
+    const repaired = repairMermaid(artifact.content);
+    if (repaired !== artifact.content) sources.push(repaired);
+    const data = JSON.stringify(sources).replace(/</g, '\\u003c');
     // The library is inlined: the sandboxed frame has no network and its policy allows no external scripts.
-    return head + `<pre class="mermaid">${escapeHtml(artifact.content)}</pre><script>${mermaidSource}</script>` +
-      '<script>if(window.mermaid){mermaid.initialize({startOnLoad:false,securityLevel:"strict"});mermaid.run({querySelector:".mermaid"}).catch(function(e){' +
-      'document.body.insertAdjacentHTML("beforeend","<p style=\\"color:#a13c2c\\">Diagram error: "+String((e&&e.message)||e).replace(/</g,"&lt;")+"</p>")})}</script>';
+    return head + `<div id="d"></div><script>${mermaidSource}</script><script>` +
+      `(async function(){var C=${data},host=document.getElementById("d"),err="";` +
+      'if(!window.mermaid){host.textContent="Mermaid did not load.";return}' +
+      'mermaid.initialize({startOnLoad:false,securityLevel:"strict"});' +
+      'for(var i=0;i<C.length;i++){try{await mermaid.parse(C[i]);var r=await mermaid.render("g"+i,C[i]);host.innerHTML=r.svg;if(r.bindFunctions)r.bindFunctions(host);' +
+      'if(i>0)parent.postMessage({type:"artifact-info",repaired:true},"*");return}catch(e){err=String((e&&e.message)||e)}' +
+      'document.querySelectorAll("[id^=dg]").forEach(function(n){n.remove()})}' +
+      'var short=err.split("\\n").slice(0,3).join(" ").slice(0,300);' +
+      'host.innerHTML="<p class=err></p>";host.firstChild.textContent="This diagram has a syntax error: "+short;' +
+      'parent.postMessage({type:"artifact-error",message:short},"*")})();</script>';
   }
   return '';
+}
+
+// Best-effort fixes for the two slips models make most often in flowcharts: a literal "\n" used as a line break,
+// and unquoted node labels that contain parentheses. Shapes such as [(cylinder)] and [[subroutine]] are left alone.
+export function repairMermaid(source) {
+  return String(source)
+    .replace(/\\n/g, '<br/>')
+    .replace(/(\b[\w-]+)\[(?![(\[/\\"])([^\]\n"]*[()][^\]\n"]*)\]/g, '$1["$2"]');
 }
 
 // Mermaid's source text, fetched once from this app and placed inside the frame document. '' means it is not installed.
@@ -126,7 +146,7 @@ export function artifactsToMarkdown(text) {
 const SCRIPTS_KEY = 'privacy-llm-artifact-scripts';
 const readScripts = () => { try { return localStorage.getItem(SCRIPTS_KEY) !== 'off'; } catch (_) { return true; } };
 
-export function createPane({getMessages, copyText, status}) {
+export function createPane({getMessages, copyText, status, askFix}) {
   const $ = id => document.getElementById(id);
   const state = {id: null, version: 0, tab: 'preview', scripts: readScripts(), sessionId: null, shown: '', live: false, liveArtifact: null, saved: null};
   let pending = '';
@@ -176,12 +196,13 @@ export function createPane({getMessages, copyText, status}) {
     for (const [id, tab] of [['tab-preview', 'preview'], ['tab-code', 'code']]) $(id).setAttribute('aria-selected', String(state.tab === tab));
     $('artifact-scripts-label').hidden = !(artifact.type === 'html' || artifact.type === 'svg');
     $('artifact-scripts').checked = state.scripts;
-    $('artifact-note').hidden = artifact.complete;
-    if (!artifact.complete) $('artifact-note').textContent = 'This artifact looks cut off: the reply ended before its closing tag.';
     const code = state.tab === 'code';
     $('artifact-frame').hidden = code; $('artifact-code').hidden = !code;
     const key = [state.id, state.version, state.tab, state.scripts, artifact.content].join('\u0000');
-    if (key === state.shown) return;  // nothing visible changed, so do not reload the frame
+    if (key === state.shown) return;  // nothing visible changed: keep the frame and any error note it reported
+    $('artifact-fix').hidden = true;
+    $('artifact-note').hidden = artifact.complete;
+    if (!artifact.complete) $('artifact-note').textContent = 'This artifact looks cut off: the reply ended before its closing tag.';
     state.shown = key;
     if (code) $('artifact-code').textContent = artifact.content;
     else {
@@ -201,11 +222,27 @@ export function createPane({getMessages, copyText, status}) {
     $('artifact-pane').hidden = true;
     $('artifact-frame').src = 'about:blank';
   }
+  let lastError = '';
   window.addEventListener('message', event => {
-    const frame = $('artifact-frame');
-    if (event.source !== frame.contentWindow || event.data?.type !== 'artifact-ready' || !pending) return;
-    frame.contentWindow.postMessage({type: 'artifact', html: pending}, '*');  // '*' because the sandboxed frame has an opaque origin
+    const frame = $('artifact-frame'), data = event.data;
+    if (event.source !== frame.contentWindow || !data) return;
+    if (data.type === 'artifact-ready' && pending) {
+      frame.contentWindow.postMessage({type: 'artifact', html: pending}, '*');  // '*' because the sandboxed frame has an opaque origin
+    } else if (data.type === 'artifact-error' && typeof data.message === 'string') {
+      lastError = data.message.slice(0, 300);
+      $('artifact-note').hidden = false;
+      $('artifact-note').textContent = 'The diagram could not be drawn. Open the Code tab to see the source, or ask the model to fix it.';
+      $('artifact-fix').hidden = false;
+    } else if (data.type === 'artifact-info' && data.repaired) {
+      $('artifact-note').hidden = false;
+      $('artifact-note').textContent = 'Small syntax slips (line breaks, unquoted labels) were repaired for display. The saved source is unchanged.';
+    }
   });
+  $('artifact-fix').onclick = () => {
+    const found = find(); if (!found) return;
+    const {artifact} = found;
+    askFix?.(`The ${artifactLabel(artifact.type).toLowerCase()} artifact "${artifact.title}" fails to draw: ${lastError}\n\nPlease give me the complete corrected artifact again with the same id. For Mermaid, put every node label in double quotes and use <br/> for line breaks.`);
+  };
 
   $('artifact-close').onclick = close;
   $('tab-preview').onclick = () => { state.tab = 'preview'; show(); };

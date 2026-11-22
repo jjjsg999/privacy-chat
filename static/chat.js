@@ -50,7 +50,11 @@ const $ = id => document.getElementById(id);
 let current = null;
 let busy = false;
 const welcome = $('messages').firstElementChild.cloneNode(true);
-const pane = createPane({getMessages: () => current?.messages || [], copyText, status});
+const pane = createPane({getMessages: () => current?.messages || [], copyText, status,
+  askFix: text => {
+    if (busy) { status('Wait for the current reply to finish first.', true); return; }
+    $('message').value = text; $('composer').requestSubmit();
+  }});
 // An assistant reply: Markdown text, with each <artifact> block shown as a card that opens the side pane.
 function renderMessageBody(body, text, registry, messageIndex) {
   const parts = splitArtifacts(text);
