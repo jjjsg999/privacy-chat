@@ -65,6 +65,9 @@ export function collectArtifacts(messages) {
   return byId;
 }
 export const artifactLabel = type => LABELS[type] || 'Artifact';
+// What "Regenerate compactly" asks for. A fresh complete reply is safer than stitching onto a cut-off one.
+export const COMPACT_REQUEST = 'Your last reply was cut off by the length limit. Please send the complete reply again, more compactly ' +
+  '(for an artifact: short CSS, no comments, no repeated markup), using the same artifact id.';
 
 const escapeHtml = text => String(text).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
 const NO_SCRIPTS = '<meta http-equiv="Content-Security-Policy" content="script-src \'none\'">';
@@ -148,7 +151,7 @@ const readScripts = () => { try { return localStorage.getItem(SCRIPTS_KEY) !== '
 
 export function createPane({getMessages, copyText, status, askFix}) {
   const $ = id => document.getElementById(id);
-  const state = {id: null, version: 0, tab: 'preview', scripts: readScripts(), sessionId: null, shown: '', live: false, liveArtifact: null, saved: null};
+  const state = {id: null, version: 0, tab: 'preview', scripts: readScripts(), sessionId: null, shown: '', live: false, liveArtifact: null, saved: null, fixKind: ''};
   let pending = '';
 
   const find = () => {
@@ -200,9 +203,11 @@ export function createPane({getMessages, copyText, status, askFix}) {
     $('artifact-frame').hidden = code; $('artifact-code').hidden = !code;
     const key = [state.id, state.version, state.tab, state.scripts, artifact.content].join('\u0000');
     if (key === state.shown) return;  // nothing visible changed: keep the frame and any error note it reported
-    $('artifact-fix').hidden = true;
+    state.fixKind = artifact.complete ? '' : 'cutoff';
+    $('artifact-fix').hidden = artifact.complete;
+    $('artifact-fix').textContent = 'Regenerate compactly';
     $('artifact-note').hidden = artifact.complete;
-    if (!artifact.complete) $('artifact-note').textContent = 'This artifact looks cut off: the reply ended before its closing tag.';
+    if (!artifact.complete) $('artifact-note').textContent = 'This artifact looks cut off: the reply ended before its closing tag (usually the length limit).';
     state.shown = key;
     if (code) $('artifact-code').textContent = artifact.content;
     else {
@@ -230,8 +235,10 @@ export function createPane({getMessages, copyText, status, askFix}) {
       frame.contentWindow.postMessage({type: 'artifact', html: pending}, '*');  // '*' because the sandboxed frame has an opaque origin
     } else if (data.type === 'artifact-error' && typeof data.message === 'string') {
       lastError = data.message.slice(0, 300);
+      state.fixKind = 'error';
       $('artifact-note').hidden = false;
       $('artifact-note').textContent = 'The diagram could not be drawn. Open the Code tab to see the source, or ask the model to fix it.';
+      $('artifact-fix').textContent = 'Ask the model to fix it';
       $('artifact-fix').hidden = false;
     } else if (data.type === 'artifact-info' && data.repaired) {
       $('artifact-note').hidden = false;
@@ -241,6 +248,7 @@ export function createPane({getMessages, copyText, status, askFix}) {
   $('artifact-fix').onclick = () => {
     const found = find(); if (!found) return;
     const {artifact} = found;
+    if (state.fixKind === 'cutoff') { askFix?.(COMPACT_REQUEST); return; }
     askFix?.(`The ${artifactLabel(artifact.type).toLowerCase()} artifact "${artifact.title}" fails to draw: ${lastError}\n\nPlease give me the complete corrected artifact again with the same id. For Mermaid, put every node label in double quotes and use <br/> for line breaks.`);
   };
 

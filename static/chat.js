@@ -1,5 +1,5 @@
 import { marked } from './vendor/marked.js';
-import { splitArtifacts, collectArtifacts, createPane, artifactLabel, artifactsToMarkdown } from './artifacts.js';
+import { splitArtifacts, collectArtifacts, createPane, artifactLabel, artifactsToMarkdown, COMPACT_REQUEST } from './artifacts.js';
 
 function renderMarkdown(element, text) {
   element.classList.add('markdown');
@@ -138,6 +138,19 @@ function render(session) {
       summary.textContent = `Attached: ${message.attachments.map(file => file.name).join(', ')} (view extracted text)`;
       const text = document.createElement('div'); text.className = 'api-text'; text.textContent = message.content.slice(typed.length).trim();
       details.append(summary, text); article.append(details);
+    }
+    if (message.role === 'assistant' && message.truncated) {  // the provider stopped at the output limit
+      const note = document.createElement('p'); note.className = 'truncated-note';
+      note.append('This reply hit the length limit and was cut off. ');
+      if (session.id && index === session.messages.length - 1 && session.session_type !== 'meeting') {
+        const again = document.createElement('button'); again.type = 'button'; again.textContent = 'Regenerate compactly';
+        again.onclick = () => {
+          if (busy) { status('Wait for the current reply to finish first.', true); return; }
+          $('message').value = COMPACT_REQUEST; $('composer').requestSubmit();
+        };
+        note.append(again);
+      }
+      article.append(note);
     }
     const actions = messageActions(session, message, index, article);
     if (actions) article.append(actions);

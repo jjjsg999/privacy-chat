@@ -61,12 +61,17 @@ class StreamCompleteTests(unittest.TestCase):
         handler = lambda request: httpx.Response(status, text=body, headers={'content-type': 'text/event-stream'})
         settled = []
 
+        self.finish = 'not reported'
+
         async def go():
             pieces, error = [], None
             try:
                 async with aclosing(engine.stream_complete([{'role': 'user', 'content': 'hi'}], 'm')) as stream:
                     async for piece in stream:
-                        pieces.append(piece)
+                        if isinstance(piece, engine.StreamEnd):
+                            self.finish = piece.reason
+                        else:
+                            pieces.append(piece)
             except engine.ChatError as exc:
                 error = exc
             return pieces, error
@@ -86,6 +91,25 @@ class StreamCompleteTests(unittest.TestCase):
             {'choices': [{'delta': {}, 'finish_reason': 'stop'}], 'usage': usage}, 'DONE'))
         self.assertEqual((pieces, error), (['Hel', 'lo'], None))
         self.assertEqual(settled, [usage])
+
+    def test_finish_reason_is_reported_as_the_last_item(self):
+        self.run_stream(sse(delta('Hi'), {'choices': [{'delta': {}, 'finish_reason': 'length'}]}, 'DONE'))
+        self.assertEqual(self.finish, 'length')
+        self.run_stream(sse(delta('Hi'), {'choices': [{'delta': {}, 'finish_reason': 'stop'}]}, 'DONE'))
+        self.assertEqual(self.finish, 'stop')
+        self.run_stream(sse(delta('Hi'), 'DONE'))
+        self.assertIsNone(self.finish)  # the provider never said why it stopped
+
+    def test_output_limit_is_larger_than_before_but_never_above_the_models_own_maximum(self):
+        self.assertGreater(engine.STREAM_MAX_TOKENS, 6000)
+        catalogue = [{'id': 'a/small', 'top_provider': {'max_completion_tokens': 4096}},
+                     {'id': 'a/big', 'top_provider': {'max_completion_tokens': 64000}},
+                     {'id': 'a/null', 'top_provider': {'max_completion_tokens': None}}, {'id': 'a/none'}]
+        want = engine.STREAM_MAX_TOKENS
+        self.assertEqual(engine.output_cap(catalogue, 'a/small', want), 4096)
+        self.assertEqual(engine.output_cap(catalogue, 'a/big', want), want)
+        for unknown in ('a/null', 'a/none', 'missing/model'):
+            self.assertEqual(engine.output_cap(catalogue, unknown, want), want)
 
     def test_missing_usage_retains_reservation(self):
         pieces, error, settled = self.run_stream(sse(delta('Hello'), 'DONE'))
@@ -156,6 +180,21 @@ class StreamChatTests(unittest.TestCase):
         saved = storage.load_session(session['id'])
         self.assertEqual(saved['messages'][-1], {'role': 'assistant', 'content': 'Hi Acme, bye', 'model': 'm'})
         self.assertNotIn('token_map', events[-1]['session'])
+
+    def test_reply_cut_off_by_the_length_limit_is_marked_truncated(self):
+        async def cut_off(messages, model, max_tokens=None):
+            yield 'Part of a long page'
+            yield engine.StreamEnd('length')
+        events = self.collect(storage.new_session(), 'Make a big page', cut_off)
+        saved = storage.load_session(events[-1]['session']['id'])['messages'][-1]
+        self.assertTrue(saved['truncated'])
+        self.assertEqual(saved['content'], 'Part of a long page')
+        for reason in ('stop', None):  # a normal finish leaves no flag, so the saved shape is unchanged
+            async def normal(messages, model, max_tokens=None, reason=reason):
+                yield 'Fine'
+                yield engine.StreamEnd(reason)
+            events = self.collect(storage.new_session(), 'Hello', normal)
+            self.assertNotIn('truncated', storage.load_session(events[-1]['session']['id'])['messages'][-1])
 
     def test_abort_saves_partial_reply_marked_stopped(self):
         stream, _ = self.fake_stream(['First part. ', 'second part.'])

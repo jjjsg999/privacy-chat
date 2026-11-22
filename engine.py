@@ -194,6 +194,29 @@ async def ask_meeting(session, question, privacy, channel='web'):
 
 # --- Streaming (Web only). The functions above are unchanged and still serve Telegram. ---
 
+# Streamed replies may be long (artifacts), so they get a larger output limit than the 6,000 used elsewhere.
+# The monthly guard reserves cost for the whole limit up front, so a request is refused, never silently
+# shortened, when that reservation does not fit the remaining budget.
+STREAM_MAX_TOKENS = 16_000
+
+
+class StreamEnd:
+    """Final item of stream_complete(): why the provider stopped ('stop', 'length', ...). Not text."""
+    def __init__(self, reason):
+        self.reason = reason
+
+
+def output_cap(catalogue, model, wanted):
+    """`wanted` limited to the model's own maximum output when the catalogue reports one."""
+    try:
+        reported = int(next(m for m in catalogue if m['id'] == model)['top_provider']['max_completion_tokens'])
+        if reported > 0:
+            return min(wanted, reported)
+    except (StopIteration, KeyError, TypeError, ValueError):
+        pass
+    return wanted
+
+
 async def _reserve_stream(messages, model, max_tokens):
     """Same guards as complete(): dev guard, key, price lookup, durable reservation."""
     try:
@@ -203,11 +226,12 @@ async def _reserve_stream(messages, model, max_tokens):
     key = storage.openrouter_api_key()
     if not key:
         raise ChatError('Add your OpenRouter API key in Settings or config.json.')
-    max_tokens = 6000 if max_tokens is None else max_tokens
+    max_tokens = STREAM_MAX_TOKENS if max_tokens is None else max_tokens
     global _monthly_prices
     try:
         if _monthly_prices is None or time.monotonic() - _monthly_prices[0] > 300:
             _monthly_prices = (time.monotonic(), await model_catalogue())
+        max_tokens = output_cap(_monthly_prices[1], model, max_tokens)
         rates = monthly_budget.prices(_monthly_prices[1], model)
         reservation = monthly_budget.reserve(messages, max_tokens, rates, model)
     except (dev_budget.BudgetError, OSError) as exc:
@@ -223,6 +247,7 @@ async def stream_complete(messages, model, max_tokens=None):
     key, max_tokens, rates, reservation = await _reserve_stream(messages, model, max_tokens)
     usage = None
     produced = False
+    finish = None
     try:
         timeout = httpx.Timeout(connect=15, read=45, write=15, pool=15)  # read = max silence between chunks
         async with httpx.AsyncClient(timeout=timeout) as client:
@@ -244,6 +269,8 @@ async def stream_complete(messages, model, max_tokens=None):
                     if isinstance(chunk.get('usage'), dict):
                         usage = chunk['usage']
                     for choice in chunk.get('choices') or []:
+                        if choice.get('finish_reason'):
+                            finish = choice['finish_reason']
                         piece = (choice.get('delta') or {}).get('content')
                         if isinstance(piece, str) and piece:
                             produced = True
@@ -251,6 +278,7 @@ async def stream_complete(messages, model, max_tokens=None):
         monthly_budget.settle(reservation, usage)
         if not produced:
             raise ValueError('Empty completion')
+        yield StreamEnd(finish)
     except (httpx.HTTPError, ValueError, KeyError, TypeError, AttributeError) as exc:
         try:
             monthly_budget.settle(reservation, usage)  # no-op unless a usable cost arrived
@@ -293,10 +321,13 @@ async def _stream_turn(session, question, outbound, model, extra=None):
     A user-aborted or failed stream with some text saves the partial reply (stopped=True).
     """
     rehydrator = StreamRehydrator(session['token_map'])
-    parts, finished, error = [], False, None
+    parts, finished, error, truncated = [], False, None, False
     try:
         async with aclosing(stream_complete(outbound, model)) as pieces:
             async for piece in pieces:
+                if isinstance(piece, StreamEnd):
+                    truncated = piece.reason == 'length'  # the provider stopped at the output limit
+                    continue
                 text = rehydrator.feed(piece)
                 if text:
                     parts.append(text)
@@ -321,7 +352,8 @@ async def _stream_turn(session, question, outbound, model, extra=None):
         yield {'type': 'error', 'message': str(error), 'saved': bool(''.join(parts).strip())}
         return
     session['messages'] = session['messages'] + [{'role': 'user', 'content': question, **(extra or {})},
-                                                  {'role': 'assistant', 'content': ''.join(parts), 'model': model}]
+                                                  {'role': 'assistant', 'content': ''.join(parts), 'model': model,
+                                                   **({'truncated': True} if truncated else {})}]
     apply_local_title(session)
     storage.save_session(session)
 

@@ -13,4 +13,6 @@ TYPE is one of:
 - markdown: a formatted document.
 - code: a complete file. Add language="python" (or the right language).
 
+Keep artifacts compact: short CSS, no comments, no repeated markup. Replies have a length limit, and an artifact that is cut off is useless.
+
 Rules: do not wrap the content in code fences. Write a brief note outside the block. To revise an artifact, output the whole artifact again with the same id; never a diff. Strings like PERSON__1 are privacy placeholders: keep them exactly as written inside artifacts too.
