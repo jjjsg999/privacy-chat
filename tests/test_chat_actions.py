@@ -167,7 +167,12 @@ class ArtifactTests(ChatActionTests):
     def test_web_chat_is_told_about_artifacts_but_meetings_and_telegram_chat_are_not(self):
         self.stream(message='make me a page')
         self.assertIn('<artifact type="TYPE"', self.sent[-1][0]['content'])
-        self.assertIn('explicitly asks', self.sent[-1][0]['content'])
+        prompt = self.sent[-1][0]['content']
+        self.assertIn('default format is HTML', prompt)           # HTML is the default type
+        self.assertIn('not Mermaid', prompt)                       # diagrams default to HTML too
+        for office in ('Word', 'Excel', 'PowerPoint'):             # not built yet: ask for the stand-in
+            self.assertIn(office, prompt)
+        self.assertIn('Do not make one for a quick answer', prompt)  # ordinary chat stays chat
         meeting = self.chat(pairs=1, session_type='meeting', transcript='T', intelligence='I', mode='meeting_ready')
         self.sent.clear()
         self.stream(session_id=meeting['id'], message='question')
