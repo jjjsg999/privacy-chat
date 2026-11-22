@@ -50,7 +50,9 @@ Read `PROJECT_HANDOFF_CURRENT.md` for the architecture, API, storage, privacy bo
 - Rename, search, Markdown export, copy buttons, edit-and-resend, branch into a new conversation, pin/archive, light/dark theme, keyboard shortcuts, resizable sidebar. Edit and branch apply to normal chats only.
 - Artifacts: only when the user asks. The model wraps standalone content in `<artifact type=… title=… id=…>` (html, svg, markdown, mermaid, code). `artifacts.js` finds these blocks and shows them in a side pane (live source while streaming, rendered preview when saved, versions by repeating an id). HTML/SVG run in an iframe served from `/artifact-frame`, which has its own CSP (no network, inline scripts only) and a sandbox without `allow-same-origin`. Mermaid's library is inlined into that frame. Only the streamed web chat is told about artifacts.
 
-Known limits: replies stop at 6,000 output tokens; an artifact can still navigate its own frame to an external address (not blockable by CSP), so treat untrusted uploads with care; no encryption at rest; no web search, tool calling, skills or Memory.
+Artifact safety: "Run scripts" starts off in any conversation that contains uploads (turning it on applies to that conversation only); meta refresh, `<base>` and resource-hint tags are stripped from HTML/SVG before display. Every frame load goes through `about:blank` first, because the frame does not reliably navigate straight to a new URL after `document.write`.
+
+Known limits: streamed replies stop at 16,000 output tokens (or the model's own maximum); a cut-off reply is flagged and offers "Regenerate compactly". With scripts on, an artifact script may still be able to navigate its own frame to an external address (CSP cannot block that; it could not be reproduced in the built-in browser, so treat it as possible). No encryption at rest; no web search, tool calling, skills or Memory.
 
 ## Local development
 

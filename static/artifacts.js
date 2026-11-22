@@ -79,15 +79,30 @@ function intoHead(html, meta) {  // the policy must come before any script, and 
 }
 const PAGE_HEAD = '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">';
 
+// Remove the tags that can send the frame somewhere else without running a script: a meta refresh (the restored real
+// names could ride in its URL), <base>, and resource hints. Parsing does not execute anything.
+function neutralize(html) {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  for (const node of doc.querySelectorAll('meta[http-equiv], base, link[rel]')) {
+    const tag = node.tagName;
+    if (tag === 'BASE'
+      || (tag === 'META' && /^\s*refresh\s*$/i.test(node.getAttribute('http-equiv')))
+      || (tag === 'LINK' && /\b(prefetch|preload|prerender|preconnect|dns-prefetch)\b/i.test(node.getAttribute('rel')))) node.remove();
+  }
+  return '<!doctype html>' + doc.documentElement.outerHTML;
+}
+
 // The complete document written into the sandboxed frame.
 function frameDocument(artifact, scripts) {
   const guard = scripts ? '' : NO_SCRIPTS;
   if (artifact.type === 'html') {
     const full = /<html[\s>]|^\s*<!doctype/i.test(artifact.content);
-    return guard ? intoHead(full ? artifact.content : PAGE_HEAD + artifact.content, guard) : (full ? artifact.content : PAGE_HEAD + artifact.content);
+    const page = neutralize(full ? artifact.content : PAGE_HEAD + artifact.content);
+    return guard ? intoHead(page, guard) : page;
   }
   if (artifact.type === 'svg') {
-    return PAGE_HEAD + guard + '<style>html,body{margin:0;background:#fff}svg{display:block;max-width:100%;max-height:100vh;margin:auto}</style>' + artifact.content;
+    const page = neutralize(PAGE_HEAD + '<style>html,body{margin:0;background:#fff}svg{display:block;max-width:100%;max-height:100vh;margin:auto}</style>' + artifact.content);
+    return guard ? intoHead(page, guard) : page;
   }
   if (artifact.type === 'markdown') {
     const html = window.DOMPurify.sanitize(marked.parse(artifact.content, {gfm: true, breaks: false}), {FORBID_TAGS: ['style', 'form', 'input', 'button']});
@@ -151,8 +166,14 @@ const readScripts = () => { try { return localStorage.getItem(SCRIPTS_KEY) !== '
 
 export function createPane({getMessages, copyText, status, askFix}) {
   const $ = id => document.getElementById(id);
-  const state = {id: null, version: 0, tab: 'preview', scripts: readScripts(), sessionId: null, shown: '', live: false, liveArtifact: null, saved: null, fixKind: ''};
+  const state = {id: null, version: 0, tab: 'preview', scripts: readScripts(), override: null, sessionId: null, shown: '', live: false, liveArtifact: null, saved: null, fixKind: ''};
   let pending = '';
+
+  // Uploaded files are the likeliest carrier of hidden instructions to the model (prompt injection), so in a
+  // conversation that contains uploads scripts start off for every artifact, whatever the saved preference says.
+  // Turning them on applies to that conversation only and is not remembered.
+  const hasUploads = () => getMessages().some(message => message.attachments?.length);
+  const scriptsOn = () => hasUploads() ? (state.override !== null && state.override === state.sessionId) : state.scripts;
 
   const find = () => {
     const entry = state.id ? collectArtifacts(getMessages()).get(state.id) : null;
@@ -164,6 +185,17 @@ export function createPane({getMessages, copyText, status, askFix}) {
     const extension = artifact.type === 'code' ? (EXTENSIONS[artifact.language] || 'txt') : {html: 'html', svg: 'svg', markdown: 'md', mermaid: 'mmd'}[artifact.type];
     return `${slug(artifact.title) || 'artifact'}.${extension}`;
   };
+
+  // A frame whose document was replaced with document.write does not reliably navigate straight to a new URL, so
+  // every load starts from about:blank. The timer is a fallback in case the blank page never reports "load".
+  function loadFrame(url) {
+    const frame = $('artifact-frame');
+    let started = false;
+    const go = () => { if (!started) { started = true; frame.src = url; } };
+    frame.addEventListener('load', go, {once: true});
+    frame.src = 'about:blank';
+    setTimeout(go, 150);
+  }
 
   // While a reply is still streaming, the pane shows the artifact's source as it is written. The rendered preview
   // opens once the reply is saved (see open()), because half-written HTML is a poor thing to run.
@@ -198,16 +230,21 @@ export function createPane({getMessages, copyText, status, askFix}) {
     $('tab-preview').hidden = !previewable;
     for (const [id, tab] of [['tab-preview', 'preview'], ['tab-code', 'code']]) $(id).setAttribute('aria-selected', String(state.tab === tab));
     $('artifact-scripts-label').hidden = !(artifact.type === 'html' || artifact.type === 'svg');
-    $('artifact-scripts').checked = state.scripts;
+    $('artifact-scripts').checked = scriptsOn();
     const code = state.tab === 'code';
     $('artifact-frame').hidden = code; $('artifact-code').hidden = !code;
-    const key = [state.id, state.version, state.tab, state.scripts, artifact.content].join('\u0000');
+    const key = [state.id, state.version, state.tab, scriptsOn(), artifact.content].join('\u0000');
     if (key === state.shown) return;  // nothing visible changed: keep the frame and any error note it reported
     state.fixKind = artifact.complete ? '' : 'cutoff';
     $('artifact-fix').hidden = artifact.complete;
     $('artifact-fix').textContent = 'Regenerate compactly';
-    $('artifact-note').hidden = artifact.complete;
-    if (!artifact.complete) $('artifact-note').textContent = 'This artifact looks cut off: the reply ended before its closing tag (usually the length limit).';
+    const notes = [];
+    if (!artifact.complete) notes.push('This artifact looks cut off: the reply ended before its closing tag (usually the length limit).');
+    if ((artifact.type === 'html' || artifact.type === 'svg') && hasUploads() && !scriptsOn()) {
+      notes.push('Scripts are off because this conversation includes uploaded files, which can hide instructions to the model. Turn on "Run scripts" only if you trust this page.');
+    }
+    $('artifact-note').hidden = !notes.length;
+    $('artifact-note').textContent = notes.join(' ');
     state.shown = key;
     if (code) $('artifact-code').textContent = artifact.content;
     else {
@@ -216,8 +253,8 @@ export function createPane({getMessages, copyText, status, askFix}) {
         loadMermaid().then(() => { if (state.id === artifact.id) show(); });
         return;
       }
-      pending = frameDocument(artifact, state.scripts);
-      $('artifact-frame').src = '/artifact-frame?load=' + Date.now();  // the frame replies "ready", then gets the document
+      pending = frameDocument(artifact, scriptsOn());
+      loadFrame('/artifact-frame?load=' + Date.now());  // the frame replies "ready", then gets the document
     }
   }
   function close() {
@@ -257,8 +294,12 @@ export function createPane({getMessages, copyText, status, askFix}) {
   $('tab-code').onclick = () => { state.tab = 'code'; show(); };
   $('artifact-version').onchange = () => { state.version = Number($('artifact-version').value); show(); };
   $('artifact-scripts').onchange = () => {
-    state.scripts = $('artifact-scripts').checked;
-    try { localStorage.setItem(SCRIPTS_KEY, state.scripts ? 'on' : 'off'); } catch (_) { /* the choice lasts until reload */ }
+    const on = $('artifact-scripts').checked;
+    if (hasUploads()) state.override = on ? state.sessionId : null;  // this conversation only, never remembered
+    else {
+      state.scripts = on;
+      try { localStorage.setItem(SCRIPTS_KEY, on ? 'on' : 'off'); } catch (_) { /* the choice lasts until reload */ }
+    }
     show();
   };
   $('artifact-copy').onclick = () => { const found = find(); if (found) copyText(found.artifact.content, $('artifact-copy')); };
