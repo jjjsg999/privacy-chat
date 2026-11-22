@@ -177,7 +177,7 @@ class TelegramTransport:
                 answer = 'Wait for a meeting analysis first. Use /meeting to capture a transcript.'
             else:
                 try:
-                    result = await engine.ask_meeting(session, ' '.join(context.args), self.privacy)
+                    result = await engine.ask_meeting(session, ' '.join(context.args), self.privacy, channel='telegram')
                     answer = result['messages'][-1]['content']
                 except engine.ChatError as exc:
                     answer = str(exc)
@@ -206,7 +206,7 @@ class TelegramTransport:
                 session.update(telegram_chat_id=update.effective_chat.id,
                                telegram_user_id=update.effective_user.id)
             try:
-                result = await engine.chat(session, text, self.privacy)
+                result = await engine.chat(session, text, self.privacy, channel='telegram')
             except engine.ChatError as exc:
                 answer = str(exc)
             else:

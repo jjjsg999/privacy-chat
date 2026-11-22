@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Models · Privacy LLM</title><link rel="stylesheet" href="/static/style.css"><script src="/static/theme.js"></script><script src="/static/models.js" defer></script><script src="/static/navigation.js" defer></script><script src="/static/sidebar-resize.js" defer></script></head>
+<body class="workspace-page"><aside id="sidebar"><a class="brand" href="/">Privacy <span>LLM</span></a><p class="eyebrow">YOUR PERSONAL WORKSPACE</p><nav class="main-nav" aria-label="Main navigation"><a href="/">Meetings &amp; chat</a><a href="/adviser">Adviser chat</a><a href="/memory">Memory</a><a href="/settings">Settings</a></nav></aside><div class="workspace-main"><header><button id="toggle-sidebar" aria-label="Toggle navigation" aria-expanded="false" aria-controls="sidebar">☰</button><h1>Models</h1><span class="local-badge">Local workspace</span></header><div class="workspace-scroll"><main class="settings-content models-wide">
+
+  <p class="eyebrow">OPENROUTER CATALOGUE</p><h1>Models and prices</h1>
+  <p class="intro">Every model OpenRouter currently lists, with prices in US dollars per million tokens. Filter by price, sort by any column, and choose the model new messages will use.</p>
+  <p>Chats and Adviser: <strong id="current-model">Loading…</strong> · Meeting analysis and questions: <strong id="current-meeting-model">Loading…</strong> <button id="reset-meeting" type="button" hidden>Use the chat model for meetings</button></p>
+
+  <p id="spend-summary" class="spend-line" role="status"></p>
+
+  <section class="settings-card">
+    <div class="models-toolbar">
+      <div><label for="search">Search name or ID</label><input id="search" type="search" placeholder="e.g. claude, gpt, llama" autocomplete="off"></div>
+      <div class="models-sort"><label for="sort">Sort by</label><select id="sort"><option value="input:1">Input price, low to high</option><option value="input:-1">Input price, high to low</option><option value="output:1">Output price, low to high</option><option value="output:-1">Output price, high to low</option><option value="name:1">Name A–Z</option></select></div>
+      <div><label for="provider">Provider</label><select id="provider"><option value="">All providers</option></select></div>
+      <div><label for="min-in">Input price from ($ / 1M)</label><input id="min-in" type="number" min="0" step="any" placeholder="Any"></div>
+      <div><label for="max-in">Input price up to ($ / 1M)</label><input id="max-in" type="number" min="0" step="any" placeholder="Any"></div>
+      <div><label for="min-out">Output price from ($ / 1M)</label><input id="min-out" type="number" min="0" step="any" placeholder="Any"></div>
+      <div><label for="max-out">Output price up to ($ / 1M)</label><input id="max-out" type="number" min="0" step="any" placeholder="Any"></div>
+    </div>
+    <div class="models-checks">
+      <label class="favourite-filter"><input id="free-only" type="checkbox"> Free models only</label>
+      <label class="favourite-filter"><input id="favourites-only" type="checkbox"> Favourites only</label>
+      <label class="favourite-filter"><input id="usable-only" type="checkbox" checked> Hide models this app cannot use</label>
+    </div>
+    <button id="refresh" type="button">Refresh from OpenRouter</button> <button id="clear" type="button">Clear filters</button>
+    <p id="count" role="status" aria-live="polite">Loading the live catalogue…</p>
+    <p class="hint">Models with an unknown price, and web-search variants ending in :online, are blocked by this app's monthly cost guard, so they are hidden by default. Prices come straight from OpenRouter; other charges may apply.</p>
+    <div class="table-wrap"><table class="models-table"><thead><tr id="head"></tr></thead><tbody id="rows"></tbody></table></div>
+    <button id="more" type="button" hidden>Show more models</button>
+  </section>
+
+</main></div></div></body></html>

@@ -1,14 +1,17 @@
 import asyncio
+import json
 from decimal import Decimal
-from contextlib import asynccontextmanager
+from contextlib import aclosing, asynccontextmanager
+from typing import Literal
 from urllib.parse import urlsplit
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi import FastAPI, File, HTTPException, Query, Request, UploadFile
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+import documents
 import engine
 import adviser
 import storage
@@ -45,7 +48,8 @@ async def local_browser_guard(request: Request, call_next):
     response = await call_next(request)
     response.headers['Cache-Control'] = 'no-store'
     response.headers['X-Content-Type-Options'] = 'nosniff'
-    response.headers['Content-Security-Policy'] = "default-src 'self'; style-src 'self'; script-src 'self'; frame-ancestors 'none'"
+    if request.url.path != '/artifact-frame':  # that page sets its own, deliberately different policy
+        response.headers['Content-Security-Policy'] = "default-src 'self'; style-src 'self'; script-src 'self'; frame-ancestors 'self'"
     return response
 
 
@@ -54,9 +58,34 @@ async def index():
     return FileResponse(storage.ROOT / 'static' / 'index.html')
 
 
+# The sandboxed page that shows artifacts. The browser runs it with an opaque origin (iframe sandbox plus the CSP
+# `sandbox` directive): it can run the artifact's inline scripts but has no network, no access to this app's pages,
+# API or storage, and cannot open windows or submit forms. The artifact text is posted in by the parent page.
+ARTIFACT_FRAME = (
+    '<!doctype html><html><head><meta charset="utf-8"><title>Artifact</title><script>'
+    "addEventListener('message',function(e){var d=e.data;if(e.source!==parent||!d||d.type!=='artifact'||typeof d.html!=='string')return;"
+    'document.open();document.write(d.html);document.close();});'
+    "parent.postMessage({type:'artifact-ready'},'*');"
+    '</script></head><body></body></html>')
+ARTIFACT_FRAME_CSP = ("default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; "
+                      "img-src data: blob:; font-src data:; media-src data: blob:; connect-src 'none'; "
+                      "form-action 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; "
+                      "frame-ancestors 'self'; sandbox allow-scripts")
+
+
+@app.get('/artifact-frame')
+async def artifact_frame():
+    return HTMLResponse(ARTIFACT_FRAME, headers={'Content-Security-Policy': ARTIFACT_FRAME_CSP})
+
+
 @app.get('/settings')
 async def settings_page():
     return FileResponse(storage.ROOT / 'static' / 'settings.html')
+
+
+@app.get('/models')
+async def models_page():
+    return FileResponse(storage.ROOT / 'static' / 'models.html')
 
 
 @app.get('/memory')
@@ -72,9 +101,13 @@ async def adviser_page():
 @app.get('/api/settings')
 async def get_settings():
     config = storage.settings()
-    return {'model': config['model'], 'sensitive_terms': config['sensitive_terms'],
+    return {'model': config['model'], 'meeting_model': str(config.get('meeting_model') or ''),
+            'sensitive_terms': config['sensitive_terms'],
             'favourites': config.get('favourites', []),
             'chat_diagnosis': config.get('chat_diagnosis', False),
+            'review_extracted_text': bool(config.get('review_extracted_text', False)),
+            'web_instructions': config.get('web_instructions', ''),
+            'telegram_instructions': config.get('telegram_instructions', ''),
             'monthly_cost_ceiling_usd': str(config.get('monthly_cost_ceiling_usd', '2.00')),
             'monthly_budget': monthly_budget.status(),
             'openrouter': {'configured': bool(storage.openrouter_api_key())}}
@@ -106,6 +139,10 @@ class Settings(BaseModel):
     openrouter_api_key: str = Field(default='', max_length=1000)
     clear_api_key: bool = False
     chat_diagnosis: bool = False
+    meeting_model: str | None = Field(default=None, max_length=200, pattern=r'^(\S+/\S+)?$')  # '' = use the main model
+    review_extracted_text: bool | None = None
+    web_instructions: str | None = Field(default=None, max_length=2000)
+    telegram_instructions: str | None = Field(default=None, max_length=2000)
     monthly_cost_ceiling_usd: Decimal | None = Field(default=None, ge=0, le=100000, decimal_places=2)
 
 
@@ -116,6 +153,13 @@ async def put_settings(value: Settings):
         config = storage.settings()
         config.pop('sensitive_terms', None)
         config.update(model=value.model, chat_diagnosis=value.chat_diagnosis)
+        if value.meeting_model is not None:
+            config['meeting_model'] = value.meeting_model
+        if value.review_extracted_text is not None:
+            config['review_extracted_text'] = value.review_extracted_text
+        for name in ('web_instructions', 'telegram_instructions'):
+            if getattr(value, name) is not None:  # omitted = keep the saved text
+                config[name] = getattr(value, name).strip()
         if value.monthly_cost_ceiling_usd is not None:
             config['monthly_cost_ceiling_usd'] = str(value.monthly_cost_ceiling_usd)
         storage.write_json(storage.DATA / 'settings.json', config)
@@ -129,6 +173,24 @@ async def put_settings(value: Settings):
 class Favourite(BaseModel):
     model: str = Field(min_length=1, max_length=200, pattern=r'^\S+/\S+$')
     favourite: bool
+
+
+class ModelChoice(BaseModel):
+    model: str = Field(max_length=200, pattern=r'^(\S+/\S+)?$')
+    purpose: Literal['general', 'meeting'] = 'general'
+
+
+@app.put('/api/settings/model')
+async def choose_model(value: ModelChoice):
+    """Change only one model: 'general' (all other chats) or 'meeting' (blank = follow the general model)."""
+    if value.purpose == 'general' and not value.model:
+        raise HTTPException(422, 'Choose a model.')
+    async with chat_lock:
+        config = storage.settings()
+        config.pop('sensitive_terms', None)
+        config['model' if value.purpose == 'general' else 'meeting_model'] = value.model
+        storage.write_json(storage.DATA / 'settings.json', config)
+    return {'model': config['model'], 'meeting_model': str(config.get('meeting_model') or '')}
 
 
 @app.put('/api/settings/favourite')
@@ -147,8 +209,54 @@ async def favourite(value: Favourite):
 
 
 @app.get('/api/sessions')
-async def sessions():
-    return storage.list_sessions()
+async def sessions(q: str | None = Query(default=None, max_length=200)):
+    return storage.list_sessions(q)
+
+
+class SessionUpdate(BaseModel):
+    title: str | None = Field(default=None, min_length=1, max_length=100)
+    pinned: bool | None = None
+    archived: bool | None = None
+
+
+@app.patch('/api/sessions/{session_id}')
+async def update_session(session_id: str, value: SessionUpdate):
+    """Rename, pin or archive. Fields that are omitted are left unchanged."""
+    if value.title is None and value.pinned is None and value.archived is None:
+        raise HTTPException(422, 'Nothing to change.')
+    title = ' '.join(value.title.split()) if value.title is not None else None
+    if value.title is not None and not title:
+        raise HTTPException(422, 'Please enter a title.')
+    async with chat_lock:
+        read_session(session_id)
+        result = None
+        if title:
+            result = storage.rename_session(session_id, title)
+        if value.pinned is not None or value.archived is not None:
+            result = storage.set_session_flags(session_id, value.pinned, value.archived)
+        return storage.public_session(result)
+
+
+class Branch(BaseModel):
+    message_index: int = Field(ge=0)
+
+
+@app.post('/api/sessions/{session_id}/branch')
+async def branch_session(session_id: str, value: Branch):
+    """Start a new conversation from a copy of this chat up to one assistant reply."""
+    async with chat_lock:
+        read_session(session_id)
+        try:
+            return storage.public_session(storage.branch_session(session_id, value.message_index))
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from None
+        except OSError:
+            raise HTTPException(500, 'Could not save the new conversation.') from None
+
+
+@app.get('/api/spend/models')
+async def spend_by_model():
+    return monthly_budget.spend_by_model()
 
 
 def read_session(session_id):
@@ -214,6 +322,115 @@ async def adviser_chat(value: AdviserMessage):
             raise HTTPException(502, str(exc)) from None
         except OSError:
             raise HTTPException(503, 'Could not save adviser conversation.') from None
+
+
+class AttachmentIn(BaseModel):
+    name: str = Field(min_length=1, max_length=120)
+    kind: str = Field(pattern='^(exact|ocr)$')
+    text: str = Field(min_length=1, max_length=1_000_000)  # real caps come from documents.limits()
+
+
+class StreamMessage(BaseModel):
+    session_id: str | None = Field(default=None, max_length=100)
+    message: str = Field(default='', max_length=50_000)
+    attachments: list[AttachmentIn] = Field(default_factory=list, max_length=100)
+    edit_index: int | None = Field(default=None, ge=0)  # replace this user message (and everything after it)
+
+
+def check_attachment_limits(files):
+    lim = documents.limits()
+    if len(files) > lim['max_attachments']:
+        raise HTTPException(422, f'Attach at most {lim["max_attachments"]} files per message.')
+    if sum(len(f['text']) for f in files) > lim['max_total_chars']:
+        raise HTTPException(422, f'Attachments exceed {lim["max_total_chars"]:,} characters in total.')
+    for f in files:
+        if len(f['text']) > lim['max_chars_per_attachment']:
+            raise HTTPException(422, f'{f["name"]}: more than {lim["max_chars_per_attachment"]:,} characters.')
+
+
+def apply_edit(session, index, typed):
+    """Drop the chosen user message and everything after it, in memory only; return its replacement.
+
+    Nothing is written until the new reply streams and is saved, so a failed edit leaves the saved chat intact.
+    Attached file text is kept; only the typed part can change.
+    """
+    if session.get('session_type', 'chat') != 'chat':
+        raise HTTPException(422, 'Only normal chats can be edited.')
+    messages = session['messages']
+    if index >= len(messages) or messages[index].get('role') != 'user':
+        raise HTTPException(422, 'Choose one of your own messages to edit.')
+    old = messages[index]
+    meta = old.get('attachments') or []
+    rest = ''
+    if meta:
+        old_typed = old.get('typed', '')
+        if not old['content'].startswith(old_typed):
+            raise HTTPException(422, 'This message cannot be edited.')
+        rest = old['content'][len(old_typed):].strip()
+    message = '\n\n'.join(part for part in (typed, rest) if part)
+    if not message:
+        raise HTTPException(422, 'Please enter a message.')
+    session['messages'] = messages[:index]
+    return message, ({'typed': typed, 'attachments': meta} if meta else None)
+
+
+@app.post('/api/upload')
+async def upload(files: list[UploadFile] = File(...)):
+    """Extract text locally (OCR for images and scans). Nothing is stored; the browser keeps the result."""
+    lim = documents.limits()
+    if len(files) > lim['max_attachments']:
+        raise HTTPException(422, f'Attach at most {lim["max_attachments"]} files per message.')
+    review = bool(storage.settings().get('review_extracted_text', False))
+    extracted = []
+    for upload_file in files:
+        data = await upload_file.read(lim['max_bytes'] + 1)
+        try:
+            item = await asyncio.to_thread(documents.extract, upload_file.filename, data, lim)
+        except documents.DocumentError as exc:
+            raise HTTPException(422, str(exc)) from None
+        item['review'] = review and item['source'] in ('pdf', 'image')
+        extracted.append(item)
+    check_attachment_limits(extracted)
+    return {'files': extracted, 'limits': {k: lim[k] for k in ('max_attachments', 'max_bytes', 'max_pdf_pages')}}
+
+
+@app.post('/api/chat/stream')
+async def chat_stream(value: StreamMessage):
+    """Line-delimited JSON events: delta, done, title, error. Holds chat_lock for the whole stream."""
+    typed = value.message.strip()
+    files = [f.model_dump() for f in value.attachments]
+    editing = value.edit_index is not None
+    if editing and (files or not value.session_id):
+        raise HTTPException(422, 'An edit needs an existing conversation and cannot change attachments.')
+    if not typed and not files and not editing:
+        raise HTTPException(422, 'Please enter a message.')
+    check_attachment_limits(files)
+    message = documents.compose_message(typed, files)
+    extra = {'typed': typed, 'attachments': [{'name': f['name'], 'kind': f['kind'], 'chars': len(f['text'])} for f in files]} if files else None
+
+    def line(event):
+        return json.dumps(event, ensure_ascii=False) + '\n'
+
+    async def events():
+        nonlocal message, extra
+        async with chat_lock:
+            try:
+                current = read_session(value.session_id) if value.session_id else storage.new_session()
+                if editing:
+                    message, extra = apply_edit(current, value.edit_index, typed)
+            except HTTPException as exc:
+                yield line({'type': 'error', 'message': exc.detail, 'saved': False})
+                return
+            try:
+                async with aclosing(engine.stream_chat(current, message, app.state.privacy, extra)) as stream:
+                    async for event in stream:
+                        yield line(event)
+            except engine.ChatError as exc:
+                yield line({'type': 'error', 'message': str(exc), 'saved': False})
+            except OSError:
+                yield line({'type': 'error', 'message': 'Could not save the conversation.', 'saved': False})
+
+    return StreamingResponse(events(), media_type='application/x-ndjson')
 
 
 @app.post('/api/chat')

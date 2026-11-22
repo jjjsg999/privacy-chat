@@ -64,6 +64,28 @@ def status():
                 'available': False, 'error': 'Monthly ledger unavailable; requests blocked. Existing files retained.'}
 
 
+def spend_by_model():
+    """This month's charged amounts grouped by model. Unsettled reservations count at their reserved amount."""
+    month = period()
+    try:
+        data = _read()
+    except (BudgetError, OSError):
+        return {'month': month, 'available': False, 'models': [], 'untracked_usd': '0', 'total_usd': '0'}
+    totals, untracked, total = {}, Decimal(0), Decimal(0)
+    for entry in data['entries']:
+        if entry['month'] != month:
+            continue
+        amount = _money(entry['charged_usd']); total += amount
+        model = entry.get('model')
+        if not isinstance(model, str) or not model:
+            untracked += amount  # recorded before per-model tracking existed
+            continue
+        row = totals.setdefault(model, {'model': model, 'usd': Decimal(0), 'calls': 0, 'unsettled': 0})
+        row['usd'] += amount; row['calls'] += 1; row['unsettled'] += entry['state'] == 'reserved'
+    models = sorted(({**row, 'usd': str(row['usd'])} for row in totals.values()), key=lambda r: Decimal(r['usd']), reverse=True)
+    return {'month': month, 'available': True, 'models': models, 'untracked_usd': str(untracked), 'total_usd': str(total)}
+
+
 def prices(catalogue, model):
     try:
         if ':online' in model:
@@ -81,7 +103,7 @@ def prices(catalogue, model):
         raise BudgetError('Model pricing is unknown or unsupported; no paid request sent.') from None
 
 
-def reserve(messages, max_tokens, rates):
+def reserve(messages, max_tokens, rates, model=None):
     if type(max_tokens) is not int or max_tokens <= 0 or not messages or any(
             set(m) != {'role', 'content'} or not isinstance(m['content'], str) for m in messages):
         raise BudgetError('Monthly guard requires bounded plain-text requests.')
@@ -98,8 +120,11 @@ def reserve(messages, max_tokens, rates):
             data['started_at'] = storage.now()
             storage.write_json(_root() / 'initialized.json', {'schema': 1, 'at': data['started_at']})
         identifier = uuid4().hex
-        data['entries'].append({'id': identifier, 'month': month, 'at': storage.now(),
-            'reserved_usd': str(amount), 'charged_usd': str(amount), 'state': 'reserved'})
+        entry = {'id': identifier, 'month': month, 'at': storage.now(),
+                 'reserved_usd': str(amount), 'charged_usd': str(amount), 'state': 'reserved'}
+        if model:  # lets the Models page show spend per model; older entries simply have none
+            entry['model'] = str(model)[:200]
+        data['entries'].append(entry)
         storage.write_json(_root() / 'ledger.json', data)
     return identifier
 

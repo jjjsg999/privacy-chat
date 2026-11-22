@@ -83,3 +83,26 @@ class PrivacyEngine:
     @staticmethod
     def rehydrate(text, token_map):
         return TOKEN.sub(lambda m: token_map.get(m[0], m[0]), text)
+
+
+class StreamRehydrator:
+    """Incremental rehydrate(): holds back a trailing word so split tokens restore correctly.
+
+    Concatenated feed()+flush() output equals PrivacyEngine.rehydrate(full_text, token_map).
+    """
+    MAX_HELD = 200  # Placeholders are short; a longer unbroken run cannot be one.
+
+    def __init__(self, token_map):
+        self.token_map = token_map
+        self.buffer = ''
+
+    def feed(self, chunk):
+        self.buffer += chunk
+        tail = re.search(r'\w+$', self.buffer)
+        cut = tail.start() if tail and len(tail[0]) <= self.MAX_HELD else len(self.buffer)
+        ready, self.buffer = self.buffer[:cut], self.buffer[cut:]
+        return PrivacyEngine.rehydrate(ready, self.token_map)
+
+    def flush(self):
+        ready, self.buffer = self.buffer, ''
+        return PrivacyEngine.rehydrate(ready, self.token_map)

@@ -70,7 +70,8 @@ const assert = require('node:assert/strict');
       await page.locator('nav.main-nav a[href="/"]').click();
       await page.getByRole('textbox', {name:'Message', exact:true}).fill('Hello');
       // Mock the provider-facing endpoint for UI interaction; do not make paid calls.
-      await page.route('**/api/chat', route => route.fulfill({status:200, contentType:'application/json', body:JSON.stringify({id:'web_smoke',title:'Smoke conversation',messages:[{role:'user',content:'Hello'},{role:'assistant',content:'A local smoke-check response.'}]})}));
+      const smoke = {id:'web_smoke',title:'Smoke conversation',messages:[{role:'user',content:'Hello'},{role:'assistant',content:'A local smoke-check response.'}]};
+      await page.route('**/api/chat/stream', route => route.fulfill({status:200, contentType:'application/x-ndjson', body:[{type:'start',session_id:'web_smoke'},{type:'delta',text:'A local smoke-check response.'},{type:'done',session:smoke}].map(event => JSON.stringify(event)).join('\n') + '\n'}));
       await page.getByRole('button', {name:'Send'}).click();
       await page.getByText('A local smoke-check response.').waitFor();
       assert.deepEqual(errors, []);

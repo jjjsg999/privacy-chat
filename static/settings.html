@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Settings · Privacy LLM</title><link rel="stylesheet" href="/static/style.css"><script src="/static/settings.js" defer></script><script src="/static/navigation.js" defer></script></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Settings · Privacy LLM</title><link rel="stylesheet" href="/static/style.css"><script src="/static/theme.js"></script><script src="/static/settings.js" defer></script><script src="/static/navigation.js" defer></script><script src="/static/sidebar-resize.js" defer></script></head>
 <body class="workspace-page"><aside id="sidebar"><a class="brand" href="/">Privacy <span>LLM</span></a><p class="eyebrow">YOUR PERSONAL WORKSPACE</p><nav class="main-nav" aria-label="Main navigation"><a href="/">Meetings &amp; chat</a><a href="/adviser">Adviser chat</a><a href="/memory">Memory</a><a href="/settings" aria-current="page">Settings</a></nav></aside><div class="workspace-main"><header><button id="toggle-sidebar" aria-label="Toggle navigation" aria-expanded="false" aria-controls="sidebar">☰</button><h1>Settings</h1><span class="local-badge">Local workspace</span></header><div class="workspace-scroll"><main class="settings-content">
 
   <p class="eyebrow">YOUR WORKSPACE, YOUR PREFERENCES</p><h1>Settings</h1><p class="intro">One place for your model and privacy preferences.</p>
@@ -18,24 +18,24 @@
       <label class="favourite-filter"><input id="clear-api-key" name="clear_api_key" type="checkbox"> Remove the saved key</label>
       <p>Saved model: <strong id="current-model">Loading…</strong></p>
       <label for="model">OpenRouter model ID</label><input id="model" name="model" placeholder="provider/model-name" maxlength="200" pattern="\S+/\S+" required>
-      <p class="hint">Choose a model below or enter its ID, then Save settings.</p>
+      <p class="hint">Use Browse OpenRouter models below or enter an ID, then Save settings.</p>
+      <label for="meeting-model">Meeting model (optional)</label><input id="meeting-model" name="meeting_model" placeholder="Leave blank to use the model above" maxlength="200" pattern="(\S+/\S+)?" spellcheck="false">
+      <p class="hint">Used for meeting analysis and questions about meetings, on both the web and Telegram. All other chats (and Adviser chats) use the model above. Leave blank to use one model for everything.</p>
       <button id="test-connection" type="button" disabled>Test connection</button>
       <p class="hint">Tests the saved model with a short request; standard model charges may apply.</p>
-      <hr><label for="model-search">Search models by name or provider</label><input id="model-search" type="search" placeholder="Search the live catalogue…">
-      <button id="refresh-models" type="button">Load / refresh models</button>
-      <p class="hint">Prices are USD per million tokens. Blank limits mean no limit; 0 includes free token pricing. Other charges and pricing tiers may apply. Models with unknown prices are excluded when a price filter is set.</p>
-      <div class="model-filters">
-        <div><label for="input-cost">Maximum input cost ($ / 1M tokens)</label><input id="input-cost" type="number" min="0" step="any" placeholder="Any price"></div>
-        <div><label for="output-cost">Maximum output cost ($ / 1M tokens)</label><input id="output-cost" type="number" min="0" step="any" placeholder="Any price"></div>
-        <div><label for="input-mode">Input mode</label><select id="input-mode"><option value="">Any input mode</option></select></div>
-        <div><label for="output-mode">Output mode</label><select id="output-mode"><option value="">Any output mode</option></select></div>
-      </div>
-      <label class="favourite-filter"><input id="favourites-only" type="checkbox"> Favourites only</label>
-      <p class="hint">Stars save immediately. Model selection still uses Save settings. Modes describe the model; this app currently sends text.</p>
-      <p id="catalogue-status" role="status"></p><div id="model-results"></div>
-      <button id="show-more" type="button" hidden>Show more models</button>
+      <hr><button id="browse-models" type="button" aria-haspopup="dialog">Browse OpenRouter models</button>
+      <p class="hint">Opens the live catalogue in a large window: search, filter, and sort by input or output price. Use <strong>Use</strong> to fill in the OpenRouter model ID, or <strong>Meetings</strong> to fill in the Meeting model. Then click Save settings.</p>
+      <dialog id="model-picker" class="model-picker" aria-labelledby="picker-title"><div class="picker-bar"><strong id="picker-title">OpenRouter models</strong><span class="hint">Use fills the model ID · Meetings fills the Meeting model · Save settings afterwards</span><button id="close-picker" type="button">Close</button></div><iframe id="model-frame" title="OpenRouter model catalogue"></iframe></dialog>
     </section>
     <section class="settings-card"><h2>Sensitive terms</h2><label for="terms">Global protection list</label><textarea id="terms" name="terms" rows="10" maxlength="100000" spellcheck="false" placeholder="CLIENT: Example Company&#10;SYSTEM: Internal Platform&#10;A private project name"></textarea><p class="hint">One term per line. Optionally use an uppercase type such as CLIENT, PERSON, SYSTEM or REGULATOR followed by a colon. Plain terms use SENSITIVE tokens. Matching ignores case and respects word boundaries. Lines starting with # are comments.</p><p class="hint">Changes apply to the full history on the next message in every conversation.</p></section>
+    <section class="settings-card"><h2>Custom instructions</h2>
+      <label for="web-instructions">Web chat instructions</label><textarea id="web-instructions" name="web_instructions" rows="4" maxlength="2000" placeholder="For example: Answer concisely. Use British spelling."></textarea>
+      <label for="telegram-instructions">Telegram instructions</label><textarea id="telegram-instructions" name="telegram_instructions" rows="4" maxlength="2000" placeholder="For example: Keep replies short enough for a phone."></textarea>
+      <p class="hint">Added to the assistant’s system prompt for normal chat and meeting questions on that channel. They pass through the same privacy processing as your messages. Meeting analysis and Adviser chats are not affected. Up to 2,000 characters each.</p></section>
+    <section class="settings-card"><h2>File uploads</h2>
+      <label class="favourite-filter"><input name="review_extracted_text" type="checkbox"> Preview and edit extracted text from PDFs and images before sending</label>
+      <p class="hint">Off by default: extracted text is sent with your message, then privacy-processed like anything you type. Turn this on to read and correct the text first. This is useful because OCR can misread characters, and a misread name may escape detection. Word and plain-text files are always read exactly and are never previewed.</p>
+      <p class="hint">Files are read on this computer (English and Traditional Chinese OCR) and are never stored. Default limits: 10 MB per file, 20 PDF pages, 5 files per message; they can be raised under "upload_limits" in data/settings.json.</p></section>
     <section class="settings-card"><h2>Chat diagnosis</h2><label class="favourite-filter"><input name="chat_diagnosis" type="checkbox"> Chat diagnosis to show text sent to LLM API</label><p class="hint">Records the exact text sent for new meeting analyses. Open Full transcript to compare the original with the privacy-processed system prompt and transcript. Older meetings without a recording cannot show an exact API version. Disabling hides existing recordings and stops new recordings; saved recordings remain local.</p></section>
     <div class="settings-actions"><p id="status" role="status"></p><button class="primary" type="submit" id="save">Save settings</button></div>
   </form>

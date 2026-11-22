@@ -1,19 +1,47 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Privacy LLM</title><link rel="stylesheet" href="/static/style.css"><script src="/static/vendor/purify.min.js" defer></script><script src="/static/chat.js" type="module"></script></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Privacy LLM</title><link rel="stylesheet" href="/static/style.css"><script src="/static/theme.js"></script><script src="/static/vendor/purify.min.js" defer></script><script src="/static/chat.js" type="module"></script><script src="/static/sidebar-resize.js" defer></script></head>
 <body class="chat-page">
   <aside id="sidebar">
     <a class="brand" href="/">Privacy <span>LLM</span></a>
     <p class="eyebrow">YOUR PERSONAL WORKSPACE</p>
     <nav class="main-nav" aria-label="Main navigation"><a href="/" aria-current="page">Meetings &amp; chat</a><a href="/adviser">Adviser chat</a><a href="/memory">Memory</a><a href="/settings">Settings</a></nav>
     <button id="new-chat" class="primary">+ New conversation</button>
+    <label class="sr-only" for="session-search">Search conversations</label><input id="session-search" type="search" placeholder="Search conversations…" maxlength="200" autocomplete="off">
     <nav id="sessions" aria-label="Conversations"></nav>
   </aside>
   <main class="conversation">
-    <header><button id="toggle-sidebar" aria-label="Toggle conversations" aria-expanded="false" aria-controls="sidebar">☰</button><h1 id="chat-title">New conversation</h1><span class="local-badge">Local workspace</span></header>
+    <header><button id="toggle-sidebar" aria-label="Toggle conversations" aria-expanded="false" aria-controls="sidebar">☰</button><h1 id="chat-title">New conversation</h1><button id="export" type="button" hidden title="Download this conversation as Markdown. The file contains your real, unmasked text.">Export</button><button id="show-shortcuts" type="button" title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts">⌨</button><span class="local-badge">Local workspace</span></header>
     <div id="messages" role="log" aria-live="polite" aria-label="Conversation messages">
       <section class="welcome"><div class="welcome-icon" aria-hidden="true">✳</div><p class="eyebrow">A LITTLE MORE PRIVATE</p><h2>Space to think freely.</h2><p>Ask a question, explore an idea, or work through a decision.</p><p class="privacy-note">Sensitive terms and detected personal details are replaced locally before your message reaches the model.</p></section>
     </div>
-    <footer><p id="status" role="status"></p><form id="composer"><label class="sr-only" for="message">Message</label><textarea id="message" rows="2" maxlength="50000" placeholder="What’s on your mind?" required></textarea><button id="send" class="primary" type="submit">Send <span aria-hidden="true">↑</span></button></form><p class="footnote">History stays on this device. Privacy detection may miss details; review sensitive content.</p></footer>
+    <footer><p id="status" role="status"></p><div id="attachments" aria-label="Attached files"></div><form id="composer"><label class="sr-only" for="message">Message</label><textarea id="message" rows="2" maxlength="50000" placeholder="What’s on your mind?"></textarea><input id="file-input" type="file" multiple hidden accept=".pdf,.docx,.txt,.md,.csv,.png,.jpg,.jpeg,.webp,.bmp,.heic,.heif"><button id="attach" type="button" title="Attach PDFs, Word files, text or images. They are read on this computer.">Attach</button><button id="send" class="primary" type="submit">Send <span aria-hidden="true">↑</span></button><button id="stop" type="button" hidden>Stop</button></form><p class="footnote">History stays on this device. Privacy detection may miss details; review sensitive content.</p></footer>
   </main>
+  <section id="artifact-pane" aria-label="Artifact" hidden>
+    <div class="artifact-bar">
+      <strong id="artifact-title"></strong>
+      <select id="artifact-version" aria-label="Version" hidden></select>
+      <div class="artifact-tabs" role="tablist"><button id="tab-preview" type="button" role="tab">Preview</button><button id="tab-code" type="button" role="tab">Code</button></div>
+      <label id="artifact-scripts-label" title="HTML artifacts run in a sandbox with no network access."><input type="checkbox" id="artifact-scripts" checked> Run scripts</label>
+      <button id="artifact-copy" type="button">Copy</button><button id="artifact-download" type="button" title="The file contains your real, unmasked text.">Download</button>
+      <button id="artifact-close" type="button" aria-label="Close artifact">×</button>
+    </div>
+    <p id="artifact-note" class="hint" hidden></p>
+    <iframe id="artifact-frame" title="Artifact preview" sandbox="allow-scripts" referrerpolicy="no-referrer"></iframe>
+    <pre id="artifact-code" hidden></pre>
+  </section>
+  <dialog id="shortcuts" aria-labelledby="shortcuts-title">
+    <h2 id="shortcuts-title">Keyboard shortcuts</h2>
+    <table>
+      <tr><td><kbd>Enter</kbd></td><td>Send the message</td></tr>
+      <tr><td><kbd>Shift</kbd> + <kbd>Enter</kbd></td><td>New line</td></tr>
+      <tr><td><kbd>Esc</kbd></td><td>Stop the reply, or cancel an edit</td></tr>
+      <tr><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>O</kbd></td><td>New conversation</td></tr>
+      <tr><td><kbd>Ctrl</kbd> + <kbd>K</kbd></td><td>Search conversations</td></tr>
+      <tr><td><kbd>/</kbd></td><td>Focus the message box</td></tr>
+      <tr><td><kbd>Alt</kbd> + <kbd>C</kbd></td><td>Copy the last reply</td></tr>
+      <tr><td><kbd>?</kbd></td><td>Show this list</td></tr>
+    </table>
+    <form method="dialog"><button class="primary">Close</button></form>
+  </dialog>
 </body></html>
