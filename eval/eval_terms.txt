@@ -1,0 +1,45 @@
+# Eval-only invented terms. Not the real sensitive_terms.txt.
+CLIENT: Altamira Biosystems
+CLIENT: Brightvale Holdings
+CLIENT: Copperfield Robotics
+CLIENT: Fernwick Energy
+CLIENT: Greywell Pharma
+CLIENT: Harrowgate Logistics
+CLIENT: Ironquill Software
+CLIENT: Kestrel Dock Partners
+CLIENT: Kestrel Marine Group
+CLIENT: Lumenpath Systems
+CLIENT: Marlowe & Finch
+CLIENT: Meridian Oakes
+CLIENT: Norlight Capital
+DEAL: Operation Bluebird
+DEAL: Operation Cormorant
+DEAL: Operation Gannet
+DEAL: Operation Harvest Moon
+DEAL: Operation Lighthouse
+DEAL: Operation Mudlark
+DEAL: Operation Ptarmigan
+CLIENT: Orrin Vale Capital
+CLIENT: Ostrander Foods
+CLIENT: Peregrine Dyeworks
+CLIENT: Pinecrest Labs
+DEAL: Project Cinder
+DEAL: Project Dovetail
+DEAL: Project Ember
+DEAL: Project Gossamer
+DEAL: Project Halcyon
+DEAL: Project Heron
+DEAL: Project Larkspur
+DEAL: Project Nightjar
+DEAL: Project Quicksilver
+DEAL: Project Saffron
+DEAL: Project Sandpiper
+DEAL: Project Tamarack
+DEAL: Project Thistle
+DEAL: Project Wisteria
+CLIENT: Quillon Partners
+CLIENT: Sablewood Media
+CLIENT: Stonebridge Analytics
+CLIENT: Tidewater Ventures
+CLIENT: Valemont Insurance
+CLIENT: Zenthorpe Industries

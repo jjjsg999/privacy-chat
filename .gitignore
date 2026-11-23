@@ -15,3 +15,6 @@ benchmarks/q1a/inputs/
 benchmarks/q1a/references/
 benchmarks/q1a/outputs/
 benchmarks/q1bc/outputs/
+
+# Privacy Filter model weights (downloaded locally; never commit).
+models/

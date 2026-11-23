@@ -95,6 +95,11 @@ def tokenized_instructions(config, channel, privacy, session, terms):
     return privacy.tokenize(text, session['token_map'], terms) if text else ''
 
 
+def apply_privacy_mode(privacy, config):
+    """Pass the saved detector setting (standard | layered) to the shared privacy engine."""
+    privacy.mode = config.get('privacy_detectors', 'standard')
+
+
 def with_instructions(prompt, instructions):
     return prompt + ('\n\nThe user\'s standing instructions (follow them in every reply):\n' + instructions
                      if instructions else '')
@@ -104,6 +109,7 @@ async def chat(session, message, privacy, channel='web'):
     if session.get('session_type') == 'meeting':
         return await ask_meeting(session, message, privacy, channel)
     config = storage.settings()
+    apply_privacy_mode(privacy, config)
     terms = parse_terms(config['sensitive_terms'])
     history = session['messages'] + [{'role': 'user', 'content': message}]
     # Reprocess full local history so new global terms apply to earlier messages too.
@@ -134,6 +140,7 @@ def private_messages(messages, privacy, token_map, terms):
 
 async def meeting_completion(session, messages, privacy, capture_diagnosis=False):
     config = storage.settings()
+    apply_privacy_mode(privacy, config)
     terms = parse_terms(config['sensitive_terms'])
     outbound = private_messages(messages, privacy, session['token_map'], terms)
     model = meeting_model(config)
@@ -366,6 +373,7 @@ async def stream_chat(session, message, privacy, extra=None):
                 yield event
         return
     config = storage.settings()
+    apply_privacy_mode(privacy, config)
     terms = parse_terms(config['sensitive_terms'])
     history = session['messages'] + [{'role': 'user', 'content': message}]
     outbound = [{'role': m['role'], 'content': privacy.tokenize(m['content'], session['token_map'], terms)} for m in history]
@@ -392,6 +400,7 @@ async def stream_ask_meeting(session, question, privacy, extra=None):
         yield {'type': 'error', 'message': 'No analyzed meeting transcript is available yet.', 'saved': False}
         return
     config = storage.settings()
+    apply_privacy_mode(privacy, config)
     terms = parse_terms(config['sensitive_terms'])
     messages = [{'role': 'system', 'content': with_instructions(meeting_prompt('ask.md'), instructions_for(config, 'web'))},
                 transcript_message(session['transcript']),

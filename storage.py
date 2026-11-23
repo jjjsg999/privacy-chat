@@ -41,6 +41,8 @@ def settings():
         'model': os.environ.get('OPENROUTER_MODEL', 'openai/gpt-4o-mini')}
     result['sensitive_terms'] = TERMS.read_text(encoding='utf-8') if TERMS.exists() else ''
     result.setdefault('monthly_cost_ceiling_usd', '2.00')
+    # "standard" (today's detectors) or "layered" (terms > patterns > Privacy Filter > spaCy).
+    result.setdefault('privacy_detectors', 'standard')
     return result
 
 

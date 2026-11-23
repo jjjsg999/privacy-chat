@@ -13,3 +13,4 @@ Pillow>=10
 pillow-heif>=0.18
 rapidocr>=3.10,<4
 onnxruntime>=1.20,<2
+tokenizers>=0.20,<1
