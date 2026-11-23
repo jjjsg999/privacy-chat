@@ -120,10 +120,6 @@ function render(session, options = {}) {
     if (message.pinned) { article.classList.add('pinned'); const badge = document.createElement('span'); badge.className = 'pin-badge'; badge.textContent = 'Pinned'; label.append(' ', badge); }
     const body = document.createElement('div'); body.className = 'body'; body.textContent = message.content;
     if (message.role === 'assistant') renderMessageBody(body, message.content, registry, index);
-    if (session.session_type === 'meeting' && message.role === 'assistant') {  // structured record (or the older prose analysis)
-      if (index === 1 && session.intelligence && typeof session.intelligence === 'object') renderRecord(body, session);
-      else if (index > 1) linkLineRefs(body, session);
-    }
     article.append(label);
     if (message.role === 'assistant' && (message.model || message.stopped)) {
       const note = document.createElement('small'); note.className = 'model-label';
@@ -152,7 +148,7 @@ function render(session, options = {}) {
           const notice = document.createElement('p'); notice.textContent = 'No API snapshot was recorded for this meeting. Enable diagnosis before processing a new meeting. Historical requests cannot be reconstructed exactly.';
           transcript.append(notice);
         }
-      } else transcript.append(session.transcript_lines?.length ? numberedTranscript(session) : body);
+      } else transcript.append(body);
       article.append(transcript);
     } else {
       article.append(body);
@@ -260,95 +256,6 @@ function contextNote(session, message) {
   const foot = document.createElement('p'); foot.className = 'hint'; foot.textContent = notes.join(' ');
   details.append(list, foot);
   return details;
-}
-// ---- Meeting record: line chips, verification flags, action checkboxes.
-// Transcript text and model output are untrusted (they come from Telegram): everything here uses textContent, never HTML.
-const RECORD_SECTIONS = [['decisions', 'Decisions'], ['actions', 'Actions'], ['open_questions', 'Open questions'], ['risks', 'Risks'], ['key_figures', 'Key figures']];
-// A chip for one transcript line. Clicking it quotes the line under the item; clicking again hides it.
-function lineChip(session, n, host) {
-  const text = session.transcript_lines?.[n - 1];
-  const chip = document.createElement('button'); chip.type = 'button'; chip.className = 'line-chip'; chip.textContent = `L${n}`;
-  if (text === undefined) { chip.disabled = true; chip.classList.add('missing'); chip.title = 'This line is not in the transcript'; return chip; }
-  chip.title = 'Show this line of the transcript'; chip.setAttribute('aria-expanded', 'false');
-  chip.onclick = () => {
-    const open = [...host.querySelectorAll('.line-quote')].find(q => q.dataset.line === String(n));
-    if (open) { open.remove(); chip.setAttribute('aria-expanded', 'false'); return; }
-    const quote = document.createElement('blockquote'); quote.className = 'line-quote'; quote.dataset.line = String(n);
-    const label = document.createElement('strong'); label.textContent = `L${n} `;
-    quote.append(label, document.createTextNode(text)); host.append(quote); chip.setAttribute('aria-expanded', 'true');
-  };
-  return chip;
-}
-function recordItem(session, key, item) {
-  const li = document.createElement('li'); li.className = 'record-item'; if (item.verified === false) li.classList.add('unverified');
-  const main = document.createElement('span'); main.className = 'record-text';
-  main.textContent = key === 'actions' ? item.task : key === 'key_figures' ? `${item.figure}${item.context ? ' — ' + item.context : ''}` : item.text;
-  li.append(main);
-  if (key === 'actions') {
-    const meta = document.createElement('span'); meta.className = 'record-meta'; meta.textContent = ` · Owner: ${item.owner || 'not stated'} · Due: ${item.due || 'not stated'}`;
-    const label = document.createElement('label'); label.className = 'action-status';
-    const box = document.createElement('input'); box.type = 'checkbox'; box.checked = session.action_state?.[item.id]?.status === 'done';
-    box.setAttribute('aria-label', `Mark action ${item.id} done`);
-    box.onchange = async () => {
-      const done = box.checked;
-      try {
-        await api(`/api/actions/${encodeURIComponent(session.id)}/${encodeURIComponent(item.id)}`, {method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({status: done ? 'done' : 'open'})});
-        (session.action_state ||= {})[item.id] = {status: done ? 'done' : 'open'};
-      } catch (error) { box.checked = !done; status(error.message, true); }
-    };
-    label.append(box, ' Done'); li.append(meta, ' ', label);
-  }
-  for (const n of item.lines || []) li.append(' ', lineChip(session, n, li));
-  if (item.verified === false) {
-    const flag = document.createElement('span'); flag.className = 'record-flag'; flag.textContent = ` ⚠ Unverified: ${item.reason || 'could not be checked'}`; li.append(flag);
-  }
-  return li;
-}
-function renderRecord(body, session) {
-  const record = session.intelligence;
-  body.replaceChildren(); body.classList.add('meeting-record');
-  const brief = document.createElement('div'); renderMarkdown(brief, record.brief); body.append(brief);
-  if (record.structured === false) {
-    const note = document.createElement('p'); note.className = 'record-failed';
-    note.textContent = `The structured part failed (${record.failure || 'unknown reason'}), so only the brief is shown.`; body.append(note); return;
-  }
-  for (const [key, title] of RECORD_SECTIONS) {
-    const items = record[key] || [];
-    const section = document.createElement('section'); section.className = 'record-section';
-    const heading = document.createElement('h3'); heading.textContent = `${title} (${items.length})`; section.append(heading);
-    if (items.length) { const list = document.createElement('ul'); for (const item of items) list.append(recordItem(session, key, item)); section.append(list); }
-    else { const none = document.createElement('p'); none.className = 'hint'; none.textContent = 'Nothing recorded.'; section.append(none); }
-    body.append(section);
-  }
-}
-// The stored transcript, numbered the way the model and the chips number it.
-function numberedTranscript(session) {
-  const box = document.createElement('div'); box.className = 'numbered-transcript';
-  session.transcript_lines.forEach((line, index) => {
-    const row = document.createElement('div'); row.className = 'tline'; row.id = `tl-${index + 1}`;
-    const number = document.createElement('span'); number.className = 'ln'; number.textContent = `L${index + 1}`;
-    const text = document.createElement('span'); text.className = 'lt'; text.textContent = line; row.append(number, text); box.append(row);
-  });
-  return box;
-}
-// [L12] in a meeting answer becomes a chip when line 12 exists; otherwise it stays plain text with a small marker.
-function linkLineRefs(body, session) {
-  const count = session.transcript_lines?.length || 0;
-  const walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT), nodes = [];
-  while (walker.nextNode()) if (!walker.currentNode.parentElement.closest('pre, code, a, button')) nodes.push(walker.currentNode);
-  for (const node of nodes) {
-    const parts = node.nodeValue.split(/(\[L\d+\])/);
-    if (parts.length < 2) continue;
-    const host = node.parentElement.closest('p, li, blockquote, div') || body, fragment = document.createDocumentFragment();
-    for (const part of parts) {
-      const match = /^\[L(\d+)\]$/.exec(part);
-      if (!match) { fragment.append(part); continue; }
-      const n = Number(match[1]);
-      if (n >= 1 && n <= count) fragment.append(lineChip(session, n, host));
-      else { const span = document.createElement('span'); span.className = 'ref-invalid'; span.title = 'This line is not in the transcript'; span.textContent = `${part}?`; fragment.append(span); }
-    }
-    node.replaceWith(fragment);
-  }
 }
 function startEdit(article, message, index) {
   if (busy) { status('Wait for the current reply to finish before editing.', true); return; }
@@ -683,8 +590,6 @@ const linkedSession = new URLSearchParams(location.search).get('session');
 if (linkedSession) api(`/api/sessions/${encodeURIComponent(linkedSession)}`).then(session => {
   render(session); const transcript = document.querySelector('.meeting-panel');
   if (transcript) { transcript.open = true; transcript.scrollIntoView(); }
-  const line = document.getElementById(`tl-${Number(new URLSearchParams(location.search).get('line'))}`);
-  if (line) { line.classList.add('flash'); line.scrollIntoView({block: 'center'}); }
 }).catch(error => status(error.message, true));
 // Keyboard shortcuts (Enter / Shift+Enter in the message box are handled above). Listed in the ⌨ dialog.
 $('show-shortcuts').onclick = () => $('shortcuts').showModal();

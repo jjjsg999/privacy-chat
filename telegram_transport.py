@@ -10,7 +10,6 @@ from telegram import Update
 from telegram.ext import Application, ApplicationHandlerStop, CommandHandler, MessageHandler, TypeHandler, filters
 
 import engine
-import meeting_record
 import storage
 
 log = logging.getLogger(__name__)
@@ -23,8 +22,7 @@ HELP = (
     '/title [text] — show or set the current title\n'
     '/new — archive this conversation and start fresh\n'
     '/meeting — start fresh transcript capture; analysis follows 5 seconds of silence\n'
-    '/ask <question> — ask about the full analyzed meeting transcript (answers cite lines such as [L12])\n'
-    '/actions — list open actions from all meetings (change their status in Web)'
+    '/ask <question> — ask about the full analyzed meeting transcript'
 )
 
 
@@ -153,8 +151,7 @@ class TelegramTransport:
                 mapping[key] = result['id']
                 storage.write_json(path, mapping)
                 del self.captures[key]
-            for message in meeting_record.telegram_messages(result['intelligence']):
-                await reply(update, message)
+            await reply(update, result['intelligence'])
         except asyncio.CancelledError:
             raise
         except Exception as exc:
@@ -185,12 +182,6 @@ class TelegramTransport:
                 except engine.ChatError as exc:
                     answer = str(exc)
         await reply(update, answer)
-
-    async def actions(self, update, context):
-        async with self.lock:
-            open_actions = storage.list_actions(status='open')['actions']
-        for message in meeting_record.telegram_actions(open_actions):
-            await reply(update, message)
 
     async def message(self, update, context):
         text = (update.effective_message.text or '').strip()
@@ -241,7 +232,7 @@ class TelegramTransport:
         application.add_handler(TypeHandler(Update, self.guard), group=-1)
         for command, handler in [('start', self.meeting), ('help', self.help),
                 ('terms', self.terms), ('title', self.title), ('new', self.new),
-                ('meeting', self.meeting), ('ask', self.ask), ('actions', self.actions)]:
+                ('meeting', self.meeting), ('ask', self.ask)]:
             application.add_handler(CommandHandler(command, handler))
         application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.message))
         application.add_handler(MessageHandler(filters.ALL, self.unsupported))

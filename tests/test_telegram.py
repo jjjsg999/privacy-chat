@@ -120,7 +120,7 @@ class TelegramSmokeTests(unittest.IsolatedAsyncioTestCase):
         self.complete.reset_mock()
         storage.atomic_write(storage.TERMS, 'CLIENT: Acme')
         async def meeting_reply(messages, model):
-            return json.dumps({'brief': re.search(r'CLIENT__\d+', messages[1]['content'])[0] + ' reply'})
+            return re.search(r'CLIENT__\d+', messages[1]['content'])[0] + ' reply'
         self.complete.side_effect = meeting_reply
         await self.send('/meeting')
         capture = self.transport.captures['123:123']
@@ -147,10 +147,9 @@ class TelegramSmokeTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn('RAW MEETING TRANSCRIPT', outbound)
         saved = storage.load_session(capture['session']['id'])
         self.assertEqual(saved['transcript'], 'Acme: we should delay launch.\n\nFinance: the budget expires Friday.')
-        self.assertEqual(saved['intelligence']['brief'], 'Acme reply')
-        self.assertTrue(saved['intelligence']['structured'])
+        self.assertEqual(saved['intelligence'], 'Acme reply')
         self.assertEqual(saved['mode'], 'meeting_ready')
-        self.assertTrue(self.reply.call_args.args[0].startswith('Acme reply'))  # the compact summary starts with the brief
+        self.assertEqual(self.reply.call_args.args[0], 'Acme reply')
 
     async def test_meeting_new_cancels_pending_analysis_without_blank_files(self):
         await self.send('/meeting')
@@ -172,7 +171,7 @@ class TelegramSmokeTests(unittest.IsolatedAsyncioTestCase):
         capture = self.transport.captures['123:123']
         storage.atomic_write(storage.TERMS, 'CLIENT: Acme')
         storage.write_json(storage.DATA / 'settings.json', {'model':'test/selected-meeting-model'})
-        self.complete.side_effect = [json.dumps({'brief': 'Meeting intelligence.'}), '""']
+        self.complete.side_effect = ['Meeting intelligence.', '""']
         await engine.analyze_meeting(capture['session'], 'Acme committed to Friday. Hidden detail: seven approvals.', self.privacy)
         self.assertEqual(capture['session']['title'], 'Meeting intelligence')
         self.assertIn('executive intelligence analyst', self.complete.await_args_list[0].args[0][0]['content'])
