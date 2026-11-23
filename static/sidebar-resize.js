@@ -2,7 +2,7 @@
 (() => {
   const sidebar = document.getElementById('sidebar');
   if (!sidebar) return;
-  const KEY = 'privacy-llm-sidebar-width', MIN = 200, MAX = 560, DEFAULT = 270;
+  const KEY = 'privacy-llm-sidebar-width', MIN = 200, MAX = 560, DEFAULT = 248;
   const clamp = value => Math.min(MAX, Math.max(MIN, Math.round(value)));
   let width = DEFAULT;
   try { const saved = Number(localStorage.getItem(KEY)); if (saved) width = clamp(saved); } catch (_) {}

@@ -2,23 +2,37 @@
 <html lang="en">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Privacy LLM</title><link rel="stylesheet" href="/static/style.css"><script src="/static/theme.js"></script><script src="/static/vendor/purify.min.js" defer></script><script src="/static/chat.js" type="module"></script><script src="/static/sidebar-resize.js" defer></script></head>
 <body class="chat-page">
-  <aside id="sidebar">
-    <a class="brand" href="/">Privacy <span>LLM</span></a>
-    <p class="eyebrow">YOUR PERSONAL WORKSPACE</p>
-    <nav class="main-nav" aria-label="Main navigation"><a href="/" aria-current="page">Meetings &amp; chat</a><a href="/adviser">Adviser chat</a><a href="/memory">Memory</a><a href="/settings">Settings</a></nav>
-    <label class="space-label" for="space-switcher">Space</label><select id="space-switcher" aria-describedby="space-hint"></select>
+  <aside id="sidebar" aria-label="Conversations and navigation">
+    <a class="brand" href="/"><span class="brand-tile" aria-hidden="true"><svg class="ico" viewBox="0 0 24 24" width="18" height="18" focusable="false"><path d="M7 11V8a5 5 0 0 1 10 0v3"/><rect x="5" y="11" width="14" height="10" rx="2"/></svg></span><span class="brand-name">Privacy <span class="dim">LLM</span></span></a>
+    <div id="space-block" class="space-block">
+      <div id="space-seg" class="seg" role="group" aria-label="Space" hidden></div>
+      <label class="space-label" for="space-switcher">Space</label><select id="space-switcher" aria-describedby="space-hint"></select>
+    </div>
     <button id="new-chat" class="primary">+ New conversation</button>
-    <label class="sr-only" for="session-search">Search conversations</label><input id="session-search" type="search" placeholder="Search conversations…" maxlength="200" autocomplete="off">
-    <label class="all-spaces"><input type="checkbox" id="all-spaces"> Search all spaces</label><p id="space-hint" class="sr-only">Conversations are grouped into spaces. Only the chosen space is listed.</p>
+    <div class="search-block">
+      <label class="sr-only" for="session-search">Search conversations</label><input id="session-search" type="search" placeholder="Search conversations…" maxlength="200" autocomplete="off">
+      <label class="all-spaces"><input type="checkbox" id="all-spaces"> Search all spaces</label><p id="space-hint" class="sr-only">Conversations are grouped into spaces. Only the chosen space is listed.</p>
+    </div>
+    <nav class="main-nav" aria-label="Main navigation"><a href="/" aria-current="page"><svg class="ico" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M4 5h16v11H9l-5 4z"/></svg>Meetings &amp; chat</a><a href="/adviser"><svg class="ico" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Adviser chat</a><a href="/memory"><svg class="ico" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg>Memory</a><a href="/settings"><svg class="ico" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>Settings</a></nav>
     <nav id="sessions" aria-label="Conversations"></nav>
   </aside>
   <main class="conversation">
-    <header><button id="toggle-sidebar" aria-label="Toggle conversations" aria-expanded="false" aria-controls="sidebar">☰</button><h1 id="chat-title">New conversation</h1><button id="export" type="button" hidden title="Download this conversation as Markdown. The file contains your real, unmasked text.">Export</button><button id="show-shortcuts" type="button" title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts">⌨</button><span class="local-badge">Local workspace</span></header>
+    <header><button id="toggle-sidebar" aria-label="Toggle conversations" aria-expanded="false" aria-controls="sidebar">☰</button><div class="crumb"><span id="crumb-space" class="crumb-space"></span><span class="crumb-sep" aria-hidden="true">/</span><h1 id="chat-title">New conversation</h1></div><button id="export" type="button" hidden title="Download this conversation as Markdown. The file contains your real, unmasked text.">Export</button><button id="show-shortcuts" type="button" title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts"><span aria-hidden="true">⌨</span><span class="btn-text"> Shortcuts</span></button><button id="details-toggle" type="button" aria-expanded="false" aria-controls="details">Details</button><span class="local-badge" title="Local workspace: history stays on this device"><svg class="ico" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false"><path d="M7 11V8a5 5 0 0 1 10 0v3"/><rect x="5" y="11" width="14" height="10" rx="2"/></svg><span class="badge-full">Local workspace</span><span class="badge-short">Local</span></span></header>
     <div id="messages" role="log" aria-live="polite" aria-label="Conversation messages">
       <section class="welcome"><div class="welcome-icon" aria-hidden="true">✳</div><p class="eyebrow">A LITTLE MORE PRIVATE</p><h2>Space to think freely.</h2><p>Ask a question, explore an idea, or work through a decision.</p><p class="privacy-note">Sensitive terms and detected personal details are replaced locally before your message reaches the model.</p></section>
     </div>
-    <footer><button id="jump-latest" type="button" hidden>↓ Jump to latest</button><p id="status" role="status"></p><div id="attachments" aria-label="Attached files"></div><form id="composer"><label class="sr-only" for="message">Message</label><textarea id="message" rows="2" maxlength="50000" placeholder="What’s on your mind?"></textarea><input id="file-input" type="file" multiple hidden accept=".pdf,.docx,.txt,.md,.csv,.png,.jpg,.jpeg,.webp,.bmp,.heic,.heif"><button id="attach" type="button" title="Attach PDFs, Word files, text or images. They are read on this computer.">Attach</button><button id="send" class="primary" type="submit">Send <span aria-hidden="true">↑</span></button><button id="stop" type="button" hidden>Stop</button></form><p class="footnote">History stays on this device. Privacy detection may miss details; review sensitive content.</p></footer>
+    <footer><div class="footer-inner"><button id="jump-latest" type="button" hidden>↓ Jump to latest</button><p id="status" role="status"></p><div id="attachments" aria-label="Attached files"></div><form id="composer"><label class="sr-only" for="message">Message</label><textarea id="message" rows="2" maxlength="50000" placeholder="What’s on your mind?"></textarea><input id="file-input" type="file" multiple hidden accept=".pdf,.docx,.txt,.md,.csv,.png,.jpg,.jpeg,.webp,.bmp,.heic,.heif"><button id="attach" type="button" title="Attach PDFs, Word files, text or images. They are read on this computer.">Attach</button><button id="send" class="primary" type="submit">Send <span aria-hidden="true">↑</span></button><button id="stop" type="button" hidden>Stop</button></form><p class="footnote"><svg class="ico" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false"><path d="M7 11V8a5 5 0 0 1 10 0v3"/><rect x="5" y="11" width="14" height="10" rx="2"/></svg><span>History stays on this device. Privacy detection may miss details; review sensitive content.</span></p></div></footer>
   </main>
+  <aside id="details" aria-label="Conversation details">
+    <div class="details-head"><h2 id="details-heading">This conversation</h2><button id="details-close" type="button" aria-label="Close details">×</button></div>
+    <div class="details-body">
+      <section class="d-sec" aria-labelledby="d-space-h"><h3 id="d-space-h">Space</h3><p id="d-space" class="d-val"></p></section>
+      <section class="d-sec" aria-labelledby="d-model-h"><h3 id="d-model-h">Model</h3><p id="d-model" class="d-val"></p></section>
+      <section class="d-sec" aria-labelledby="d-context-h"><h3 id="d-context-h">Last request</h3><div id="d-context"></div></section>
+      <section class="d-sec" aria-labelledby="d-pinned-h"><h3 id="d-pinned-h">Pinned</h3><ul id="d-pinned" class="d-list"></ul></section>
+      <section class="d-sec" aria-labelledby="d-artifacts-h"><h3 id="d-artifacts-h">Artifacts in this chat</h3><ul id="d-artifacts" class="d-list"></ul></section>
+    </div>
+  </aside>
   <section id="artifact-pane" aria-label="Artifact" hidden>
     <div class="artifact-bar">
       <strong id="artifact-title"></strong>
@@ -38,7 +52,7 @@
     <table>
       <tr><td><kbd>Enter</kbd></td><td>Send the message</td></tr>
       <tr><td><kbd>Shift</kbd> + <kbd>Enter</kbd></td><td>New line</td></tr>
-      <tr><td><kbd>Esc</kbd></td><td>Stop the reply, or cancel an edit</td></tr>
+      <tr><td><kbd>Esc</kbd></td><td>Stop the reply, close Details, or cancel an edit</td></tr>
       <tr><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>O</kbd></td><td>New conversation</td></tr>
       <tr><td><kbd>Ctrl</kbd> + <kbd>K</kbd></td><td>Search conversations</td></tr>
       <tr><td><kbd>/</kbd></td><td>Focus the message box</td></tr>

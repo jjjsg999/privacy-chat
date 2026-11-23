@@ -59,7 +59,20 @@ async function loadSpaces() {
   space = spaces.some(s => s.id === saved) ? saved : (spaces.find(s => s.id === 'work') || spaces[0]).id;
   $('space-switcher').replaceChildren(...spaces.map(s => new Option(s.name, s.id)));
   $('space-switcher').value = space;
+  buildSpaceSegments(); renderDetails(current);
 }
+// Up to three spaces show as a segmented control; more fall back to the original dropdown (the select stays the source of truth).
+function buildSpaceSegments() {
+  const seg = $('space-seg'), few = spaces.length > 1 && spaces.length <= 3;
+  seg.hidden = !few; $('space-switcher').hidden = few; document.querySelector('label[for=space-switcher]').hidden = few;
+  seg.replaceChildren(...(few ? spaces.map(s => {
+    const button = document.createElement('button'); button.type = 'button'; button.textContent = s.name; button.dataset.space = s.id;
+    button.setAttribute('aria-pressed', String(s.id === $('space-switcher').value));
+    button.onclick = () => { if (s.id === $('space-switcher').value) return; $('space-switcher').value = s.id; $('space-switcher').onchange(); };
+    return button;
+  }) : []));
+}
+const syncSpaceSegments = () => { for (const button of $('space-seg').children) button.setAttribute('aria-pressed', String(button.dataset.space === $('space-switcher').value)); };
 let busy = false;
 const welcome = $('messages').firstElementChild.cloneNode(true);
 const pane = createPane({getMessages: () => current?.messages || [], copyText, status,
@@ -124,20 +137,26 @@ function render(session, options = {}) {
     const heading = document.createElement('h2'); heading.className = 'history-heading'; heading.textContent = 'Full conversation history'; $('messages').append(heading);
   }
   const registry = session && session.session_type !== 'meeting' ? collectArtifacts(session.messages) : new Map();
+  const latestContext = lastContextIndex(session?.messages || []);
   for (const [index, message] of (session?.messages || []).entries()) {
     const article = document.createElement('article');
     article.className = `message ${message.role}`;
-    const label = document.createElement('span'); label.className = 'speaker';
-    label.textContent = message.role === 'user' ? 'You' : 'Assistant';
-    if (message.pinned) { article.classList.add('pinned'); const badge = document.createElement('span'); badge.className = 'pin-badge'; badge.textContent = 'Pinned'; label.append(' ', badge); }
+    // Each message is a full-width row: a label column (who, model, pinned) and a content column.
+    const inner = document.createElement('div'); inner.className = 'msg-inner';
+    const label = document.createElement('div'); label.className = 'msg-label';
+    const speaker = document.createElement('span'); speaker.className = 'speaker';
+    speaker.textContent = message.role === 'user' ? 'You' : 'Assistant';
+    label.append(speaker);
+    const content = document.createElement('div'); content.className = 'msg-content';
+    inner.append(label, content); article.append(inner);
     const body = document.createElement('div'); body.className = 'body'; body.textContent = message.content;
     if (message.role === 'assistant') renderMessageBody(body, message.content, registry, index);
-    article.append(label);
     if (message.role === 'assistant' && (message.model || message.stopped)) {
       const note = document.createElement('small'); note.className = 'model-label';
       note.textContent = [message.model, message.stopped ? 'stopped early' : ''].filter(Boolean).join(' · ');
-      body.append(note);
+      label.append(note);
     }
+    if (message.pinned) { article.classList.add('pinned'); const badge = document.createElement('span'); badge.className = 'pin-badge'; badge.textContent = 'Pinned'; label.append(badge); }
     if (session.session_type === 'meeting' && index === 0 && message.role === 'user') {
       const transcript = document.createElement('details'); transcript.className = 'meeting-panel';
       const summary = document.createElement('summary'); summary.textContent = 'Full transcript';
@@ -161,9 +180,9 @@ function render(session, options = {}) {
           transcript.append(notice);
         }
       } else transcript.append(body);
-      article.append(transcript);
+      content.append(transcript);
     } else {
-      article.append(body);
+      content.append(body);
     }
     if (message.role === 'user' && message.attachments?.length) {
       const typed = message.typed || '';
@@ -172,7 +191,7 @@ function render(session, options = {}) {
       const summary = document.createElement('summary');
       summary.textContent = `Attached: ${message.attachments.map(file => file.name).join(', ')} (view extracted text)`;
       const text = document.createElement('div'); text.className = 'api-text'; text.textContent = message.content.slice(typed.length).trim();
-      details.append(summary, text); article.append(details);
+      details.append(summary, text); content.append(details);
       if (session.id) {
         const files = document.createElement('div'); files.className = 'file-pins';
         message.attachments.forEach((file, fileIndex) => {
@@ -182,10 +201,14 @@ function render(session, options = {}) {
           button.onclick = () => setPin({kind: 'file', index, file: fileIndex, pinned: !file.pinned});
           files.append(button);
         });
-        article.append(files);
+        content.append(files);
       }
     }
-    if (message.role === 'assistant' && message.context) article.append(contextNote(session, message));
+    if (message.role === 'assistant' && message.context) {
+      const note = contextNote(session, message);
+      if (index === latestContext) note.classList.add('is-latest');  // the right panel shows this one when it is visible
+      content.append(note);
+    }
     if (message.role === 'assistant' && message.truncated) {  // the provider stopped at the output limit
       const note = document.createElement('p'); note.className = 'truncated-note';
       note.append('This reply hit the length limit and was cut off. ');
@@ -197,15 +220,49 @@ function render(session, options = {}) {
         };
         note.append(again);
       }
-      article.append(note);
+      content.append(note);
     }
     const actions = messageActions(session, message, index, article);
-    if (actions) article.append(actions);
+    if (actions) content.append(actions);
     $('messages').append(article);
   }
   if (keep === null) { follow = true; scrollToBottom(); } else $('messages').scrollTop = keep;
   $('export').hidden = !session?.messages?.length;
   pane.sync(session?.id);
+  renderDetails(session);
+}
+const lastContextIndex = messages => { for (let i = messages.length - 1; i >= 0; i--) if (messages[i].role === 'assistant' && messages[i].context) return i; return -1; };
+// The "Conversation details" panel. All text is set with textContent; pins and artifact buttons reuse the chat's own handlers.
+const emptyItem = text => { const li = document.createElement('li'); li.className = 'd-empty'; li.textContent = text; return li; };
+function renderDetails(session) {
+  const messages = session?.messages || [];
+  const name = spaceName(session?.space || space);
+  $('crumb-space').textContent = name; $('d-space').textContent = name;
+  const reply = [...messages].reverse().find(m => m.role === 'assistant' && m.model);
+  $('d-model').textContent = reply?.model || 'Chosen in Settings';
+  const lastContext = lastContextIndex(messages);
+  if (lastContext >= 0) $('d-context').replaceChildren(contextNote(session, messages[lastContext]));
+  else { const none = document.createElement('p'); none.className = 'd-empty'; none.textContent = 'Nothing sent yet. After a reply, what was sent and what was left out shows here.'; $('d-context').replaceChildren(none); }
+  const registry = session && session.session_type !== 'meeting' ? collectArtifacts(messages) : new Map();
+  const pinned = [];
+  messages.forEach((m, index) => {
+    if (m.pinned) pinned.push({text: snippetOf(session, index), change: {kind: 'message', index, pinned: false}});
+    (m.attachments || []).forEach((file, fileIndex) => { if (file.pinned) pinned.push({text: `File ${file.name}`, change: {kind: 'file', index, file: fileIndex, pinned: false}}); });
+  });
+  for (const id of session?.pinned_artifacts || []) pinned.push({text: `Artifact "${registry.get(id)?.versions.at(-1)?.title || id}"`, change: {kind: 'artifact', artifact: id, pinned: false}});
+  $('d-pinned').replaceChildren(...(pinned.length ? pinned.map(item => {
+    const li = document.createElement('li'), text = document.createElement('span'); text.textContent = item.text;
+    const button = document.createElement('button'); button.type = 'button'; button.className = 'pin-button'; button.textContent = 'Unpin';
+    button.setAttribute('aria-label', `Unpin: ${item.text}`); button.onclick = () => setPin(item.change);
+    li.append(text, button); return li;
+  }) : [emptyItem('Nothing pinned. Pin a message, file or artifact to send it with every request.')]));
+  $('d-artifacts').replaceChildren(...(registry.size ? [...registry].map(([id, entry]) => {
+    const last = entry.versions[entry.versions.length - 1];
+    const li = document.createElement('li'), button = document.createElement('button'); button.type = 'button'; button.className = 'd-open';
+    button.textContent = `${last.title} · ${artifactLabel(last.type)}${entry.versions.length > 1 ? ` · ${entry.versions.length} versions` : ''}`;
+    button.onclick = () => pane.open(id, -1, session?.id);
+    li.append(button); return li;
+  }) : [emptyItem('No artifacts yet.')]));
 }
 // Copy on every message; Edit on your messages and Branch on replies, for normal saved chats only.
 function messageActions(session, message, index, article) {
@@ -230,6 +287,11 @@ async function setPin(pin) {
     render(await api(`/api/sessions/${current.id}`, {method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({pin})}), {keepScroll: true});
   } catch (error) { status(error.message, true); }
 }
+function snippetOf(session, index) {
+  const m = session.messages?.[index]; if (!m) return `message ${index + 1} (no longer in this conversation)`;
+  const text = ((m.attachments?.length ? m.typed : m.content) || '').replace(/\s+/g, ' ').trim();
+  return `${m.role === 'user' ? 'You' : 'Assistant'}: ${text.length > 70 ? text.slice(0, 70) + '…' : text || '(attachment only)'}`;
+}
 const plural = (count, word) => `${count} ${word}${count === 1 ? '' : 's'}`;
 // One muted line under a reply that left things out. Click it for the list, with a pin button beside each item.
 function contextNote(session, message) {
@@ -251,12 +313,7 @@ function contextNote(session, message) {
     }
     list.append(li);
   };
-  const snippet = index => {
-    const m = session.messages?.[index]; if (!m) return `message ${index + 1} (no longer in this conversation)`;
-    const text = ((m.attachments?.length ? m.typed : m.content) || '').replace(/\s+/g, ' ').trim();
-    return `${m.role === 'user' ? 'You' : 'Assistant'}: ${text.length > 70 ? text.slice(0, 70) + '…' : text || '(attachment only)'}`;
-  };
-  for (const index of messages) item(snippet(index), session.messages?.[index] && {label: 'Pin', change: {kind: 'message', index, pinned: true}});
+  for (const index of messages) item(snippetOf(session, index), session.messages?.[index] && {label: 'Pin', change: {kind: 'message', index, pinned: true}});
   for (const a of artifacts) {
     const pinned = (session.pinned_artifacts || []).includes(a.id);
     item(`Artifact "${a.title}" version ${a.version}`, {label: pinned ? 'Pinned latest' : 'Pin latest version', change: {kind: 'artifact', artifact: a.id, pinned: true}});
@@ -287,7 +344,7 @@ function startEdit(article, message, index) {
   };
   row.append(cancel, save); editor.append(area, row);
   body.hidden = true; if (bar) bar.hidden = true;
-  article.insertBefore(editor, body.nextSibling || null);
+  body.parentNode.insertBefore(editor, body.nextSibling || null);
   area.focus(); area.setSelectionRange(area.value.length, area.value.length);
 }
 function setBusy(on) {
@@ -423,7 +480,9 @@ async function refreshSessions() {
       }
       row.append(menu);
     };
-    row.append(button, rename, menuButton, remove);
+    const actions = document.createElement('div'); actions.className = 'row-actions';  // shown on hover or focus (always on touch screens)
+    actions.append(rename, menuButton, remove);
+    row.append(button, actions);
     return row;
   };
   // Pinned first, then everything else, then the archive (collapsed unless you are searching).
@@ -451,6 +510,7 @@ $('space-switcher').onchange = () => {
   space = $('space-switcher').value;
   try { localStorage.setItem(SPACE_KEY, space); } catch { /* remembered only when storage is available */ }
   if (current && (current.space || 'work') !== space) { render(null); $('message').value = ''; attachments = []; renderAttachments(); }
+  syncSpaceSegments(); renderDetails(current);
   status('');
   refreshSessions().catch(error => status(error.message, true));
 };
@@ -459,6 +519,20 @@ let searchTimer = 0;
 $('session-search').oninput = () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => refreshSessions().catch(error => status(error.message, true)), 250); };
 function closeSidebar() { $('sidebar').classList.remove('open'); $('toggle-sidebar').setAttribute('aria-expanded', 'false'); }
 $('toggle-sidebar').onclick = () => { const open = $('sidebar').classList.toggle('open'); $('toggle-sidebar').setAttribute('aria-expanded', String(open)); };
+// Details panel: always shown at 1280px and wider. Below that it opens from the Details button, as a drawer (or a full-screen sheet on phones).
+const detailsDrawer = window.matchMedia('(max-width:1279px)');
+function setDetails(open, restoreFocus = true) {
+  $('details').classList.toggle('open', open);
+  $('details-toggle').setAttribute('aria-expanded', String(open));
+  if (open) $('details-close').focus(); else if (restoreFocus) $('details-toggle').focus();
+}
+const detailsOpen = () => $('details').classList.contains('open') && detailsDrawer.matches;
+$('details-toggle').onclick = () => setDetails(!$('details').classList.contains('open'));
+$('details-close').onclick = () => setDetails(false);
+detailsDrawer.addEventListener('change', () => { if ($('details').classList.contains('open')) setDetails(false, false); });
+// While the artifact pane is open the panel stays out of the way (the CSS hides it); make the button state agree.
+new MutationObserver(() => { if (!$('artifact-pane').hidden && $('details').classList.contains('open')) setDetails(false, false); })
+  .observe($('artifact-pane'), {attributes: true, attributeFilter: ['hidden']});
 $('new-chat').onclick = () => { if (busy) return; render(null); $('message').value = ''; attachments = []; renderAttachments(); status(''); closeSidebar(); refreshSessions().catch(error => status(error.message, true)); $('message').focus(); };
 let controller = null;
 $('stop').onclick = () => controller?.abort();
@@ -638,6 +712,7 @@ document.addEventListener('keydown', event => {
   const target = event.target, typing = target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
   const mod = event.ctrlKey || event.metaKey;
   if (event.key === 'Escape' && controller) { event.preventDefault(); controller.abort(); }
+  else if (event.key === 'Escape' && detailsOpen()) { event.preventDefault(); setDetails(false); }
   else if (event.key === 'Escape' && pane.isOpen()) { event.preventDefault(); pane.close(); }
   else if (mod && event.shiftKey && event.code === 'KeyO') { event.preventDefault(); $('new-chat').click(); }
   else if (mod && !event.shiftKey && event.code === 'KeyK') {
