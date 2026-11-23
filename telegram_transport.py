@@ -114,11 +114,15 @@ class TelegramTransport:
         await reply(update, text)
 
     async def boundary(self, update, meeting=False):
+        # Discard a pending capture BEFORE waiting for the lock. An analysis that is already running holds the lock for
+        # as long as the model takes, so /new used to wait for it, let it finish and post it, and only then take effect.
+        key = f'{update.effective_chat.id}:{update.effective_user.id}'
+        capture = self.captures.pop(key, None)
+        if capture and capture.get('task'):
+            capture['task'].cancel()  # also aborts a running analysis; its lock is released as it unwinds
+            await asyncio.gather(capture['task'], return_exceptions=True)
         async with self.lock:
             path, mapping, key, session = self.active(update)
-            capture = self.captures.pop(key, None)
-            if capture and capture.get('task'):
-                capture['task'].cancel()
             if session:
                 session['archived_at'] = storage.now()
                 storage.save_session(session)

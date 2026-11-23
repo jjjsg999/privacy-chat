@@ -151,6 +151,50 @@ class TelegramSmokeTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(saved['mode'], 'meeting_ready')
         self.assertEqual(self.reply.call_args.args[0], 'Acme reply')
 
+    async def test_new_during_a_running_analysis_discards_it_instead_of_waiting_and_posting_it(self):
+        real_sleep = asyncio.sleep
+        started, release = asyncio.Event(), asyncio.Event()
+
+        async def slow_analysis(messages, model, *args, **kwargs):
+            started.set()
+            await release.wait()
+            return 'Late analysis that must never be posted'
+        self.complete.side_effect = slow_analysis
+        await self.send('/meeting')
+        with patch('telegram_transport.asyncio.sleep', new=AsyncMock()):
+            await self.send('The transcript of the earlier meeting')
+            await asyncio.wait_for(started.wait(), timeout=2)  # the analysis is now running and holds the lock
+            self.reply.reset_mock()
+            new_command = asyncio.create_task(self.send('/new'))
+            await real_sleep(.1)
+            self.assertTrue(new_command.done(), '/new must not wait for the running analysis')
+            await new_command
+        release.set()
+        await real_sleep(.05)
+        self.assertEqual(self.transport.captures, {})
+        self.assertEqual(storage.list_sessions(), [])  # nothing from the discarded meeting was saved
+        replies = [call.args[0] for call in self.reply.await_args_list]
+        self.assertEqual(len(replies), 1)
+        self.assertIn('Ready for a fresh conversation', replies[0])
+        self.assertFalse(self.lock.locked())
+        self.complete.side_effect = None
+        await self.send('A normal question')  # and the chat works normally afterwards
+        self.assertEqual(storage.load_session(storage.list_sessions()[0]['id'])['session_type'], 'chat')
+
+    async def test_new_after_a_failed_analysis_discards_the_kept_chunks(self):
+        self.complete.side_effect = engine.ChatError('Unavailable')
+        await self.send('/meeting')
+        with patch('telegram_transport.asyncio.sleep', new=AsyncMock()):
+            await self.send('Transcript that fails')
+            await self.transport.captures['123:123']['task']
+        self.assertIn('123:123', self.transport.captures)  # kept for a retry, as designed
+        self.complete.side_effect = None
+        self.complete.reset_mock()
+        await self.send('/new')
+        self.assertEqual(self.transport.captures, {})
+        self.assertIn('Ready for a fresh conversation', self.reply.call_args.args[0])
+        await asyncio.sleep(.05)
+        self.complete.assert_not_awaited()
     async def test_meeting_new_cancels_pending_analysis_without_blank_files(self):
         await self.send('/meeting')
         await self.send('/meeting')
@@ -293,3 +337,4 @@ class TelegramSmokeTests(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
