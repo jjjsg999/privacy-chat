@@ -1,4 +1,5 @@
 """Shared chat logic: all remote messages pass through privacy processing."""
+import contextvars
 import json
 import zlib
 from contextlib import aclosing
@@ -16,6 +17,11 @@ _monthly_prices = None
 
 class ChatError(Exception):
     pass
+
+
+# Meeting analysis and questions send a whole transcript and wait for a long answer, so they get a longer read timeout.
+SLOW_TIMEOUT = 300
+_slow_call = contextvars.ContextVar('slow_call', default=False)
 
 
 class CostLimitError(ChatError):
@@ -54,7 +60,7 @@ async def complete(messages, model, max_tokens=None, *, purpose=None):
     except (dev_budget.BudgetError, OSError) as exc:
         raise CostLimitError(str(exc) if isinstance(exc, dev_budget.BudgetError) else 'Monthly ledger unavailable; no request sent.') from None
     try:
-        async with httpx.AsyncClient(timeout=90) as client:
+        async with httpx.AsyncClient(timeout=SLOW_TIMEOUT if _slow_call.get() else 90) as client:
             response = await client.post('https://openrouter.ai/api/v1/chat/completions',
                 headers={'Authorization': f'Bearer {key}'},
                 json={'model': model, 'messages': messages, 'max_tokens': max_tokens,
@@ -67,7 +73,13 @@ async def complete(messages, model, max_tokens=None, *, purpose=None):
             raise ValueError('Empty completion')
         return content
     except (httpx.HTTPError, ValueError, KeyError, IndexError, TypeError) as exc:
-        # Never expose provider responses or secrets in errors.
+        # Never expose provider responses or secrets in errors. Only the kind of failure is named, so it can be acted on.
+        if isinstance(exc, httpx.TimeoutException):
+            raise ChatError('The model took too long to answer and the request timed out. Retry, or choose a faster model.') from exc
+        if isinstance(exc, ValueError) and str(exc) == 'Empty completion':
+            raise ChatError('The model returned an empty reply. Retry, or choose another model.') from exc
+        if isinstance(exc, httpx.HTTPStatusError):
+            raise ChatError(f'OpenRouter refused the request (HTTP {exc.response.status_code}). Check the model, API key and account balance, then retry.') from exc
         raise ChatError('OpenRouter request failed. Check the model, API key and account balance, then retry.') from exc
     except OSError:
         raise ChatError('Monthly ledger update failed; reservation retained. Check local storage before retrying.') from None
@@ -249,7 +261,11 @@ def private_messages(messages, privacy, token_map, terms):
 async def send_meeting(session, outbound, config, capture_diagnosis=False):
     """Send an already-masked meeting request and restore the reply locally."""
     model = meeting_model(config)
-    result = await complete(outbound, model)
+    slow = _slow_call.set(True)  # a whole transcript and a long answer: allow SLOW_TIMEOUT instead of 90 seconds
+    try:
+        result = await complete(outbound, model)
+    finally:
+        _slow_call.reset(slow)
     if capture_diagnosis and config.get('chat_diagnosis', False):
         session['meeting_api_request'] = {'model': model, 'messages': outbound,
                                           'captured_at': storage.now()}

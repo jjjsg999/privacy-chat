@@ -159,9 +159,12 @@ class TelegramTransport:
         except asyncio.CancelledError:
             raise
         except Exception as exc:
-            log.error('Meeting processing failed (%s).', type(exc).__name__)
+            # Exception types are logged, never provider text. A ChatError's message is written to be safe to show.
+            cause = type(exc.__cause__).__name__ if exc.__cause__ else '-'
+            log.error('Meeting processing failed (%s, cause %s).', type(exc).__name__, cause)
+            reason = f' Reason: {exc}' if isinstance(exc, engine.ChatError) else ''
             try:
-                await reply(update, 'Meeting processing or delivery failed. Check Web for a saved result. If none exists, your chunks remain in memory; send another transcript chunk to retry, or /new to discard them.')
+                await reply(update, 'Meeting processing or delivery failed. Check Web for a saved result. If none exists, your chunks remain in memory; send another transcript chunk to retry, or /new to discard them.' + reason)
             except Exception:
                 log.error('Could not deliver meeting error notice.')
 
