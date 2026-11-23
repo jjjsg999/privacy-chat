@@ -43,6 +43,8 @@ def settings():
     result.setdefault('monthly_cost_ceiling_usd', '2.00')
     # "standard" (today's detectors) or "layered" (terms > patterns > Privacy Filter > spaCy).
     result.setdefault('privacy_detectors', 'standard')
+    # "common_public" lets countries, regions and major cities through; "mask_all" masks every place.
+    result.setdefault('place_names', 'common_public')
     return result
 
 

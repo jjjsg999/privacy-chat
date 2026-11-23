@@ -225,5 +225,61 @@ class CjkBoundaryTests(unittest.TestCase):
             self.assertEqual(out, '請蔡芬宏跟你說')
 
 
+class PlaceNameTests(unittest.TestCase):
+    def locations(self, text, words):
+        return FakeAnalyzer([finding(text.index(w), text.index(w) + len(w), 'LOCATION', 'SpacyRecognizer') for w in words])
+
+    def test_countries_regions_and_major_cities_pass_by_default(self):
+        text = 'Flights from Paris to the Netherlands, then Asia and Germany.'
+        privacy = PrivacyEngine(self.locations(text, ['Paris', 'Netherlands', 'Asia', 'Germany']))
+        self.assertEqual(privacy.place_names, 'common_public')
+        self.assertEqual(privacy.tokenize(text, {}, []), text)
+
+    def test_small_places_and_addresses_still_masked(self):
+        text = 'We met in Kleinbach near Oakfield Village.'
+        privacy = PrivacyEngine(self.locations(text, ['Kleinbach', 'Oakfield Village']))
+        masked = privacy.tokenize(text, {}, [])
+        self.assertNotIn('Kleinbach', masked)
+        self.assertNotIn('Oakfield', masked)
+
+    def test_mask_all_masks_everything(self):
+        text = 'Paris and Germany'
+        privacy = PrivacyEngine(self.locations(text, ['Paris', 'Germany']), place_names='mask_all')
+        masked = privacy.tokenize(text, {}, [])
+        self.assertNotIn('Paris', masked)
+        self.assertNotIn('Germany', masked)
+
+    def test_layered_mode_same_rule_and_terms_still_win(self):
+        text = 'Paris office, Germany, Kleinbach'
+        analyzer = self.locations(text, ['Paris', 'Germany', 'Kleinbach'])
+        privacy = PrivacyEngine(analyzer, mode='layered', privacy_filter=FakeFilter())
+        masked = privacy.tokenize(text, {}, parse_terms('SENSITIVE: Germany'))
+        self.assertIn('Paris', masked)
+        self.assertNotIn('Germany', masked)  # a user term beats the public-place pass
+        self.assertNotIn('Kleinbach', masked)
+
+    def test_privacy_filter_address_is_not_a_public_place(self):
+        text = 'Send it to 12 Paris Road'
+        privacy = PrivacyEngine(self.locations(text, ['Paris']), mode='layered',
+                                privacy_filter=FakeFilter([(11, 24, 'private_address')]))
+        self.assertNotIn('Paris', privacy.tokenize(text, {}, []))
+
+    def test_matching_is_case_and_article_insensitive_and_exact(self):
+        from public_places import is_public_place
+        for yes in ('paris', 'THE Netherlands', ' Hong Kong ', 'U.S.', 'Southeast Asia'):
+            self.assertTrue(is_public_place(yes), yes)
+        for no in ('Paris Road', 'Kleinbach', 'Acme Tower', ''):
+            self.assertFalse(is_public_place(no), no)
+
+    def test_invalid_setting_rejected_and_setting_passed_through(self):
+        with self.assertRaises(ValueError):
+            PrivacyEngine(FakeAnalyzer(), place_names='some')
+        privacy = PrivacyEngine(FakeAnalyzer())
+        engine.apply_privacy_mode(privacy, {'place_names': 'mask_all'})
+        self.assertEqual(privacy.place_names, 'mask_all')
+        engine.apply_privacy_mode(privacy, {})
+        self.assertEqual(privacy.place_names, 'common_public')
+
+
 if __name__ == '__main__':
     unittest.main()

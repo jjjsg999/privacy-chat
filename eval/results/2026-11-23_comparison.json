@@ -1,5 +1,6 @@
 {
   "date": "2026-11-23",
+  "place_names": "mask_all",
   "snippets": 550,
   "eval_terms": 44,
   "must_mask_values": 1323,
@@ -7061,6 +7062,6 @@
   },
   "run_seconds": {
     "A": 2.6,
-    "B": 27.2
+    "B": 21.8
   }
 }

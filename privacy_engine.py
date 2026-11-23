@@ -9,6 +9,8 @@ import os
 import re
 from pathlib import Path
 
+from public_places import is_public_place
+
 # Word boundaries that treat CJK as separators: Chinese/Japanese/Korean text has no spaces, so a
 # placeholder or term glued to it (PERSON__3跟, 跟Acme開會) must still match.
 CJK = '\u2e80-\u9fff\uac00-\ud7af\uf900-\ufaff\uff00-\uffef'
@@ -17,6 +19,8 @@ BOUND_R = r'(?![^\W' + CJK + r'])'
 TOKEN = re.compile(BOUND_L + r'[A-Z][A-Z0-9_]*__\d+' + BOUND_R)
 
 MODES = ('standard', 'layered')
+# place_names: mask every LOCATION, or let countries, regions and major cities through.
+PLACE_MODES = ('common_public', 'mask_all')
 
 # Layer priority when overlapping spans disagree about the kind (lower wins).
 PRIORITY = {'terms': 0, 'pattern': 1, 'privacy_filter': 2, 'spacy': 3}
@@ -190,8 +194,9 @@ def parse_terms(text):
 
 
 class PrivacyEngine:
-    def __init__(self, analyzer=None, mode='standard', privacy_filter=None):
+    def __init__(self, analyzer=None, mode='standard', privacy_filter=None, place_names='common_public'):
         self.mode = mode
+        self.place_names = place_names
         self._privacy_filter = privacy_filter
         if analyzer is None:
             import spacy.util
@@ -227,6 +232,23 @@ class PrivacyEngine:
             raise ValueError(f'privacy_detectors must be one of {MODES}, got {value!r}')
         self._mode = value
 
+    @property
+    def place_names(self):
+        return self._place_names
+
+    @place_names.setter
+    def place_names(self, value):
+        value = 'common_public' if value is None else value
+        if value not in PLACE_MODES:
+            raise ValueError(f'place_names must be one of {PLACE_MODES}, got {value!r}')
+        self._place_names = value
+
+    def _detect(self, text):
+        findings = self.analyzer.analyze(text=text, language='en')
+        if self.place_names == 'mask_all':
+            return findings
+        return [f for f in findings if not (f.entity_type == 'LOCATION' and is_public_place(text[f.start:f.end]))]
+
     def final_spans(self, text, terms):
         """Layered detection. Returns merged [(start, end, kind, source)] over `text`.
 
@@ -243,7 +265,7 @@ class PrivacyEngine:
             lookup = {f'T{i}': kind for i, (kind, _) in enumerate(terms)}
             pattern = re.compile(BOUND_L + '(?:' + '|'.join(f'(?P<T{i}>{re.escape(value)})' for i, (_, value) in enumerate(terms)) + ')' + BOUND_R, re.I)
             spans += [(m.start(), m.end(), lookup[m.lastgroup], 'terms') for m in pattern.finditer(blank)]
-        for item in self.analyzer.analyze(text=blank, language='en'):
+        for item in self._detect(blank):
             metadata = getattr(item, 'recognition_metadata', None) or {}
             source = 'spacy' if metadata.get('recognizer_name') == 'SpacyRecognizer' else 'pattern'
             spans.append((item.start, item.end, item.entity_type, source))
@@ -287,7 +309,7 @@ class PrivacyEngine:
         masked = list(text)
         for start, end in protected:
             masked[start:end] = ' ' * (end - start)
-        findings = self.analyzer.analyze(text=''.join(masked), language='en')
+        findings = self._detect(''.join(masked))
         selected = []
         for item in sorted(findings, key=lambda x: (x.start, -x.end, -x.score)):
             if any(item.start < end and item.end > start for start, end in protected):

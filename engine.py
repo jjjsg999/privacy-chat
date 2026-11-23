@@ -98,6 +98,7 @@ def tokenized_instructions(config, channel, privacy, session, terms):
 def apply_privacy_mode(privacy, config):
     """Pass the saved detector setting (standard | layered) to the shared privacy engine."""
     privacy.mode = config.get('privacy_detectors', 'standard')
+    privacy.place_names = config.get('place_names', 'common_public')
 
 
 def with_instructions(prompt, instructions):

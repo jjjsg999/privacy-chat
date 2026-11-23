@@ -8,6 +8,7 @@ PrivacyEngine.tokenize(); spans are recovered from its output, so the scored cod
 """
 import json
 import re
+import sys
 import time
 from datetime import date
 from pathlib import Path
@@ -148,22 +149,23 @@ def markdown(report):
     return '\n'.join(lines) + '\n'
 
 
-def main():
+def main(place_names='mask_all'):
     snippets = load_testset()
     terms = parse_terms(generate_testset.EVAL_TERMS.read_text(encoding='utf-8'))
-    privacy = PrivacyEngine()  # real Presidio/spaCy; the layered model loads on first layered use
+    privacy = PrivacyEngine(place_names=place_names)  # real Presidio/spaCy; the layered model loads on first layered use
     results, seconds = {}, {}
     for key, mode in SETUPS.items():
         privacy.mode = mode
         results[key], elapsed = evaluate(privacy, snippets, terms)
         seconds[key] = round(elapsed, 1)
         print(f"Setup {key} ({mode}): recall {results[key]['recall_pct']}%, precision {results[key]['precision_pct']}%, {seconds[key]} s")
-    report = {'date': date.today().isoformat(), 'snippets': len(snippets), 'eval_terms': len(terms),
+    report = {'date': date.today().isoformat(), 'place_names': place_names, 'snippets': len(snippets), 'eval_terms': len(terms),
               'must_mask_values': results['A']['must_mask_values'],
               'adoption_rule': {'min_recall_gain_points': ADOPT_MIN_RECALL_GAIN_POINTS, 'max_precision_drop_points': ADOPT_MAX_PRECISION_DROP_POINTS},
               'setups': results, 'verdict': verdict(results['A'], results['B']), 'run_seconds': seconds}
     RESULTS.mkdir(exist_ok=True)
-    stem = RESULTS / f"{report['date']}_comparison"
+    suffix = '' if place_names == 'mask_all' else f'_places-{place_names}'
+    stem = RESULTS / f"{report['date']}_comparison{suffix}"
     stem.with_suffix('.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
     stem.with_suffix('.md').write_text(markdown(report), encoding='utf-8')
     print(f"Verdict: {report['verdict']['verdict']} (recall {report['verdict']['recall_gain_points']:+}, precision {report['verdict']['precision_change_points']:+})")
@@ -171,4 +173,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    # Default mask_all keeps the original comparison reproducible; pass common_public to see the shipped default.
+    main(sys.argv[1] if len(sys.argv) > 1 else 'mask_all')
