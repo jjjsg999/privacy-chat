@@ -93,6 +93,11 @@ async def memory_page():
     return FileResponse(storage.ROOT / 'static' / 'memory.html')
 
 
+@app.get('/actions')
+async def actions_page():
+    return FileResponse(storage.ROOT / 'static' / 'actions.html')
+
+
 @app.get('/adviser')
 async def adviser_page():
     return FileResponse(storage.ROOT / 'static' / 'adviser.html')
@@ -276,6 +281,30 @@ async def branch_session(session_id: str, value: Branch):
             raise HTTPException(422, str(exc)) from None
         except OSError:
             raise HTTPException(500, 'Could not save the new conversation.') from None
+
+
+@app.get('/api/actions')
+async def actions(status: Literal['open', 'done', 'all'] = 'open', owner: str | None = Query(default=None, max_length=200),
+                  meeting: str | None = Query(default=None, max_length=100), include_archived: bool = False):
+    """Open (or done) actions across all meetings. Local only: no model call."""
+    return storage.list_actions(status, owner, meeting, include_archived)
+
+
+class ActionStatus(BaseModel):
+    status: Literal['open', 'done']
+
+
+@app.patch('/api/actions/{session_id}/{action_id}')
+async def set_action(session_id: str, action_id: str, value: ActionStatus):
+    async with chat_lock:
+        read_session(session_id)
+        try:
+            session = storage.set_action_status(session_id, action_id, value.status)
+        except ValueError as exc:
+            raise HTTPException(404 if 'exist' in str(exc) else 422, str(exc)) from None
+        except OSError:
+            raise HTTPException(500, 'Could not save the action status.') from None
+        return {'action_id': action_id, **session['action_state'][action_id]}
 
 
 @app.get('/api/spend/models')

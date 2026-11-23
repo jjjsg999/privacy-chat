@@ -7,6 +7,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
 
+import meeting_record
+
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / 'data'
 TERMS = ROOT / 'sensitive_terms.txt'
@@ -114,6 +116,8 @@ def public_session(session):
     result = {k: v for k, v in session.items() if k not in ('token_map', 'meeting_api_request') + CACHE_KEYS}
     if 'messages' in result:
         result['messages'] = [{k: v for k, v in m.items() if k not in CACHE_KEYS} for m in result['messages']]
+    if result.get('session_type') == 'meeting' and result.get('transcript'):
+        result['transcript_lines'] = meeting_record.clean_lines(result['transcript'])  # what the L-numbers refer to
     result['chat_diagnosis'] = diagnosis
     if diagnosis and 'meeting_api_request' in session:
         result['meeting_api_request'] = session['meeting_api_request']
@@ -122,7 +126,8 @@ def public_session(session):
 
 def visible_session(session):
     if session.get('session_type') == 'meeting':
-        return bool(session.get('transcript', '').strip() and session.get('intelligence', '').strip() and session.get('mode') == 'meeting_ready')
+        return bool(session.get('transcript', '').strip() and meeting_record.brief_of(session.get('intelligence')).strip()
+                and session.get('mode') == 'meeting_ready')
     return any(m.get('role') == 'user' and m.get('content', '').strip() for m in session.get('messages', []))
 
 
@@ -199,6 +204,68 @@ def branch_session(session_id, message_index):
         branch['pinned_artifacts'] = list(source['pinned_artifacts'])
     save_session(branch)
     return branch
+
+
+ACTION_STATUSES = ('open', 'done')
+
+
+def _action_rows(session):
+    record = session.get('intelligence')
+    if session.get('session_type') != 'meeting' or not isinstance(record, dict):
+        return []
+    state = session.get('action_state') or {}
+    try:
+        reference = datetime.fromisoformat(session.get('created_at')).date()
+    except (TypeError, ValueError):
+        reference = datetime.now(timezone.utc).date()
+    rows = []
+    for action in record.get('actions') or []:
+        current = state.get(action['id']) or {}
+        due = meeting_record.parse_due(action.get('due'), reference)
+        rows.append({'session_id': session['id'], 'meeting_title': session.get('title') or 'Meeting',
+                     'meeting_date': session.get('created_at'), 'archived': bool(session.get('archived')),
+                     'action_id': action['id'], 'task': action['task'], 'owner': action.get('owner'),
+                     'due': action.get('due'), 'due_sort': due.isoformat() if due else None, 'lines': action.get('lines', []),
+                     'verified': action.get('verified', True), 'reason': action.get('reason'),
+                     'status': current.get('status', 'open'), 'updated_at': current.get('updated_at')})
+    return rows
+
+
+def list_actions(status='open', owner=None, meeting=None, include_archived=False):
+    """Actions across all meeting sessions, for the tracker. Status is kept apart from the model's record.
+
+    Sorted by due date where it parses (common formats), then the rest in the order they were stated, newest meeting first.
+    """
+    rows, meetings = [], {}
+    for path in (DATA / 'sessions').glob('*.json'):
+        session = json.loads(path.read_text(encoding='utf-8'))
+        if not visible_session(session) or (session.get('archived') and not include_archived):
+            continue
+        found = _action_rows(session)
+        if found:
+            meetings[session['id']] = {'id': session['id'], 'title': session.get('title') or 'Meeting', 'date': session.get('created_at')}
+        rows += found
+    owners = sorted({r['owner'] for r in rows if r['owner']}, key=str.casefold)
+    needle = (owner or '').strip().casefold()
+    rows = [r for r in rows if (status in (None, '', 'all') or r['status'] == status)
+            and (not needle or needle in (r['owner'] or '').casefold()) and (not meeting or r['session_id'] == meeting)]
+    rows.sort(key=lambda r: (r['due_sort'] is None, r['due_sort'] or '', r['meeting_date'] or ''), reverse=False)
+    undated = [r for r in rows if r['due_sort'] is None]
+    undated.sort(key=lambda r: r['meeting_date'] or '', reverse=True)
+    return {'actions': [r for r in rows if r['due_sort'] is not None] + undated, 'owners': owners,
+            'meetings': sorted(meetings.values(), key=lambda m: m['date'] or '', reverse=True)}
+
+
+def set_action_status(session_id, action_id, status):
+    """Mark one action open or done. Keeps updated_at so the conversation list order is not disturbed."""
+    if status not in ACTION_STATUSES:
+        raise ValueError('Status must be open or done.')
+    session = load_session(session_id)
+    if action_id not in {a['action_id'] for a in _action_rows(session)}:
+        raise ValueError('That action does not exist in this meeting.')
+    session.setdefault('action_state', {})[action_id] = {'status': status, 'updated_at': now()}
+    write_json(session_path(session_id), session)
+    return session
 
 
 def list_sessions(query=None):

@@ -424,7 +424,8 @@ class MeetingModelTests(unittest.TestCase):
         self.assertEqual(self.models, ['meet/model'] * 4)
         self.models.clear()
         asyncio.run(engine.analyze_meeting(storage.new_session('telegram'), 'raw transcript', self.privacy))
-        self.assertEqual(self.models, ['meet/model', 'meet/model'])  # analysis and its title call
+        # The mock replies with prose: the analysis, one retry for the structured record, and the title call.
+        self.assertEqual(self.models, ['meet/model'] * 3)
 
     def test_blank_meeting_model_follows_the_main_model_and_can_be_cleared(self):
         self.client.put('/api/settings', json={'model': 'chat/model', 'sensitive_terms': ''})
