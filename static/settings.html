@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Settings · Privacy LLM</title><link rel="stylesheet" href="/static/style.css"><script src="/static/theme.js"></script><script src="/static/settings.js" defer></script><script src="/static/navigation.js" defer></script><script src="/static/sidebar-resize.js" defer></script></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Settings · Privacy LLM</title><link rel="stylesheet" href="/static/style.css"><script src="/static/theme.js"></script><script src="/static/settings.js" defer></script><script src="/static/navigation.js" defer></script><script src="/static/spaces-settings.js" defer></script><script src="/static/sidebar-resize.js" defer></script></head>
 <body class="workspace-page"><aside id="sidebar"><a class="brand" href="/">Privacy <span>LLM</span></a><p class="eyebrow">YOUR PERSONAL WORKSPACE</p><nav class="main-nav" aria-label="Main navigation"><a href="/">Meetings &amp; chat</a><a href="/adviser">Adviser chat</a><a href="/memory">Memory</a><a href="/settings" aria-current="page">Settings</a></nav></aside><div class="workspace-main"><header><button id="toggle-sidebar" aria-label="Toggle navigation" aria-expanded="false" aria-controls="sidebar">☰</button><h1>Settings</h1><span class="local-badge">Local workspace</span></header><div class="workspace-scroll"><main class="settings-content">
 
   <p class="eyebrow">YOUR WORKSPACE, YOUR PREFERENCES</p><h1>Settings</h1><p class="intro">One place for your model and privacy preferences.</p>
@@ -36,6 +36,14 @@
       <label class="favourite-filter"><input name="review_extracted_text" type="checkbox"> Preview and edit extracted text from PDFs and images before sending</label>
       <p class="hint">Off by default: extracted text is sent with your message, then privacy-processed like anything you type. Turn this on to read and correct the text first. This is useful because OCR can misread characters, and a misread name may escape detection. Word and plain-text files are always read exactly and are never previewed.</p>
       <p class="hint">Files are read on this computer (English and Traditional Chinese OCR) and are never stored. Default limits: 10 MB per file, 20 PDF pages, 5 files per message; they can be raised under "upload_limits" in data/settings.json.</p></section>
+    <section class="settings-card" id="spaces-card"><h2>Spaces</h2>
+      <p class="hint">Spaces group your chats so the sidebar shows one set at a time. They are for organising only: nothing is shared between chats, and privacy works exactly the same in every space.</p>
+      <ul id="space-list" aria-label="Your spaces"></ul>
+      <div class="space-add"><div class="space-add-field"><label for="space-new">New space name</label><input id="space-new" maxlength="40" autocomplete="off"></div><button type="button" id="space-add">Add space</button></div>
+      <label for="telegram-space">Telegram goes to</label><select id="telegram-space"></select>
+      <p class="hint">New Telegram chats and meetings are placed in this space.</p>
+      <p id="space-status" role="status" aria-live="polite"></p>
+    </section>
     <section class="settings-card"><h2>Context</h2>
       <label for="context-chat">Context for chats</label>
       <select id="context-chat" name="context_mode_chat" aria-describedby="context-hint">

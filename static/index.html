@@ -6,8 +6,10 @@
     <a class="brand" href="/">Privacy <span>LLM</span></a>
     <p class="eyebrow">YOUR PERSONAL WORKSPACE</p>
     <nav class="main-nav" aria-label="Main navigation"><a href="/" aria-current="page">Meetings &amp; chat</a><a href="/adviser">Adviser chat</a><a href="/memory">Memory</a><a href="/settings">Settings</a></nav>
+    <label class="space-label" for="space-switcher">Space</label><select id="space-switcher" aria-describedby="space-hint"></select>
     <button id="new-chat" class="primary">+ New conversation</button>
     <label class="sr-only" for="session-search">Search conversations</label><input id="session-search" type="search" placeholder="Search conversations…" maxlength="200" autocomplete="off">
+    <label class="all-spaces"><input type="checkbox" id="all-spaces"> Search all spaces</label><p id="space-hint" class="sr-only">Conversations are grouped into spaces. Only the chosen space is listed.</p>
     <nav id="sessions" aria-label="Conversations"></nav>
   </aside>
   <main class="conversation">

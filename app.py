@@ -111,6 +111,7 @@ async def get_settings():
             'monthly_cost_ceiling_usd': str(config.get('monthly_cost_ceiling_usd', '2.00')),
             'context_mode_chat': engine.context_mode(config, False),
             'context_mode_meeting': engine.context_mode(config, True),
+            'spaces': storage.spaces(config), 'telegram_space': storage.telegram_space(config),
             'monthly_budget': monthly_budget.status(),
             'openrouter': {'configured': bool(storage.openrouter_api_key())}}
 
@@ -216,8 +217,57 @@ async def favourite(value: Favourite):
 
 
 @app.get('/api/sessions')
-async def sessions(q: str | None = Query(default=None, max_length=200)):
-    return storage.list_sessions(q)
+async def sessions(q: str | None = Query(default=None, max_length=200), space: str | None = Query(default=None, max_length=100)):
+    """`space` is a space id or 'all'; leave it out for every space."""
+    if space not in (None, '', 'all') and space not in {s['id'] for s in storage.spaces()}:
+        raise HTTPException(422, 'Unknown space.')
+    return storage.list_sessions(q, space)
+
+
+class SpaceName(BaseModel):
+    name: str = Field(max_length=200)
+
+
+class TelegramSpace(BaseModel):
+    space: str = Field(min_length=1, max_length=100)
+
+
+def space_call(action, *args):
+    try:
+        return action(*args)
+    except storage.SpaceError as exc:
+        raise HTTPException(exc.status, str(exc)) from None
+    except OSError:
+        raise HTTPException(500, 'Could not save the spaces.') from None
+
+
+@app.get('/api/spaces')
+async def list_spaces():
+    return storage.space_summary()
+
+
+@app.post('/api/spaces')
+async def add_space(value: SpaceName):
+    async with chat_lock:
+        return space_call(storage.add_space, value.name)
+
+
+@app.put('/api/spaces/telegram')
+async def telegram_space(value: TelegramSpace):
+    async with chat_lock:
+        return space_call(storage.set_telegram_space, value.space)
+
+
+@app.patch('/api/spaces/{space_id}')
+async def rename_space(space_id: str, value: SpaceName):
+    async with chat_lock:
+        return space_call(storage.rename_space, space_id, value.name)
+
+
+@app.delete('/api/spaces/{space_id}')
+async def delete_space(space_id: str):
+    async with chat_lock:
+        return space_call(storage.delete_space, space_id)
 
 
 class PinChange(BaseModel):
@@ -234,12 +284,13 @@ class SessionUpdate(BaseModel):
     pinned: bool | None = None
     archived: bool | None = None
     pin: PinChange | None = None
+    space: str | None = Field(default=None, min_length=1, max_length=100)
 
 
 @app.patch('/api/sessions/{session_id}')
 async def update_session(session_id: str, value: SessionUpdate):
     """Rename, pin or archive. Fields that are omitted are left unchanged."""
-    if value.title is None and value.pinned is None and value.archived is None and value.pin is None:
+    if value.title is None and value.pinned is None and value.archived is None and value.pin is None and value.space is None:
         raise HTTPException(422, 'Nothing to change.')
     title = ' '.join(value.title.split()) if value.title is not None else None
     if value.title is not None and not title:
@@ -251,6 +302,11 @@ async def update_session(session_id: str, value: SessionUpdate):
             result = storage.rename_session(session_id, title)
         if value.pinned is not None or value.archived is not None:
             result = storage.set_session_flags(session_id, value.pinned, value.archived)
+        if value.space is not None:
+            try:
+                result = storage.set_session_space(session_id, value.space)
+            except storage.SpaceError as exc:
+                raise HTTPException(422, str(exc)) from None
         if value.pin is not None:
             if value.pin.kind == 'artifact' and not value.pin.artifact:
                 raise HTTPException(422, 'Choose an artifact to pin.')
@@ -309,6 +365,7 @@ async def delete_session(session_id: str):
 class Message(BaseModel):
     session_id: str | None = Field(default=None, max_length=100)
     message: str = Field(min_length=1, max_length=50_000)
+    space: str | None = Field(default=None, max_length=100)  # for a new chat; an unknown id falls back to Work
 
 
 class AdviserMessage(BaseModel):
@@ -358,6 +415,7 @@ class StreamMessage(BaseModel):
     session_id: str | None = Field(default=None, max_length=100)
     message: str = Field(default='', max_length=50_000)
     attachments: list[AttachmentIn] = Field(default_factory=list, max_length=100)
+    space: str | None = Field(default=None, max_length=100)  # for a new chat; an unknown id falls back to Work
     edit_index: int | None = Field(default=None, ge=0)  # replace this user message (and everything after it)
 
 
@@ -439,7 +497,7 @@ async def chat_stream(value: StreamMessage):
         nonlocal message, extra
         async with chat_lock:
             try:
-                current = read_session(value.session_id) if value.session_id else storage.new_session()
+                current = read_session(value.session_id) if value.session_id else storage.new_session(space=value.space)
                 if editing:
                     message, extra = apply_edit(current, value.edit_index, typed)
             except HTTPException as exc:
@@ -462,7 +520,7 @@ async def chat(value: Message):
     if not value.message.strip():
         raise HTTPException(422, 'Please enter a message.')
     async with chat_lock:
-        current = read_session(value.session_id) if value.session_id else storage.new_session()
+        current = read_session(value.session_id) if value.session_id else storage.new_session(space=value.space)
         try:
             return await engine.chat(current, value.message.strip(), app.state.privacy)
         except engine.ChatError as exc:

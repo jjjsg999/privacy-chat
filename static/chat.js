@@ -48,6 +48,18 @@ async function copyText(text, button) {
 
 const $ = id => document.getElementById(id);
 let current = null;
+// Spaces group chats for organising only. The sidebar shows one space; the last choice is remembered on this device.
+let spaces = [], space = null;
+const SPACE_KEY = 'privacy-llm-space';
+const spaceName = id => spaces.find(s => s.id === id)?.name || 'Work';
+async function loadSpaces() {
+  let saved = null;
+  try { saved = localStorage.getItem(SPACE_KEY); } catch { /* private mode: fall back to Work */ }
+  spaces = (await api('/api/spaces')).spaces;
+  space = spaces.some(s => s.id === saved) ? saved : (spaces.find(s => s.id === 'work') || spaces[0]).id;
+  $('space-switcher').replaceChildren(...spaces.map(s => new Option(s.name, s.id)));
+  $('space-switcher').value = space;
+}
 let busy = false;
 const welcome = $('messages').firstElementChild.cloneNode(true);
 const pane = createPane({getMessages: () => current?.messages || [], copyText, status,
@@ -323,15 +335,17 @@ let archivedOpen = false;
 function closeRowMenus() { for (const menu of document.querySelectorAll('.row-menu')) menu.remove(); }
 document.addEventListener('click', closeRowMenus);
 async function refreshSessions() {
+  if (space === null) await loadSpaces();
   const query = $('session-search').value.trim();
-  const sessions = await api(query ? `/api/sessions?q=${encodeURIComponent(query)}` : '/api/sessions');
+  const everywhere = Boolean(query) && $('all-spaces').checked;  // "Search all spaces" only widens a search
+  const sessions = await api(`/api/sessions?space=${encodeURIComponent(everywhere ? 'all' : space)}${query ? `&q=${encodeURIComponent(query)}` : ''}`);
   $('sessions').replaceChildren();
   const makeRow = session => {
     const row = document.createElement('div'); row.className = 'session-row';
     const button = document.createElement('button'); button.textContent = session.title;
     button.className = 'session-open';
     button.classList.toggle('active', session.id === current?.id);
-    const badge = document.createElement('small'); badge.textContent = `${session.pinned ? 'Pinned · ' : ''}${session.channel_origin === 'telegram' ? 'Telegram' : 'Web'} · ${new Date(session.updated_at).toLocaleString()}`;
+    const badge = document.createElement('small'); badge.textContent = `${session.space !== space ? spaceName(session.space) + ' · ' : ''}${session.pinned ? 'Pinned · ' : ''}${session.channel_origin === 'telegram' ? 'Telegram' : 'Web'} · ${new Date(session.updated_at).toLocaleString()}`;
     button.append(badge); button.disabled = busy;
     button.onclick = async () => {
       if (busy) return;
@@ -370,8 +384,8 @@ async function refreshSessions() {
       }
     };
     const menuButton = document.createElement('button'); menuButton.className = 'session-menu'; menuButton.type = 'button';
-    menuButton.textContent = '⋯'; menuButton.title = 'Pin or archive';
-    menuButton.setAttribute('aria-label', `Pin or archive: ${session.title}`); menuButton.setAttribute('aria-haspopup', 'true');
+    menuButton.textContent = '⋯'; menuButton.title = 'Pin, archive or move';
+    menuButton.setAttribute('aria-label', `Pin, archive or move: ${session.title}`); menuButton.setAttribute('aria-haspopup', 'true');
     menuButton.onclick = event => {
       event.stopPropagation();
       const existing = row.querySelector('.row-menu');
@@ -390,6 +404,23 @@ async function refreshSessions() {
       };
       if (!session.archived) item(session.pinned ? 'Unpin' : 'Pin to top', {pinned: !session.pinned});
       item(session.archived ? 'Unarchive' : 'Archive', {archived: !session.archived});
+      const others = spaces.filter(s => s.id !== session.space);
+      if (others.length) {
+        const heading = document.createElement('p'); heading.className = 'menu-heading'; heading.textContent = 'Move to…'; menu.append(heading);
+        for (const target of others) {
+          const entry = document.createElement('button'); entry.type = 'button'; entry.setAttribute('role', 'menuitem'); entry.textContent = target.name;
+          entry.onclick = async () => {
+            closeRowMenus();
+            try {
+              await api(`/api/sessions/${encodeURIComponent(session.id)}`, {method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({space: target.id})});
+              if (current?.id === session.id) current.space = target.id;
+              status(`Moved to ${target.name}.`);
+            } catch (error) { status(error.message, true); }
+            await refreshSessions().catch(error => status(error.message, true));
+          };
+          menu.append(entry);
+        }
+      }
       row.append(menu);
     };
     row.append(button, rename, menuButton, remove);
@@ -415,6 +446,15 @@ async function refreshSessions() {
   }
   if (!sessions.length && query) { const empty = document.createElement('p'); empty.className = 'hint'; empty.textContent = 'No matching conversations.'; $('sessions').append(empty); }
 }
+$('space-switcher').onchange = () => {
+  if (busy) { $('space-switcher').value = space; status('Wait for the current reply to finish first.', true); return; }
+  space = $('space-switcher').value;
+  try { localStorage.setItem(SPACE_KEY, space); } catch { /* remembered only when storage is available */ }
+  if (current && (current.space || 'work') !== space) { render(null); $('message').value = ''; attachments = []; renderAttachments(); }
+  status('');
+  refreshSessions().catch(error => status(error.message, true));
+};
+$('all-spaces').onchange = () => refreshSessions().catch(error => status(error.message, true));
 let searchTimer = 0;
 $('session-search').oninput = () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => refreshSessions().catch(error => status(error.message, true)), 250); };
 function closeSidebar() { $('sidebar').classList.remove('open'); $('toggle-sidebar').setAttribute('aria-expanded', 'false'); }
@@ -449,7 +489,7 @@ async function streamTurn(message, files = [], editIndex = null) {
   $('send').hidden = true; $('stop').hidden = false;
   try {
     const response = await fetch('/api/chat/stream', {method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({session_id: previous?.id || null, message, attachments: files, ...(editIndex === null ? {} : {edit_index: editIndex})}),
+      body: JSON.stringify({session_id: previous?.id || null, message, attachments: files, ...(previous ? {} : {space}), ...(editIndex === null ? {} : {edit_index: editIndex})}),
       signal: controller.signal});
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
