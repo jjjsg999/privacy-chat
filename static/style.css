@@ -136,3 +136,18 @@ kbd{font:12px ui-monospace,Consolas,monospace;border:1px solid var(--line2);bord
 /* Jump to latest (shown while a reply streams and you have scrolled up) */
 footer{position:relative}
 #jump-latest{position:absolute;top:-46px;left:50%;transform:translateX(-50%);z-index:3;min-height:36px;padding:6px 14px;border-radius:20px;font-size:13px;box-shadow:0 4px 14px #0003}
+
+/* Keep-in-context pins and the context note */
+.pin-badge { font-size: .72rem; padding: 0 .4rem; border-radius: 999px; border: 1px solid currentColor; opacity: .8; }
+.message.pinned { border-left: 3px solid var(--green); }
+.pin-button { min-height: 0; font-size: .78rem; padding: .1rem .5rem; border-radius: 6px; border: 1px solid var(--line); background: transparent; color: inherit; cursor: pointer; }
+.pin-button[aria-pressed="true"] { font-weight: 600; border-color: var(--green); }
+.artifact-row { display: flex; align-items: center; gap: .5rem; }
+.artifact-row .artifact-card { flex: 1; }
+.file-pins { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .3rem; }
+.context-note, .file-pins { white-space: normal; }
+.context-note { margin: .35rem 0 0; font-size: .8rem; color: var(--muted); }
+.context-note summary { cursor: pointer; }
+.context-note ul { margin: .4rem 0; padding-left: 1.2rem; }
+.context-note li { margin: .2rem 0; }
+.context-note .hint { margin: .3rem 0 0; }

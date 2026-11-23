@@ -71,7 +71,17 @@ function renderMessageBody(body, text, registry, messageIndex) {
       registry ? (part.complete ? 'click to open' : 'incomplete') : (part.complete ? 'finishing…' : 'writing…')].filter(Boolean).join(' · ');
     if (index >= 0) card.onclick = () => pane.open(part.id, index, current?.id);
     else card.disabled = true;  // still streaming: it opens once the reply is saved
-    card.append(title, meta); body.append(card);
+    card.append(title, meta);
+    const pinned = (current?.pinned_artifacts || []).includes(part.id);
+    if (pinned) meta.textContent += ' · pinned';
+    if (registry && current?.id && part.complete) {
+      const row = document.createElement('div'); row.className = 'artifact-row';
+      const pin = document.createElement('button'); pin.type = 'button'; pin.className = 'pin-button';
+      pin.textContent = pinned ? 'Unpin' : 'Pin'; pin.title = 'Keep the latest version of this artifact in every request';
+      pin.setAttribute('aria-pressed', String(pinned));
+      pin.onclick = () => setPin({kind: 'artifact', artifact: part.id, pinned: !pinned});
+      row.append(card, pin); body.append(row);
+    } else body.append(card);
   }
 }
 async function api(url, options) {
@@ -107,6 +117,7 @@ function render(session, options = {}) {
     article.className = `message ${message.role}`;
     const label = document.createElement('span'); label.className = 'speaker';
     label.textContent = message.role === 'user' ? 'You' : 'Assistant';
+    if (message.pinned) { article.classList.add('pinned'); const badge = document.createElement('span'); badge.className = 'pin-badge'; badge.textContent = 'Pinned'; label.append(' ', badge); }
     const body = document.createElement('div'); body.className = 'body'; body.textContent = message.content;
     if (message.role === 'assistant') renderMessageBody(body, message.content, registry, index);
     article.append(label);
@@ -150,7 +161,19 @@ function render(session, options = {}) {
       summary.textContent = `Attached: ${message.attachments.map(file => file.name).join(', ')} (view extracted text)`;
       const text = document.createElement('div'); text.className = 'api-text'; text.textContent = message.content.slice(typed.length).trim();
       details.append(summary, text); article.append(details);
+      if (session.id) {
+        const files = document.createElement('div'); files.className = 'file-pins';
+        message.attachments.forEach((file, fileIndex) => {
+          const button = document.createElement('button'); button.type = 'button'; button.className = 'pin-button file-pin';
+          button.textContent = `${file.pinned ? 'Unpin' : 'Pin'} ${file.name}`; button.setAttribute('aria-pressed', String(Boolean(file.pinned)));
+          button.title = 'Keep this file\'s text in every request';
+          button.onclick = () => setPin({kind: 'file', index, file: fileIndex, pinned: !file.pinned});
+          files.append(button);
+        });
+        article.append(files);
+      }
     }
+    if (message.role === 'assistant' && message.context) article.append(contextNote(session, message));
     if (message.role === 'assistant' && message.truncated) {  // the provider stopped at the output limit
       const note = document.createElement('p'); note.className = 'truncated-note';
       note.append('This reply hit the length limit and was cut off. ');
@@ -182,10 +205,57 @@ function messageActions(session, message, index, article) {
   };
   const plain = message.role === 'user' && message.attachments?.length ? (message.typed || message.content) : message.content;
   add('Copy', 'Copy this message', button => copyText(plain, button));
+  if (session.id) add(message.pinned ? 'Unpin' : 'Pin', message.pinned ? 'Stop keeping this message in every request' : 'Keep this message in every request', () => setPin({kind: 'message', index, pinned: !message.pinned}));
   const chat = session.id && (session.session_type || 'chat') === 'chat';
   if (chat && message.role === 'user') add('Edit', 'Edit this message and resend', () => startEdit(article, message, index));
   if (chat && message.role === 'assistant') add('Branch', 'Branch into a new conversation from this reply', () => branchFrom(index));
   return bar;
+}
+async function setPin(pin) {
+  if (!current?.id) return;
+  if (busy) { status('Wait for the current reply to finish first.', true); return; }
+  try {
+    render(await api(`/api/sessions/${current.id}`, {method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({pin})}), {keepScroll: true});
+  } catch (error) { status(error.message, true); }
+}
+const plural = (count, word) => `${count} ${word}${count === 1 ? '' : 's'}`;
+// One muted line under a reply that left things out. Click it for the list, with a pin button beside each item.
+function contextNote(session, message) {
+  const info = message.context, left = info.omitted || {};
+  const messages = left.messages || [], artifacts = left.artifacts || [], files = left.files || [];
+  const sent = [plural(info.sent_messages, 'message'), info.sent_files ? plural(info.sent_files, 'file') : ''].filter(Boolean).join(' and ');
+  const out = [messages.length ? plural(messages.length, 'older message') : '', artifacts.length ? plural(artifacts.length, 'artifact version') : '',
+    files.length ? plural(files.length, 'file') : ''].filter(Boolean);
+  const details = document.createElement('details'); details.className = 'context-note';
+  const summary = document.createElement('summary');
+  summary.textContent = `Sent ${sent}${out.length ? ` · ${out.join(' and ')} left out` : ''}`;
+  details.append(summary);
+  const list = document.createElement('ul');
+  const item = (text, pin) => {
+    const li = document.createElement('li'); li.append(text);
+    if (pin && session.id) {
+      const button = document.createElement('button'); button.type = 'button'; button.className = 'pin-button'; button.textContent = pin.label;
+      button.title = 'Keep this in every request from now on'; button.onclick = () => setPin(pin.change); li.append(' ', button);
+    }
+    list.append(li);
+  };
+  const snippet = index => {
+    const m = session.messages?.[index]; if (!m) return `message ${index + 1} (no longer in this conversation)`;
+    const text = ((m.attachments?.length ? m.typed : m.content) || '').replace(/\s+/g, ' ').trim();
+    return `${m.role === 'user' ? 'You' : 'Assistant'}: ${text.length > 70 ? text.slice(0, 70) + '…' : text || '(attachment only)'}`;
+  };
+  for (const index of messages) item(snippet(index), session.messages?.[index] && {label: 'Pin', change: {kind: 'message', index, pinned: true}});
+  for (const a of artifacts) {
+    const pinned = (session.pinned_artifacts || []).includes(a.id);
+    item(`Artifact "${a.title}" version ${a.version}`, {label: pinned ? 'Pinned latest' : 'Pin latest version', change: {kind: 'artifact', artifact: a.id, pinned: true}});
+  }
+  for (const f of files) item(`File ${f.name}`, {label: 'Pin', change: {kind: 'file', index: f.message, file: f.file, pinned: true}});
+  const notes = [`Context setting: ${info.mode}. About ${info.est_tokens.toLocaleString()} tokens sent.`];
+  if (info.over_cap) notes.push('The pinned and protected items alone are over this setting; they were sent anyway.');
+  if (!info.context_length_known) notes.push(`This model's context size is not known yet, so ${info.context_length.toLocaleString()} tokens were assumed.`);
+  const foot = document.createElement('p'); foot.className = 'hint'; foot.textContent = notes.join(' ');
+  details.append(list, foot);
+  return details;
 }
 function startEdit(article, message, index) {
   if (busy) { status('Wait for the current reply to finish before editing.', true); return; }

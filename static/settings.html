@@ -36,6 +36,19 @@
       <label class="favourite-filter"><input name="review_extracted_text" type="checkbox"> Preview and edit extracted text from PDFs and images before sending</label>
       <p class="hint">Off by default: extracted text is sent with your message, then privacy-processed like anything you type. Turn this on to read and correct the text first. This is useful because OCR can misread characters, and a misread name may escape detection. Word and plain-text files are always read exactly and are never previewed.</p>
       <p class="hint">Files are read on this computer (English and Traditional Chinese OCR) and are never stored. Default limits: 10 MB per file, 20 PDF pages, 5 files per message; they can be raised under "upload_limits" in data/settings.json.</p></section>
+    <section class="settings-card"><h2>Context</h2>
+      <label for="context-chat">Context for chats</label>
+      <select id="context-chat" name="context_mode_chat" aria-describedby="context-hint">
+        <option value="lean">Lean</option><option value="balanced">Balanced</option><option value="full">Full</option>
+      </select>
+      <label for="context-meeting">Context for meetings</label>
+      <select id="context-meeting" name="context_mode_meeting" aria-describedby="context-hint">
+        <option value="lean">Lean</option><option value="balanced">Balanced</option><option value="full">Full</option>
+      </select>
+      <p class="hint" id="context-hint"><strong>Lean</strong> sends about 12,000 tokens of conversation: the cheapest, but older material is left out sooner.
+        <strong>Balanced</strong> sends about 30,000. <strong>Full</strong> sends everything the model can take.
+        Whatever is left out is shown under each reply, and you can pin any item to keep it in every request. Meetings always include the full transcript.</p>
+    </section>
     <section class="settings-card"><h2>Chat diagnosis</h2><label class="favourite-filter"><input name="chat_diagnosis" type="checkbox"> Chat diagnosis to show text sent to LLM API</label><p class="hint">Records the exact text sent for new meeting analyses. Open Full transcript to compare the original with the privacy-processed system prompt and transcript. Older meetings without a recording cannot show an exact API version. Disabling hides existing recordings and stops new recordings; saved recordings remain local.</p></section>
     <div class="settings-actions"><p id="status" role="status"></p><button class="primary" type="submit" id="save">Save settings</button></div>
   </form>

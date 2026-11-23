@@ -45,6 +45,9 @@ def settings():
     result.setdefault('privacy_detectors', 'standard')
     # "common_public" lets countries, regions and major cities through; "mask_all" masks every place.
     result.setdefault('place_names', 'common_public')
+    # How much history to send: lean | balanced | full (see context_builder.py).
+    result.setdefault('context_mode_chat', 'balanced')
+    result.setdefault('context_mode_meeting', 'full')
     return result
 
 
@@ -103,9 +106,14 @@ def new_session(channel='web'):
                 session_type='chat', messages=[], token_map={})
 
 
+CACHE_KEYS = ('masked', 'transcript_masked', 'intelligence_masked')  # masked-text caches stay on this machine
+
+
 def public_session(session):
     diagnosis = settings().get('chat_diagnosis', False)
-    result = {k: v for k, v in session.items() if k not in ('token_map', 'meeting_api_request')}
+    result = {k: v for k, v in session.items() if k not in ('token_map', 'meeting_api_request') + CACHE_KEYS}
+    if 'messages' in result:
+        result['messages'] = [{k: v for k, v in m.items() if k not in CACHE_KEYS} for m in result['messages']]
     result['chat_diagnosis'] = diagnosis
     if diagnosis and 'meeting_api_request' in session:
         result['meeting_api_request'] = session['meeting_api_request']
@@ -146,6 +154,32 @@ def set_session_flags(session_id, pinned=None, archived=None):
     return session
 
 
+def set_pin(session_id, kind, pinned, index=None, file=None, artifact=None):
+    """Keep-in-context pin on a message, a file chip or an artifact id. Like rename, this keeps updated_at."""
+    session = load_session(session_id)
+    messages = session.get('messages', [])
+    if kind == 'artifact':
+        ids = [a for a in session.get('pinned_artifacts', []) if a != artifact]
+        session['pinned_artifacts'] = ids + [artifact] if pinned and artifact else ids
+    else:
+        if index is None or not 0 <= index < len(messages):
+            raise ValueError('Choose one of the messages in this conversation.')
+        target = messages[index]
+        if kind == 'file':
+            files = target.get('attachments') or []
+            if file is None or not 0 <= file < len(files):
+                raise ValueError('Choose one of the attached files.')
+            target = files[file]
+        elif kind != 'message':
+            raise ValueError('Unknown pin type.')
+        if pinned:
+            target['pinned'] = True
+        else:
+            target.pop('pinned', None)
+    write_json(session_path(session_id), session)
+    return session
+
+
 def branch_session(session_id, message_index):
     """Copy a chat up to and including one assistant reply into a new web conversation.
 
@@ -161,6 +195,8 @@ def branch_session(session_id, message_index):
     branch.update(title=(f"{source.get('title') or 'Conversation'} (branch)")[:100], title_generated=True,
                   messages=json.loads(json.dumps(messages[:message_index + 1])),
                   token_map=json.loads(json.dumps(source.get('token_map', {}))), branched_from=source['id'])
+    if source.get('pinned_artifacts'):
+        branch['pinned_artifacts'] = list(source['pinned_artifacts'])
     save_session(branch)
     return branch
 

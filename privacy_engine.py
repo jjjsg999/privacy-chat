@@ -4,12 +4,16 @@ Two detector modes (setting `privacy_detectors`):
   standard  today's behaviour: terms list, then Presidio (patterns + spaCy).
   layered   terms > Presidio patterns > OpenAI Privacy Filter > spaCy, merged by union.
 """
+import hashlib
 import json
 import os
 import re
 from pathlib import Path
 
-from public_places import is_public_place
+from public_places import PUBLIC_PLACES, is_public_place
+
+# Bump when masking behaviour changes in a way that should invalidate every cached masked text.
+PRIVACY_VERSION = '1'
 
 # Word boundaries that treat CJK as separators: Chinese/Japanese/Korean text has no spaces, so a
 # placeholder or term glued to it (PERSON__3跟, 跟Acme開會) must still match.
@@ -248,6 +252,25 @@ class PrivacyEngine:
         if self.place_names == 'mask_all':
             return findings
         return [f for f in findings if not (f.entity_type == 'LOCATION' and is_public_place(text[f.start:f.end]))]
+
+    def fingerprint(self, terms_text=''):
+        """Short hash of everything that decides what masking does: the terms list, the detector setup and versions.
+
+        Masked text cached under one fingerprint is only reused under the same one.
+        """
+        from importlib import metadata
+        parts = [PRIVACY_VERSION, self.mode, self.place_names, terms_text or '']
+        if self.place_names == 'common_public':
+            parts.append(hashlib.sha256('\n'.join(sorted(PUBLIC_PLACES)).encode('utf-8')).hexdigest())
+        for package in ('presidio-analyzer', 'spacy', 'en-core-web-sm'):
+            try:
+                parts.append(package + metadata.version(package))
+            except metadata.PackageNotFoundError:
+                parts.append(package + '?')
+        if self.mode == 'layered':
+            model = DEFAULT_MODEL_DIR / MODEL_FILE
+            parts.append(f'privacy-filter:{model.stat().st_size if model.exists() else "missing"}')
+        return hashlib.sha256('\x1f'.join(parts).encode('utf-8')).hexdigest()[:16]
 
     def final_spans(self, text, terms):
         """Layered detection. Returns merged [(start, end, kind, source)] over `text`.

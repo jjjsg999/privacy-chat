@@ -1,0 +1,707 @@
+{
+  "scenarios": [
+    {
+      "scenario": "A 40-turn chat",
+      "meeting": false,
+      "turns": [
+        {
+          "turn": 1,
+          "today": 2135,
+          "lean": 2135,
+          "balanced": 2135,
+          "full": 2135
+        },
+        {
+          "turn": 2,
+          "today": 3374,
+          "lean": 3374,
+          "balanced": 3374,
+          "full": 3374
+        },
+        {
+          "turn": 3,
+          "today": 4613,
+          "lean": 4613,
+          "balanced": 4613,
+          "full": 4613
+        },
+        {
+          "turn": 4,
+          "today": 5855,
+          "lean": 5855,
+          "balanced": 5855,
+          "full": 5855
+        },
+        {
+          "turn": 5,
+          "today": 7093,
+          "lean": 7093,
+          "balanced": 7093,
+          "full": 7093
+        },
+        {
+          "turn": 6,
+          "today": 8332,
+          "lean": 8332,
+          "balanced": 8332,
+          "full": 8332
+        },
+        {
+          "turn": 7,
+          "today": 9570,
+          "lean": 9570,
+          "balanced": 9570,
+          "full": 9570
+        },
+        {
+          "turn": 8,
+          "today": 10810,
+          "lean": 10810,
+          "balanced": 10810,
+          "full": 10810
+        },
+        {
+          "turn": 9,
+          "today": 12047,
+          "lean": 12047,
+          "balanced": 12047,
+          "full": 12047
+        },
+        {
+          "turn": 10,
+          "today": 13285,
+          "lean": 13285,
+          "balanced": 13285,
+          "full": 13285
+        },
+        {
+          "turn": 11,
+          "today": 14524,
+          "lean": 13443,
+          "balanced": 14524,
+          "full": 14524
+        },
+        {
+          "turn": 12,
+          "today": 15762,
+          "lean": 13444,
+          "balanced": 15762,
+          "full": 15762
+        },
+        {
+          "turn": 13,
+          "today": 17002,
+          "lean": 13442,
+          "balanced": 17002,
+          "full": 17002
+        },
+        {
+          "turn": 14,
+          "today": 18241,
+          "lean": 13441,
+          "balanced": 18241,
+          "full": 18241
+        },
+        {
+          "turn": 15,
+          "today": 19479,
+          "lean": 13442,
+          "balanced": 19479,
+          "full": 19479
+        },
+        {
+          "turn": 16,
+          "today": 20719,
+          "lean": 13442,
+          "balanced": 20719,
+          "full": 20719
+        },
+        {
+          "turn": 17,
+          "today": 21959,
+          "lean": 13444,
+          "balanced": 21959,
+          "full": 21959
+        },
+        {
+          "turn": 18,
+          "today": 23197,
+          "lean": 13443,
+          "balanced": 23197,
+          "full": 23197
+        },
+        {
+          "turn": 19,
+          "today": 24435,
+          "lean": 13443,
+          "balanced": 24435,
+          "full": 24435
+        },
+        {
+          "turn": 20,
+          "today": 25673,
+          "lean": 13442,
+          "balanced": 25673,
+          "full": 25673
+        },
+        {
+          "turn": 21,
+          "today": 26914,
+          "lean": 13446,
+          "balanced": 26914,
+          "full": 26914
+        },
+        {
+          "turn": 22,
+          "today": 28153,
+          "lean": 13446,
+          "balanced": 28153,
+          "full": 28153
+        },
+        {
+          "turn": 23,
+          "today": 29392,
+          "lean": 13444,
+          "balanced": 29392,
+          "full": 29392
+        },
+        {
+          "turn": 24,
+          "today": 30631,
+          "lean": 13446,
+          "balanced": 30631,
+          "full": 30631
+        },
+        {
+          "turn": 25,
+          "today": 31869,
+          "lean": 13444,
+          "balanced": 31869,
+          "full": 31869
+        },
+        {
+          "turn": 26,
+          "today": 33106,
+          "lean": 13442,
+          "balanced": 32025,
+          "full": 33106
+        },
+        {
+          "turn": 27,
+          "today": 34347,
+          "lean": 13444,
+          "balanced": 32029,
+          "full": 34347
+        },
+        {
+          "turn": 28,
+          "today": 35587,
+          "lean": 13446,
+          "balanced": 32027,
+          "full": 35587
+        },
+        {
+          "turn": 29,
+          "today": 36826,
+          "lean": 13446,
+          "balanced": 32026,
+          "full": 36826
+        },
+        {
+          "turn": 30,
+          "today": 38064,
+          "lean": 13445,
+          "balanced": 32027,
+          "full": 38064
+        },
+        {
+          "turn": 31,
+          "today": 39303,
+          "lean": 13444,
+          "balanced": 32026,
+          "full": 39303
+        },
+        {
+          "turn": 32,
+          "today": 40542,
+          "lean": 13445,
+          "balanced": 32027,
+          "full": 40542
+        },
+        {
+          "turn": 33,
+          "today": 41780,
+          "lean": 13442,
+          "balanced": 32026,
+          "full": 41780
+        },
+        {
+          "turn": 34,
+          "today": 43017,
+          "lean": 13441,
+          "balanced": 32025,
+          "full": 43017
+        },
+        {
+          "turn": 35,
+          "today": 44256,
+          "lean": 13443,
+          "balanced": 32025,
+          "full": 44256
+        },
+        {
+          "turn": 36,
+          "today": 45493,
+          "lean": 13441,
+          "balanced": 32025,
+          "full": 45493
+        },
+        {
+          "turn": 37,
+          "today": 46731,
+          "lean": 13438,
+          "balanced": 32024,
+          "full": 46731
+        },
+        {
+          "turn": 38,
+          "today": 47969,
+          "lean": 13436,
+          "balanced": 32021,
+          "full": 47969
+        },
+        {
+          "turn": 39,
+          "today": 49207,
+          "lean": 13436,
+          "balanced": 32022,
+          "full": 49207
+        },
+        {
+          "turn": 40,
+          "today": 50446,
+          "lean": 13437,
+          "balanced": 32021,
+          "full": 50446
+        }
+      ],
+      "totals": {
+        "today": 1051738,
+        "lean": 480392,
+        "balanced": 905440,
+        "full": 1051738
+      }
+    },
+    {
+      "scenario": "A chat with a 60,000-character upload",
+      "meeting": false,
+      "turns": [
+        {
+          "turn": 1,
+          "today": 19214,
+          "lean": 19214,
+          "balanced": 19214,
+          "full": 19214
+        },
+        {
+          "turn": 2,
+          "today": 20152,
+          "lean": 20152,
+          "balanced": 20152,
+          "full": 20152
+        },
+        {
+          "turn": 3,
+          "today": 20948,
+          "lean": 3872,
+          "balanced": 20948,
+          "full": 20948
+        },
+        {
+          "turn": 4,
+          "today": 21743,
+          "lean": 4667,
+          "balanced": 21743,
+          "full": 21743
+        },
+        {
+          "turn": 5,
+          "today": 22538,
+          "lean": 5462,
+          "balanced": 22538,
+          "full": 22538
+        },
+        {
+          "turn": 6,
+          "today": 23336,
+          "lean": 6260,
+          "balanced": 23336,
+          "full": 23336
+        },
+        {
+          "turn": 7,
+          "today": 24134,
+          "lean": 7058,
+          "balanced": 24134,
+          "full": 24134
+        },
+        {
+          "turn": 8,
+          "today": 24930,
+          "lean": 7854,
+          "balanced": 24930,
+          "full": 24930
+        },
+        {
+          "turn": 9,
+          "today": 25729,
+          "lean": 8653,
+          "balanced": 25729,
+          "full": 25729
+        },
+        {
+          "turn": 10,
+          "today": 26523,
+          "lean": 9447,
+          "balanced": 26523,
+          "full": 26523
+        },
+        {
+          "turn": 11,
+          "today": 27318,
+          "lean": 10242,
+          "balanced": 27318,
+          "full": 27318
+        },
+        {
+          "turn": 12,
+          "today": 28113,
+          "lean": 11037,
+          "balanced": 28113,
+          "full": 28113
+        },
+        {
+          "turn": 13,
+          "today": 28911,
+          "lean": 11835,
+          "balanced": 28911,
+          "full": 28911
+        },
+        {
+          "turn": 14,
+          "today": 29707,
+          "lean": 12631,
+          "balanced": 29707,
+          "full": 29707
+        },
+        {
+          "turn": 15,
+          "today": 30501,
+          "lean": 13425,
+          "balanced": 30501,
+          "full": 30501
+        }
+      ],
+      "totals": {
+        "today": 373797,
+        "lean": 151809,
+        "balanced": 373797,
+        "full": 373797
+      }
+    },
+    {
+      "scenario": "A chat with one artifact edited 6 times",
+      "meeting": false,
+      "turns": [
+        {
+          "turn": 1,
+          "today": 2058,
+          "lean": 2058,
+          "balanced": 2058,
+          "full": 2058
+        },
+        {
+          "turn": 2,
+          "today": 5540,
+          "lean": 5540,
+          "balanced": 5540,
+          "full": 5540
+        },
+        {
+          "turn": 3,
+          "today": 9023,
+          "lean": 9023,
+          "balanced": 9023,
+          "full": 9023
+        },
+        {
+          "turn": 4,
+          "today": 12506,
+          "lean": 12506,
+          "balanced": 12506,
+          "full": 12506
+        },
+        {
+          "turn": 5,
+          "today": 15988,
+          "lean": 12627,
+          "balanced": 15988,
+          "full": 15988
+        },
+        {
+          "turn": 6,
+          "today": 19470,
+          "lean": 12680,
+          "balanced": 19470,
+          "full": 19470
+        },
+        {
+          "turn": 7,
+          "today": 23000,
+          "lean": 12780,
+          "balanced": 23000,
+          "full": 23000
+        },
+        {
+          "turn": 8,
+          "today": 23498,
+          "lean": 13278,
+          "balanced": 23498,
+          "full": 23498
+        },
+        {
+          "turn": 9,
+          "today": 23994,
+          "lean": 13774,
+          "balanced": 23994,
+          "full": 23994
+        },
+        {
+          "turn": 10,
+          "today": 24490,
+          "lean": 10841,
+          "balanced": 24490,
+          "full": 24490
+        },
+        {
+          "turn": 11,
+          "today": 24986,
+          "lean": 11337,
+          "balanced": 24986,
+          "full": 24986
+        },
+        {
+          "turn": 12,
+          "today": 25483,
+          "lean": 11834,
+          "balanced": 25483,
+          "full": 25483
+        }
+      ],
+      "totals": {
+        "today": 210036,
+        "lean": 128278,
+        "balanced": 210036,
+        "full": 210036
+      }
+    },
+    {
+      "scenario": "A meeting with 25 questions and answers",
+      "meeting": true,
+      "turns": [
+        {
+          "turn": 1,
+          "today": 25891,
+          "lean": 25891,
+          "balanced": 25891,
+          "full": 25891
+        },
+        {
+          "turn": 2,
+          "today": 26365,
+          "lean": 26365,
+          "balanced": 26365,
+          "full": 26365
+        },
+        {
+          "turn": 3,
+          "today": 26839,
+          "lean": 26474,
+          "balanced": 26839,
+          "full": 26839
+        },
+        {
+          "turn": 4,
+          "today": 27314,
+          "lean": 26473,
+          "balanced": 27314,
+          "full": 27314
+        },
+        {
+          "turn": 5,
+          "today": 27788,
+          "lean": 26473,
+          "balanced": 27788,
+          "full": 27788
+        },
+        {
+          "turn": 6,
+          "today": 28262,
+          "lean": 26474,
+          "balanced": 28262,
+          "full": 28262
+        },
+        {
+          "turn": 7,
+          "today": 28735,
+          "lean": 26472,
+          "balanced": 28735,
+          "full": 28735
+        },
+        {
+          "turn": 8,
+          "today": 29209,
+          "lean": 26472,
+          "balanced": 29209,
+          "full": 29209
+        },
+        {
+          "turn": 9,
+          "today": 29683,
+          "lean": 26474,
+          "balanced": 29683,
+          "full": 29683
+        },
+        {
+          "turn": 10,
+          "today": 30155,
+          "lean": 26471,
+          "balanced": 30155,
+          "full": 30155
+        },
+        {
+          "turn": 11,
+          "today": 30627,
+          "lean": 26470,
+          "balanced": 30627,
+          "full": 30627
+        },
+        {
+          "turn": 12,
+          "today": 31101,
+          "lean": 26472,
+          "balanced": 31101,
+          "full": 31101
+        },
+        {
+          "turn": 13,
+          "today": 31575,
+          "lean": 26473,
+          "balanced": 31575,
+          "full": 31575
+        },
+        {
+          "turn": 14,
+          "today": 32051,
+          "lean": 26475,
+          "balanced": 31686,
+          "full": 32051
+        },
+        {
+          "turn": 15,
+          "today": 32524,
+          "lean": 26474,
+          "balanced": 31683,
+          "full": 32524
+        },
+        {
+          "turn": 16,
+          "today": 32997,
+          "lean": 26472,
+          "balanced": 31682,
+          "full": 32997
+        },
+        {
+          "turn": 17,
+          "today": 33471,
+          "lean": 26473,
+          "balanced": 31683,
+          "full": 33471
+        },
+        {
+          "turn": 18,
+          "today": 33944,
+          "lean": 26473,
+          "balanced": 31681,
+          "full": 33944
+        },
+        {
+          "turn": 19,
+          "today": 34418,
+          "lean": 26473,
+          "balanced": 31681,
+          "full": 34418
+        },
+        {
+          "turn": 20,
+          "today": 34891,
+          "lean": 26472,
+          "balanced": 31682,
+          "full": 34891
+        },
+        {
+          "turn": 21,
+          "today": 35364,
+          "lean": 26472,
+          "balanced": 31680,
+          "full": 35364
+        },
+        {
+          "turn": 22,
+          "today": 35837,
+          "lean": 26472,
+          "balanced": 31680,
+          "full": 35837
+        },
+        {
+          "turn": 23,
+          "today": 36312,
+          "lean": 26473,
+          "balanced": 31683,
+          "full": 36312
+        },
+        {
+          "turn": 24,
+          "today": 36785,
+          "lean": 26472,
+          "balanced": 31683,
+          "full": 36785
+        },
+        {
+          "turn": 25,
+          "today": 37257,
+          "lean": 26470,
+          "balanced": 31681,
+          "full": 37257
+        }
+      ],
+      "totals": {
+        "today": 789395,
+        "lean": 661125,
+        "balanced": 753729,
+        "full": 789395
+      }
+    }
+  ],
+  "speed": {
+    "characters": 50000,
+    "standard": {
+      "first_pass_s": 1.848,
+      "cached_pass_s": 0.00124
+    },
+    "layered": {
+      "first_pass_s": 12.381,
+      "cached_pass_s": 0.00167
+    }
+  }
+}

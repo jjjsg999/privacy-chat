@@ -109,6 +109,8 @@ async def get_settings():
             'web_instructions': config.get('web_instructions', ''),
             'telegram_instructions': config.get('telegram_instructions', ''),
             'monthly_cost_ceiling_usd': str(config.get('monthly_cost_ceiling_usd', '2.00')),
+            'context_mode_chat': engine.context_mode(config, False),
+            'context_mode_meeting': engine.context_mode(config, True),
             'monthly_budget': monthly_budget.status(),
             'openrouter': {'configured': bool(storage.openrouter_api_key())}}
 
@@ -144,6 +146,8 @@ class Settings(BaseModel):
     web_instructions: str | None = Field(default=None, max_length=2000)
     telegram_instructions: str | None = Field(default=None, max_length=2000)
     monthly_cost_ceiling_usd: Decimal | None = Field(default=None, ge=0, le=100000, decimal_places=2)
+    context_mode_chat: Literal['lean', 'balanced', 'full'] | None = None
+    context_mode_meeting: Literal['lean', 'balanced', 'full'] | None = None
 
 
 @app.put('/api/settings')
@@ -162,6 +166,9 @@ async def put_settings(value: Settings):
                 config[name] = getattr(value, name).strip()
         if value.monthly_cost_ceiling_usd is not None:
             config['monthly_cost_ceiling_usd'] = str(value.monthly_cost_ceiling_usd)
+        for name in ('context_mode_chat', 'context_mode_meeting'):
+            if getattr(value, name) is not None:
+                config[name] = getattr(value, name)
         storage.write_json(storage.DATA / 'settings.json', config)
         if value.clear_api_key:
             storage.save_openrouter_api_key('')
@@ -213,16 +220,26 @@ async def sessions(q: str | None = Query(default=None, max_length=200)):
     return storage.list_sessions(q)
 
 
+class PinChange(BaseModel):
+    """Keep-in-context pin: a message (index), a file chip (index + file) or an artifact id (its latest version)."""
+    kind: Literal['message', 'file', 'artifact']
+    pinned: bool
+    index: int | None = Field(default=None, ge=0)
+    file: int | None = Field(default=None, ge=0)
+    artifact: str | None = Field(default=None, min_length=1, max_length=100)
+
+
 class SessionUpdate(BaseModel):
     title: str | None = Field(default=None, min_length=1, max_length=100)
     pinned: bool | None = None
     archived: bool | None = None
+    pin: PinChange | None = None
 
 
 @app.patch('/api/sessions/{session_id}')
 async def update_session(session_id: str, value: SessionUpdate):
     """Rename, pin or archive. Fields that are omitted are left unchanged."""
-    if value.title is None and value.pinned is None and value.archived is None:
+    if value.title is None and value.pinned is None and value.archived is None and value.pin is None:
         raise HTTPException(422, 'Nothing to change.')
     title = ' '.join(value.title.split()) if value.title is not None else None
     if value.title is not None and not title:
@@ -234,6 +251,13 @@ async def update_session(session_id: str, value: SessionUpdate):
             result = storage.rename_session(session_id, title)
         if value.pinned is not None or value.archived is not None:
             result = storage.set_session_flags(session_id, value.pinned, value.archived)
+        if value.pin is not None:
+            if value.pin.kind == 'artifact' and not value.pin.artifact:
+                raise HTTPException(422, 'Choose an artifact to pin.')
+            try:
+                result = storage.set_pin(session_id, value.pin.kind, value.pin.pinned, value.pin.index, value.pin.file, value.pin.artifact)
+            except ValueError as exc:
+                raise HTTPException(422, str(exc)) from None
         return storage.public_session(result)
 
 
