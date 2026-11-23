@@ -9,7 +9,12 @@ import os
 import re
 from pathlib import Path
 
-TOKEN = re.compile(r'(?<!\w)[A-Z][A-Z0-9_]*__\d+(?!\w)')
+# Word boundaries that treat CJK as separators: Chinese/Japanese/Korean text has no spaces, so a
+# placeholder or term glued to it (PERSON__3跟, 跟Acme開會) must still match.
+CJK = '\u2e80-\u9fff\uac00-\ud7af\uf900-\ufaff\uff00-\uffef'
+BOUND_L = r'(?<![^\W' + CJK + r'])'
+BOUND_R = r'(?![^\W' + CJK + r'])'
+TOKEN = re.compile(BOUND_L + r'[A-Z][A-Z0-9_]*__\d+' + BOUND_R)
 
 MODES = ('standard', 'layered')
 
@@ -236,7 +241,7 @@ class PrivacyEngine:
         spans = []
         if terms:
             lookup = {f'T{i}': kind for i, (kind, _) in enumerate(terms)}
-            pattern = re.compile(r'(?<!\w)(?:' + '|'.join(f'(?P<T{i}>{re.escape(value)})' for i, (_, value) in enumerate(terms)) + r')(?!\w)', re.I)
+            pattern = re.compile(BOUND_L + '(?:' + '|'.join(f'(?P<T{i}>{re.escape(value)})' for i, (_, value) in enumerate(terms)) + ')' + BOUND_R, re.I)
             spans += [(m.start(), m.end(), lookup[m.lastgroup], 'terms') for m in pattern.finditer(blank)]
         for item in self.analyzer.analyze(text=blank, language='en'):
             metadata = getattr(item, 'recognition_metadata', None) or {}
@@ -269,7 +274,7 @@ class PrivacyEngine:
             return text
         if terms:
             lookup = {f'T{i}': kind for i, (kind, _) in enumerate(terms)}
-            pattern = re.compile(r'(?<!\w)(?:' + '|'.join(f'(?P<T{i}>{re.escape(value)})' for i, (_, value) in enumerate(terms)) + r')(?!\w)', re.I)
+            pattern = re.compile(BOUND_L + '(?:' + '|'.join(f'(?P<T{i}>{re.escape(value)})' for i, (_, value) in enumerate(terms)) + ')' + BOUND_R, re.I)
             parts, cursor = [], 0
             for token_match in TOKEN.finditer(text):
                 parts.append(pattern.sub(lambda m: allocate(lookup[m.lastgroup], m[0]), text[cursor:token_match.start()]))
@@ -313,7 +318,7 @@ class StreamRehydrator:
 
     def feed(self, chunk):
         self.buffer += chunk
-        tail = re.search(r'\w+$', self.buffer)
+        tail = re.search(r'[^\W' + CJK + r']+$', self.buffer)
         cut = tail.start() if tail and len(tail[0]) <= self.MAX_HELD else len(self.buffer)
         ready, self.buffer = self.buffer[:cut], self.buffer[cut:]
         return PrivacyEngine.rehydrate(ready, self.token_map)

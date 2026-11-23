@@ -1,4 +1,4 @@
-﻿"""Mocked tests for the layered privacy filter. No model, no network."""
+"""Mocked tests for the layered privacy filter. No model, no network."""
 import re
 import unittest
 from types import SimpleNamespace
@@ -184,6 +184,45 @@ class StandardUnchangedTests(unittest.TestCase):
         self.assertEqual(privacy.mode, 'layered')
         engine.apply_privacy_mode(privacy, {})
         self.assertEqual(privacy.mode, 'standard')
+
+
+
+class CjkBoundaryTests(unittest.TestCase):
+    """Chinese text has no spaces: placeholders and terms glued to it must still work."""
+
+    def test_rehydrate_placeholder_next_to_cjk(self):
+        self.assertEqual(PrivacyEngine.rehydrate('請PERSON__3跟 CLIENT__2開會', {'PERSON__3': '蔡', 'CLIENT__2': 'X'}),
+                         '請蔡跟 X開會')
+
+    def test_latin_boundaries_unchanged(self):
+        mapping = {'PERSON__1': 'Anna'}
+        self.assertEqual(PrivacyEngine.rehydrate('xPERSON__1 PERSON__1x éPERSON__1', mapping), 'xPERSON__1 PERSON__1x éPERSON__1')
+
+    def test_terms_match_next_to_cjk_and_chinese_terms_match_inside_text(self):
+        privacy = PrivacyEngine(FakeAnalyzer())
+        mapping = {}
+        terms = parse_terms('CLIENT: Acme\nPERSON: 陳偉倫')
+        masked = privacy.tokenize('跟Acme開會，陳偉倫說', mapping, terms)
+        self.assertNotIn('Acme', masked)
+        self.assertNotIn('陳偉倫', masked)
+        self.assertEqual(privacy.rehydrate(masked, mapping), '跟Acme開會，陳偉倫說')
+
+    def test_terms_still_need_latin_word_boundaries(self):
+        privacy = PrivacyEngine(FakeAnalyzer())
+        self.assertEqual(privacy.tokenize('Acmes xAcme', {}, parse_terms('CLIENT: Acme')), 'Acmes xAcme')
+
+    def test_layered_terms_next_to_cjk(self):
+        privacy = PrivacyEngine(FakeAnalyzer(), mode='layered', privacy_filter=FakeFilter())
+        masked = privacy.tokenize('跟Acme開會', {}, parse_terms('CLIENT: Acme'))
+        self.assertNotIn('Acme', masked)
+
+    def test_stream_rehydrator_with_cjk_split_across_chunks(self):
+        from privacy_engine import StreamRehydrator
+        mapping = {'PERSON__3': '蔡芬宏'}
+        for chunks in (['請PERSON_', '_3跟你說'], ['請PERSON__3', '跟你說'], ['請', 'PERSON__3跟', '你說']):
+            stream = StreamRehydrator(mapping)
+            out = ''.join(stream.feed(c) for c in chunks) + stream.flush()
+            self.assertEqual(out, '請蔡芬宏跟你說')
 
 
 if __name__ == '__main__':
