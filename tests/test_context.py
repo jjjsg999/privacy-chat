@@ -257,6 +257,15 @@ class EngineContextTests(unittest.TestCase):
         self.assertIn('masked', storage.load_session(session['id'])['messages'][0])
         public = storage.public_session(storage.load_session(session['id']))
         self.assertNotIn('masked', json.dumps(public))
+        # Web search records: masked queries, page text and masked excerpts stay on the server too.
+        saved = storage.load_session(session['id'])
+        saved['searches'] = [{'id': 's_1', 'planner_query_masked': 'CLIENT__1 news', 'sent_query': 'news', 'sent_with': ['m_1'],
+                              'sources': [{'n': 1, 'title': 'T', 'url': 'https://a.example', 'snippet': 's',
+                                           'text': 'page text', 'text_masked': 'masked page', 'label_masked': 'T — a.example'}]}]
+        public = json.dumps(storage.public_session(saved))
+        for field in ('masked', 'page text', 'sent_with', '"text"'):
+            self.assertNotIn(field, public)
+        self.assertIn('"snippet"', public)
 
     def test_stubs_are_never_stored(self):
         storage.write_json(storage.DATA / 'settings.json', {'model': 'chat/model', 'context_mode_chat': 'lean'})

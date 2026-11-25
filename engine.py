@@ -1,17 +1,25 @@
 """Shared chat logic: all remote messages pass through privacy processing."""
 import contextvars
 import json
+import logging
+import re
 import zlib
 from contextlib import aclosing
+from decimal import Decimal
+from urllib.parse import urlsplit
+from uuid import uuid4
 import httpx
 import context_builder
 import public_institutions
+import web_search
 from context_builder import ContextRefused
 from privacy_engine import parse_terms, StreamRehydrator
 import storage
 import dev_budget
 import monthly_budget
 import time
+
+log = logging.getLogger('privacy_llm.engine')
 
 _monthly_prices = None
 
@@ -206,28 +214,46 @@ def fit_context(system_text, items, config, model, wanted_out, pinned_artifacts,
 
 
 def history_items(session, privacy, terms, fingerprint, first=0):
-    """Masked items for the saved messages from index `first`; only messages without a valid cache are masked."""
+    """Masked items for the saved messages from index `first`; only messages without a valid cache are masked.
+
+    Web search: a rerun or send-to-model event is masked from its stored query with mask_web_text (deterministic,
+    no detectors), and a message whose turn had web sources carries a one-line stub instead of those sources.
+    """
     items = []
+    with_sources = source_turns(session)
     for index in range(first, len(session['messages'])):
         m = session['messages'][index]
-        items.append({'role': m['role'], 'text': cached_mask(m, 'masked', m['content'], privacy, session['token_map'], terms, fingerprint),
+        if m.get('event'):
+            text = event_masked_text(m, privacy, session['token_map'], terms)
+        else:
+            text = cached_mask(m, 'masked', m['content'], privacy, session['token_map'], terms, fingerprint)
+        if m['role'] == 'user' and with_sources and m.get('id') in with_sources:
+            text += '\n\n' + context_builder.SOURCES_STUB
+        items.append({'role': m['role'], 'text': text,
                       'real': m['content'] if m['role'] == 'assistant' else None, 'index': index,
                       'attachments': m.get('attachments'), 'pinned': m.get('pinned')})
     return items
 
 
-def chat_context(session, message, privacy, config, *, channel, artifacts):
-    """(built context, cache entry for the new user message) for a normal chat turn."""
+def chat_context(session, message, privacy, config, *, channel, artifacts, new_masked=None, sources=None):
+    """(built context, cache entry for the new user message) for a normal chat turn.
+
+    `new_masked` is the new message's masked text when the caller already has it; `sources` ([{n, label, text}],
+    masked) are this turn's web sources, sent inside a delimited block after the message.
+    """
     terms = parse_terms(config['sensitive_terms'])
     fingerprint = privacy.fingerprint(config['sensitive_terms'])
     items = history_items(session, privacy, terms, fingerprint)
-    new_masked = privacy.tokenize(message, session['token_map'], terms)
-    items.append({'role': 'user', 'text': new_masked, 'index': None})
+    if new_masked is None:
+        new_masked = privacy.tokenize(message, session['token_map'], terms)
+    items.append({'role': 'user', 'text': new_masked + context_builder.sources_section(sources), 'index': None})
     instructions = tokenized_instructions(config, channel, privacy, session, terms)
     base = ('You are a helpful personal assistant. Strings like PERSON__1 and CLIENT__2 '
             'are privacy placeholders. Preserve them exactly; never infer their original values.')
     if artifacts:  # artifacts are rendered by the web UI only, so only the streamed web chat is told about them
         base += '\n\n' + meeting_prompt('artifacts.md')
+    if sources:
+        base += '\n\n' + meeting_prompt('web_sources.md')
     built = fit_context(with_instructions(base, instructions), items, config, config['model'],
                         STREAM_MAX_TOKENS if artifacts else 6000, session.get('pinned_artifacts'), meeting=False)
     return built, cache_entry(message, new_masked, fingerprint)
@@ -238,12 +264,19 @@ async def chat(session, message, privacy, channel='web'):
         return await ask_meeting(session, message, privacy, channel)
     config = storage.settings()
     apply_privacy_mode(privacy, config)
-    built, entry = chat_context(session, message, privacy, config, channel=channel, artifacts=False)
+    turn = {}
+    if web_search_active(session, config, channel):
+        async with aclosing(web_turn(session, message, privacy, config, 6000)) as events:
+            async for event in events:
+                if event['type'] == 'turn':
+                    turn = event
+    built, entry = chat_context(session, message, privacy, config, channel=channel, artifacts=False,
+                                new_masked=turn.get('new_masked'), sources=turn.get('sources'))
     outbound = built['messages']
     reply = await complete(outbound, config['model'])
-    history = session['messages'] + [{'role': 'user', 'content': message, 'masked': entry}]
+    history = session['messages'] + [{'role': 'user', 'content': message, 'masked': entry, **turn.get('user_extra', {})}]
     session['messages'] = history + [{'role': 'assistant', 'content': privacy.rehydrate(reply, session['token_map']),
-                                      **stored_context(built['info'])}]
+                                      **stored_context(built['info']), **turn.get('reply_extra', {})}]
     storage.save_session(session)
     if not session['title_generated'] and sum(m['role'] == 'user' for m in history) >= 3:
         try:
@@ -518,14 +551,14 @@ def _prompt_tokens(usage, context=None):
     return {'prompt_tokens': value, **({'est_prompt_tokens': context['est_tokens']} if context else {})}
 
 
-async def _stream_turn(session, question, outbound, model, extra=None, context=None, max_tokens=None):
+async def _stream_turn(session, question, outbound, model, extra=None, context=None, max_tokens=None, reply_extra=None):
     """Stream one reply, restore tokens locally, persist it. Yields NDJSON-ready events.
 
     A user-aborted or failed stream with some text saves the partial reply (stopped=True).
     """
     rehydrator = StreamRehydrator(session['token_map'])
     parts, finished, error, truncated, usage = [], False, None, False, None
-    sent = stored_context(context) if context else {}
+    sent = {**(stored_context(context) if context else {}), **(reply_extra or {})}
     # Only pass max_tokens when the model's window forced a smaller reply budget than the default.
     options = {'max_tokens': max_tokens} if max_tokens and max_tokens != STREAM_MAX_TOKENS else {}
     try:
@@ -575,11 +608,23 @@ async def stream_chat(session, message, privacy, extra=None):
         return
     config = storage.settings()
     apply_privacy_mode(privacy, config)
-    built, entry = chat_context(session, message, privacy, config, channel='web', artifacts=True)
+    turn = {}
+    if web_search_active(session, config, 'web'):
+        yield {'type': 'start', 'session_id': session['id']}
+        async with aclosing(web_turn(session, message, privacy, config, STREAM_MAX_TOKENS)) as events:
+            async for event in events:
+                if event['type'] == 'turn':
+                    turn = event
+                else:
+                    yield event
+    built, entry = chat_context(session, message, privacy, config, channel='web', artifacts=True,
+                                new_masked=turn.get('new_masked'), sources=turn.get('sources'))
     failed = False
-    yield {'type': 'start', 'session_id': session['id']}
-    async with aclosing(_stream_turn(session, message, built['messages'], config['model'], {**(extra or {}), 'masked': entry},
-                                     built['info'], built['out_tokens'])) as events:
+    if not turn:
+        yield {'type': 'start', 'session_id': session['id']}
+    async with aclosing(_stream_turn(session, message, built['messages'], config['model'],
+                                     {**(extra or {}), 'masked': entry, **turn.get('user_extra', {})},
+                                     built['info'], built['out_tokens'], turn.get('reply_extra'))) as events:
         async for event in events:
             failed = failed or event['type'] == 'error'
             yield event
@@ -605,3 +650,385 @@ async def stream_ask_meeting(session, question, privacy, extra=None):
             yield event
     if not failed:
         yield {'type': 'done', 'session': storage.public_session(session)}
+
+
+# --- Web search (web chats only; needs features.web_search and the chat's own web_search switch) ---
+#
+# A fixed pipeline, not a tool loop: plan (one small model call on masked text), check each query locally, search,
+# read pages, mask the page text, then answer with numbered sources. A real name reaches the search engine only
+# through rerun_search() and the model only sees it masked; both are reached only from an explicit click in the UI.
+
+PLANNER_MAX_TOKENS = 800
+
+
+def web_search_active(session, config, channel):
+    return (channel == 'web' and (config.get('features') or {}).get('web_search') is True
+            and session.get('web_search') is True and session.get('session_type', 'chat') == 'chat')
+
+
+def model_visible(search):
+    return search.get('status') == 'done' and search.get('kind') in ('public', 'generic', 'named') and bool(search.get('sources'))
+
+
+def source_turns(session):
+    """Ids of the messages whose model request carried web sources; later requests send a stub in their place."""
+    return {message_id for s in session.get('searches') or [] for message_id in s.get('sent_with') or []}
+
+
+def turn_searches(session, turn_id):
+    return [s for s in session.get('searches') or [] if s.get('turn') == turn_id and model_visible(s)]
+
+
+def sources_for_model(searches):
+    return [{'n': src['n'], 'label': src['label_masked'], 'text': src['text_masked']}
+            for s in searches for src in s['sources'] if 'text_masked' in src]
+
+
+def event_masked_text(message, privacy, token_map, terms):
+    """What the model sees for a rerun or send-to-model event: a fixed sentence around the masked query."""
+    query = privacy.mask_web_text(message.get('event_query', ''), token_map, terms)
+    if message.get('event') == 'rerun':
+        return f'Search rerun with the name: {query}. Answer my earlier question again, using all the web sources below.'
+    return f'The results of the search "{query}" may now be used. Answer my earlier question again, using all the web sources below.'
+
+
+def failure_reason(exc):
+    """A short reason for the planner note, from the named failures complete() already reports."""
+    if isinstance(exc, CostLimitError):
+        return 'monthly limit reached'
+    text = str(exc)
+    code = re.search(r'HTTP (\d{3})', text)
+    if code:
+        return f'HTTP {code[1]}'
+    if 'timed out' in text:
+        return 'timeout'
+    if 'empty reply' in text:
+        return 'empty reply'
+    return 'request failed'
+
+
+def parse_plan(text, limit):
+    """[{query, purpose}] from the planner's reply. Raises ValueError with a short reason."""
+    text = str(text or '').strip()
+    fenced = re.fullmatch(r'```(?:json)?\s*(.*?)\s*```', text, re.S)
+    if fenced:
+        text = fenced[1]
+    start, end = text.find('{'), text.rfind('}')
+    if start < 0 or end < start:
+        raise ValueError('invalid JSON')
+    try:
+        data = json.loads(text[start:end + 1])
+    except ValueError:
+        raise ValueError('invalid JSON') from None
+    if not isinstance(data, dict) or not isinstance(data.get('queries'), list):
+        raise ValueError('no query list')
+    if len(data['queries']) > limit:
+        raise ValueError('too many queries')
+    plan = []
+    for item in data['queries']:
+        if not isinstance(item, dict) or not isinstance(item.get('query'), str):
+            raise ValueError('invalid query')
+        query = ' '.join(item['query'].split())
+        if not query or len(query) > web_search.QUERY_MAX:
+            raise ValueError('invalid query')
+        purpose = item.get('purpose')
+        plan.append({'query': query, 'purpose': ' '.join(purpose.split())[:200] if isinstance(purpose, str) else ''})
+    return plan
+
+
+def planner_messages(session, new_masked, privacy, config, terms, fingerprint, model, limit):
+    """The masked conversation in lean mode, with the planner instructions. Raises ContextRefused if it cannot fit."""
+    items = history_items(session, privacy, terms, fingerprint) + [{'role': 'user', 'text': new_masked, 'index': None}]
+    length, known = context_length_for(model)
+    prompt = meeting_prompt('search_planner.md').replace('{max_queries}', str(limit))
+    built = context_builder.build_context(prompt, items, cap=context_builder.CAPS['lean'], context_length=length,
+                                          context_length_known=known, out_reserve=min(PLANNER_MAX_TOKENS, max(256, length // 4)),
+                                          mode='lean')
+    return built['messages']
+
+
+async def plan_searches(messages, model, limit):
+    """(plan, None) or (None, reason). An unreadable reply is retried once."""
+    request, reason = messages, None
+    for _ in range(2):
+        try:
+            return parse_plan(await complete(request, model, max_tokens=PLANNER_MAX_TOKENS), limit), None
+        except CostLimitError as exc:
+            return None, failure_reason(exc)
+        except ChatError as exc:
+            reason = failure_reason(exc)
+        except ValueError as exc:
+            reason = str(exc)
+        request = messages + [{'role': 'user', 'content': 'Your previous reply could not be read. Reply with the JSON object only, exactly in the shape specified.'}]
+    return None, reason
+
+
+async def _rates(model):
+    global _monthly_prices
+    if _monthly_prices is None or time.monotonic() - _monthly_prices[0] > 300:
+        _monthly_prices = (time.monotonic(), await model_catalogue())
+    return monthly_budget.prices(_monthly_prices[1], model)
+
+
+async def _estimate(messages, model, max_tokens):
+    """What complete() or stream_complete() would reserve for this request."""
+    return monthly_budget.request_amount(messages, max_tokens, await _rates(model))
+
+
+def new_search(turn, event_id, **fields):
+    record = {'id': f's_{uuid4().hex}', 'turn': turn, 'event_id': event_id, 'created_at': storage.now(), 'kind': 'generic',
+              'status': 'running', 'planner_query_masked': '', 'sent_query': '', 'rerun_query': None, 'removed': [],
+              'rerun_names': [], 'rerun_withheld': False, 'engine': 'brave', 'result_count': 0, 'pages_read': 0,
+              'sources': [], 'cost_usd': 0, 'error': None, 'parent': None}
+    record.update(fields)
+    return record
+
+
+def next_source_number(session):
+    return max([src.get('n', 0) for s in session.get('searches') or [] for src in s.get('sources') or []], default=0) + 1
+
+
+def mask_sources(record, privacy, token_map, terms):
+    for src in record['sources']:
+        domain = (urlsplit(src['url']).hostname or '').removeprefix('www.')
+        src['label_masked'] = privacy.mask_web_text(f"{src['title']} — {domain}", token_map, terms)
+        src['text_masked'] = privacy.mask_web_text(src['text'], token_map, terms)
+
+
+async def execute_search(session, record, query, privacy, terms, config, engine_name, mask=True):
+    """Search, read pages, number the sources, and mask them for the model (unless the results stay hidden)."""
+    started = time.monotonic()
+    try:
+        results = await web_search.search(engine_name, query)
+        sources, read = await web_search.read_sources(results, config['web_search']['pages_per_search'],
+                                                      context_mode(config, False), engine_name)
+    except web_search.SearchError as exc:
+        record.update(status='failed', error=str(exc))
+    except Exception:  # fail closed: an unexpected error costs this search, never the chat
+        record.update(status='failed', error='search failed')
+    else:
+        first = next_source_number(session)
+        for offset, src in enumerate(sources):
+            src['n'] = first + offset
+        record.update(status='done', result_count=len(results), pages_read=read, sources=sources)
+        if mask:
+            mask_sources(record, privacy, session['token_map'], terms)
+    # Ids, kinds, counts and timings only: never a query, page text or name.
+    log.info('web search %s kind=%s status=%s results=%s pages=%s %.1fs', record['id'], record['kind'], record['status'],
+             record['result_count'], record['pages_read'], time.monotonic() - started)
+
+
+def search_unit_cost(config, engine_name):
+    return Decimal(0) if engine_name == 'fake' else Decimal(str(config['web_search']['cost_per_search_usd']))
+
+
+def _settle(reservation, amount):
+    try:
+        monthly_budget.settle_fixed(reservation, amount)
+    except (OSError, dev_budget.BudgetError):
+        pass  # the full reservation stays charged, as for any unsettled call
+
+
+async def web_turn(session, message, privacy, config, answer_tokens):
+    """Plan, check, search, read and mask for a new message. Yields UI events, then one {'type': 'turn'} item with
+    what the answer needs: new_masked, sources, user_extra (the message id) and reply_extra (a planner note)."""
+    opts = config['web_search']
+    terms = parse_terms(config['sensitive_terms'])
+    fingerprint = privacy.fingerprint(config['sensitive_terms'])
+    session.setdefault('searches', [])
+    turn_id = f'm_{uuid4().hex[:16]}'
+    new_masked = privacy.tokenize(message, session['token_map'], terms)
+    engine_name = web_search.active_engine(opts)
+    unit, limit = search_unit_cost(config, engine_name), opts['max_searches_per_message']
+    planner_model = opts['planner_model'] or config['model']
+    result = {'type': 'turn', 'new_masked': new_masked, 'user_extra': {'id': turn_id}, 'reply_extra': {}, 'sources': None}
+
+    def skip_note(reason):
+        result['reply_extra']['web_note'] = f'Web search skipped: the planner reply could not be read (Reason: {reason})'
+        return {'type': 'planner_failed', 'message': result['reply_extra']['web_note']}
+
+    try:
+        planner = planner_messages(session, new_masked, privacy, config, terms, fingerprint, planner_model, limit)
+    except ContextRefused:
+        yield skip_note('conversation too long for the planner model')
+        yield result
+        return
+    # Budget: the planner call, every possible search and the answer must fit before the planner is called.
+    room = sum(len(json.dumps(m, ensure_ascii=False)) for m in planner) + limit * 6 * web_search.TEXT_CAPS.get(context_mode(config, False), 6000)
+    try:
+        headroom = (await _estimate(planner, planner_model, PLANNER_MAX_TOKENS)
+                    + await _estimate([{'role': 'user', 'content': 'x' * room}], config['model'], answer_tokens))
+        reservation = monthly_budget.reserve_fixed(unit * limit, f'web-search/{engine_name}', 'web_search', headroom)
+    except (dev_budget.BudgetError, ChatError, OSError):
+        record = new_search(turn_id, turn_id, kind='skipped', status='budget', error='monthly limit reached', engine=engine_name)
+        session['searches'].append(record)
+        yield {'type': 'search_skipped', 'search': storage.public_search(record)}
+        yield result
+        return
+    yield {'type': 'planner_started'}
+    used = Decimal(0)
+    try:
+        plan, reason = await plan_searches(planner, planner_model, limit)
+        if plan is None:
+            yield skip_note(reason)
+            yield result
+            return
+        for planned in plan:
+            record = new_search(turn_id, turn_id, engine=engine_name, planner_query_masked=planned['query'], purpose=planned['purpose'])
+            session['searches'].append(record)
+            try:
+                checked = web_search.check_query(planned['query'], session['token_map'], terms,
+                                                 dates=opts['dates_in_queries'], terms_names=opts['terms_list_names'])
+            except Exception:  # fail closed: any doubt about the query means it is not searched
+                record.update(status='failed', error='query check failed')
+                log.info('web search %s kind=%s status=failed (check)', record['id'], record['kind'])
+                yield {'type': 'search_done', 'search': storage.public_search(record)}
+                continue
+            record.update(kind=checked['kind'], sent_query=checked['sent_query'], rerun_query=checked['rerun_query'],
+                          removed=checked['removed'], rerun_names=checked['rerun_names'], rerun_withheld=checked['rerun_withheld'])
+            if checked['kind'] == 'skipped':
+                record['status'] = 'skipped'
+                yield {'type': 'search_skipped', 'search': storage.public_search(record)}
+                continue
+            yield {'type': 'search_started', 'search': storage.public_search(record)}
+            await execute_search(session, record, checked['sent_query'], privacy, terms, config, engine_name)
+            if record['status'] == 'done':
+                record['cost_usd'] = float(unit)
+                used += unit
+            yield {'type': 'search_done', 'search': storage.public_search(record)}
+    finally:
+        _settle(reservation, used)
+    visible = turn_searches(session, turn_id)
+    for search in visible:
+        search.setdefault('sent_with', []).append(turn_id)
+    result['sources'] = sources_for_model(visible) or None
+    yield result
+
+
+class SearchActionError(ChatError):
+    """A rerun or send-to-model request that cannot go ahead. Nothing was sent."""
+
+
+def find_search(session, search_id):
+    found = next((s for s in session.get('searches') or [] if s.get('id') == search_id), None)
+    if found is None:
+        raise SearchActionError('That search is not in this conversation.')
+    return found
+
+
+def update_linked(session):
+    session['has_linked_names'] = any('model' in r.get('sent_to', []) for r in session.get('revealed_names') or [])
+
+
+async def _answer_event(session, event, query, turn, event_id, privacy, config):
+    """Stream a new reply to an event (rerun or send-to-model) with the turn's sources, old and new.
+
+    The event is stored as a compact system-generated user message, so user/assistant alternation is kept; the UI
+    shows it as a one-line event, and it cannot be edited and resent."""
+    terms = parse_terms(config['sensitive_terms'])
+    label = 'Rerun' if event == 'rerun' else 'Sent to the model'
+    message = {'content': f'{label}: {query}', 'id': event_id, 'event': event, 'event_query': query, 'for_turn': turn}
+    visible = turn_searches(session, turn)
+    for search in visible:
+        search.setdefault('sent_with', []).append(event_id)
+    built, _ = chat_context(session, message['content'], privacy, config, channel='web', artifacts=True,
+                            new_masked=event_masked_text(message, privacy, session['token_map'], terms),
+                            sources=sources_for_model(visible) or None)
+    extra = {k: message[k] for k in ('id', 'event', 'event_query', 'for_turn')}
+    failed = False
+    async with aclosing(_stream_turn(session, message['content'], built['messages'], config['model'], extra,
+                                     built['info'], built['out_tokens'])) as events:
+        async for item in events:
+            failed = failed or item['type'] == 'error'
+            yield item
+    if not failed:
+        yield {'type': 'done', 'session': storage.public_session(session)}
+
+
+async def rerun_search(session, search_id, hide_from_ai, privacy):
+    """Rerun a Generic or Skipped search with the real names. Reached only from the rerun button (POST .../rerun).
+
+    hide_from_ai=False: the results are masked and answered by the model (the placeholder becomes linked).
+    hide_from_ai=True: the results are shown to the user only; no model call.
+    """
+    config = storage.settings()
+    apply_privacy_mode(privacy, config)
+    opts = config['web_search']
+    terms = parse_terms(config['sensitive_terms'])
+    yield {'type': 'start', 'session_id': session['id']}
+    search = find_search(session, search_id)
+    if search.get('kind') not in ('generic', 'skipped') or search.get('status') not in ('done', 'skipped') or search.get('rerun_by'):
+        raise SearchActionError('This search cannot be rerun.')
+    if hide_from_ai and not opts['offer_hidden_rerun']:
+        raise SearchActionError('Hidden reruns are switched off in Settings.')
+    try:
+        checked = web_search.check_query(search['planner_query_masked'], session['token_map'], terms,
+                                         dates=opts['dates_in_queries'], terms_names=opts['terms_list_names'])
+    except Exception:
+        raise SearchActionError('This search cannot be rerun safely.') from None
+    if not checked['rerun_query']:
+        raise SearchActionError('There is no name to add to this search.')
+    engine_name = web_search.active_engine(opts)
+    unit = search_unit_cost(config, engine_name)
+    try:
+        headroom = Decimal(0)
+        if not hide_from_ai:
+            size = sum(len(m['content']) for m in session['messages']) + 6 * web_search.TEXT_CAPS['full'] * 4
+            headroom = await _estimate([{'role': 'user', 'content': 'x' * size}], config['model'], STREAM_MAX_TOKENS)
+        reservation = monthly_budget.reserve_fixed(unit, f'web-search/{engine_name}', 'web_search', headroom)
+    except (dev_budget.BudgetError, ChatError, OSError):
+        raise SearchActionError('Search skipped: monthly limit reached') from None
+    names = {n['token'] for n in checked['rerun_names']}
+    # A linked rerun is shown with the reply to its own event message; a hidden one stays with the original turn.
+    record = new_search(search['turn'], search['turn'] if hide_from_ai else f'm_{uuid4().hex[:16]}', kind='named_hidden' if hide_from_ai else 'named', parent=search['id'],
+                        engine=engine_name, planner_query_masked=search['planner_query_masked'], sent_query=checked['rerun_query'],
+                        removed=[r for r in checked['removed'] if r.get('token') not in names], rerun_names=checked['rerun_names'])
+    session['searches'].append(record)
+    search['rerun_by'] = record['id']
+    yield {'type': 'search_started', 'search': storage.public_search(record)}
+    try:
+        await execute_search(session, record, checked['rerun_query'], privacy, terms, config, engine_name, mask=not hide_from_ai)
+    finally:
+        _settle(reservation, unit if record['status'] == 'done' else Decimal(0))
+    if record['status'] == 'done':
+        record['cost_usd'] = float(unit)
+    linked = not hide_from_ai and record['status'] == 'done'
+    at = storage.now()
+    session.setdefault('revealed_names', [])
+    for name in checked['rerun_names']:  # the name left this machine (sent to the engine), whatever the outcome
+        session['revealed_names'].append({'token': name['token'], 'display': name['display'], 'kind': name['kind'],
+                                          'source': name['source'], 'at': at, 'search_id': record['id'],
+                                          'sent_to': ['search_engine'] + (['model'] if linked else [])})
+    update_linked(session)
+    storage.save_session(session)
+    yield {'type': 'search_done', 'search': storage.public_search(record)}
+    if not linked:
+        yield {'type': 'done', 'session': storage.public_session(session)}
+        return
+    async with aclosing(_answer_event(session, 'rerun', checked['rerun_query'], search['turn'], record['event_id'],
+                                      privacy, config)) as events:
+        async for item in events:
+            yield item
+
+
+async def send_to_model(session, search_id, privacy):
+    """Turn a hidden named search into a linked one: mask its stored results and answer again, without searching."""
+    config = storage.settings()
+    apply_privacy_mode(privacy, config)
+    terms = parse_terms(config['sensitive_terms'])
+    yield {'type': 'start', 'session_id': session['id']}
+    search = find_search(session, search_id)
+    if search.get('kind') != 'named_hidden' or search.get('status') != 'done':
+        raise SearchActionError('Only results hidden from the model can be sent to it.')
+    mask_sources(search, privacy, session['token_map'], terms)
+    search['kind'] = 'named'
+    for revealed in session.get('revealed_names') or []:
+        if revealed.get('search_id') == search_id and 'model' not in revealed['sent_to']:
+            revealed['sent_to'] = revealed['sent_to'] + ['model']
+    update_linked(session)
+    storage.save_session(session)
+    yield {'type': 'search_done', 'search': storage.public_search(search)}
+    async with aclosing(_answer_event(session, 'send_to_model', search['sent_query'], search['turn'], f'm_{uuid4().hex[:16]}',
+                                      privacy, config)) as events:
+        async for item in events:
+            yield item

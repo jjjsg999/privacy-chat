@@ -361,12 +361,14 @@ class SessionUpdate(BaseModel):
     archived: bool | None = None
     pin: PinChange | None = None
     space: str | None = Field(default=None, min_length=1, max_length=100)
+    web_search: bool | None = None
 
 
 @app.patch('/api/sessions/{session_id}')
 async def update_session(session_id: str, value: SessionUpdate):
     """Rename, pin or archive. Fields that are omitted are left unchanged."""
-    if value.title is None and value.pinned is None and value.archived is None and value.pin is None and value.space is None:
+    if (value.title is None and value.pinned is None and value.archived is None and value.pin is None and value.space is None
+            and value.web_search is None):
         raise HTTPException(422, 'Nothing to change.')
     title = ' '.join(value.title.split()) if value.title is not None else None
     if value.title is not None and not title:
@@ -390,6 +392,10 @@ async def update_session(session_id: str, value: SessionUpdate):
                 result = storage.set_pin(session_id, value.pin.kind, value.pin.pinned, value.pin.index, value.pin.file, value.pin.artifact)
             except ValueError as exc:
                 raise HTTPException(422, str(exc)) from None
+        if value.web_search is not None:
+            if not storage.web_search_on():
+                raise HTTPException(409, 'Web search is switched off in Settings.')
+            result = storage.set_session_web_search(session_id, value.web_search)
         return storage.public_session(result)
 
 
@@ -493,6 +499,7 @@ class StreamMessage(BaseModel):
     attachments: list[AttachmentIn] = Field(default_factory=list, max_length=100)
     space: str | None = Field(default=None, max_length=100)  # for a new chat; an unknown id falls back to Work
     edit_index: int | None = Field(default=None, ge=0)  # replace this user message (and everything after it)
+    web_search: bool | None = None  # for a new chat: the composer's web search switch
 
 
 def check_attachment_limits(files):
@@ -515,7 +522,7 @@ def apply_edit(session, index, typed):
     if session.get('session_type', 'chat') != 'chat':
         raise HTTPException(422, 'Only normal chats can be edited.')
     messages = session['messages']
-    if index >= len(messages) or messages[index].get('role') != 'user':
+    if index >= len(messages) or messages[index].get('role') != 'user' or messages[index].get('event'):
         raise HTTPException(422, 'Choose one of your own messages to edit.')
     old = messages[index]
     meta = old.get('attachments') or []
@@ -529,6 +536,7 @@ def apply_edit(session, index, typed):
     if not message:
         raise HTTPException(422, 'Please enter a message.')
     session['messages'] = messages[:index]
+    storage.prune_searches(session)  # searches tied to the removed turns go with them
     return message, ({'typed': typed, 'attachments': meta} if meta else None)
 
 
@@ -573,7 +581,7 @@ async def chat_stream(value: StreamMessage):
         nonlocal message, extra
         async with chat_lock:
             try:
-                current = read_session(value.session_id) if value.session_id else storage.new_session(space=value.space)
+                current = read_session(value.session_id) if value.session_id else new_chat(value.space, value.web_search)
                 if editing:
                     message, extra = apply_edit(current, value.edit_index, typed)
             except HTTPException as exc:
@@ -591,12 +599,63 @@ async def chat_stream(value: StreamMessage):
     return StreamingResponse(events(), media_type='application/x-ndjson')
 
 
+def new_chat(space, web_search=None):
+    """A new web chat. With the feature on, its web search switch comes from the composer or the Settings default."""
+    session = storage.new_session(space=space)
+    config = storage.settings()
+    if storage.web_search_on(config):
+        session['web_search'] = web_search if web_search is not None else config['web_search']['enabled_for_new_chats']
+    return session
+
+
+class Rerun(BaseModel):
+    hide_from_ai: bool = False
+
+
+def search_action(session_id, run):
+    """NDJSON stream for a rerun or send-to-model click. Both are reached only from explicit buttons in the UI."""
+    def line(event):
+        return json.dumps(event, ensure_ascii=False) + '\n'
+
+    async def events():
+        async with chat_lock:
+            try:
+                current = read_session(session_id)
+                if not storage.web_search_on() or current.get('session_type', 'chat') != 'chat':
+                    raise HTTPException(409, 'Web search is switched off in Settings.')
+            except HTTPException as exc:
+                yield line({'type': 'error', 'message': exc.detail, 'saved': False})
+                return
+            try:
+                async with aclosing(run(current)) as stream:
+                    async for event in stream:
+                        yield line(event)
+            except engine.ChatError as exc:
+                yield line({'type': 'error', 'message': str(exc), 'saved': False})
+            except OSError:
+                yield line({'type': 'error', 'message': 'Could not save the conversation.', 'saved': False})
+
+    return StreamingResponse(events(), media_type='application/x-ndjson')
+
+
+@app.post('/api/sessions/{session_id}/searches/{search_id}/rerun')
+async def rerun_search(session_id: str, search_id: str, value: Rerun):
+    """Rerun a search with the real names (the user's click is the consent). hide_from_ai keeps the results from the model."""
+    return search_action(session_id, lambda current: engine.rerun_search(current, search_id, value.hide_from_ai, app.state.privacy))
+
+
+@app.post('/api/sessions/{session_id}/searches/{search_id}/send-to-model')
+async def send_search_to_model(session_id: str, search_id: str):
+    """Send the results of a hidden named search to the model, linking its placeholder in this chat."""
+    return search_action(session_id, lambda current: engine.send_to_model(current, search_id, app.state.privacy))
+
+
 @app.post('/api/chat')
 async def chat(value: Message):
     if not value.message.strip():
         raise HTTPException(422, 'Please enter a message.')
     async with chat_lock:
-        current = read_session(value.session_id) if value.session_id else storage.new_session(space=value.space)
+        current = read_session(value.session_id) if value.session_id else new_chat(value.space)
         try:
             return await engine.chat(current, value.message.strip(), app.state.privacy)
         except engine.ChatError as exc:

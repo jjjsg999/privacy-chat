@@ -81,6 +81,12 @@ WEB_SEARCH_RANGES = {'max_searches_per_message': (1, 5), 'pages_per_search': (0,
 INSTITUTION_NAME_MAX, INSTITUTION_LIST_MAX = 120, 500
 
 
+def web_search_on(config=None):
+    """The web search feature switch (features.web_search)."""
+    config = config if config is not None else settings()
+    return (config.get('features') or {}).get('web_search') is True
+
+
 def clean_features(value):
     value = value if isinstance(value, dict) else {}
     return {name: value[name] if type(value.get(name)) is bool else default for name, default in FEATURES.items()}
@@ -345,16 +351,57 @@ def new_session(channel='web', space=None):
 CACHE_KEYS = ('masked', 'transcript_masked', 'intelligence_masked')  # masked-text caches stay on this machine
 
 
+SEARCH_SERVER_ONLY = ('planner_query_masked', 'sent_with')   # masked text and bookkeeping stay on the server
+SOURCE_SERVER_ONLY = ('text', 'text_masked', 'label_masked')  # page text is never sent back to the browser
+
+
+def public_search(search):
+    result = {k: v for k, v in search.items() if k not in SEARCH_SERVER_ONLY}
+    result['sources'] = [{k: v for k, v in s.items() if k not in SOURCE_SERVER_ONLY} for s in search.get('sources') or []]
+    return result
+
+
+def masked_items(session, config):
+    """[{token, display, kind, source}] for "Masked in this chat": every placeholder in this chat except literals."""
+    from privacy_engine import parse_terms, term_matches
+    terms = parse_terms(config.get('sensitive_terms', ''))
+    return [{'token': token, 'display': value, 'kind': token.rsplit('__', 1)[0],
+             'source': 'terms' if term_matches(value, terms) else 'detector'}
+            for token, value in (session.get('token_map') or {}).items() if not token.startswith('LITERAL__')]
+
+
 def public_session(session):
-    diagnosis = settings().get('chat_diagnosis', False)
+    config = settings()
+    diagnosis = config.get('chat_diagnosis', False)
     result = {k: v for k, v in session.items() if k not in ('token_map', 'meeting_api_request') + CACHE_KEYS}
     if 'messages' in result:
         result['messages'] = [{k: v for k, v in m.items() if k not in CACHE_KEYS} for m in result['messages']]
+    if 'searches' in result:
+        result['searches'] = [public_search(s) for s in result['searches']]
+    if web_search_on(config) and session.get('session_type', 'chat') == 'chat':
+        result['masked_items'] = masked_items(session, config)
     result['chat_diagnosis'] = diagnosis
     result['space'] = effective_space(session)
     if diagnosis and 'meeting_api_request' in session:
         result['meeting_api_request'] = session['meeting_api_request']
     return result
+
+
+def prune_searches(session):
+    """After edit-and-resend: drop the searches tied to messages that are no longer in the chat."""
+    if 'searches' not in session:
+        return
+    ids = {m.get('id') for m in session.get('messages', []) if m.get('id')}
+    session['searches'] = [s for s in session['searches'] if s.get('turn') in ids and (s.get('event_id') in ids or s.get('event_id') == s.get('turn'))]
+
+
+def set_session_web_search(session_id, enabled):
+    """Switch web search for one chat. Like rename, this keeps updated_at."""
+    session = load_session(session_id)
+    session['web_search'] = bool(enabled)
+    session['space'] = effective_space(session)
+    write_json(session_path(session_id), session)
+    return session
 
 
 def visible_session(session):
@@ -437,6 +484,14 @@ def branch_session(session_id, message_index):
                   token_map=json.loads(json.dumps(source.get('token_map', {}))), branched_from=source['id'])
     if source.get('pinned_artifacts'):
         branch['pinned_artifacts'] = list(source['pinned_artifacts'])
+    if 'web_search' in source:
+        branch['web_search'] = source['web_search']
+    if source.get('searches'):  # the searches of the copied turns, and the names they revealed
+        branch['searches'] = json.loads(json.dumps(source['searches']))
+        prune_searches(branch)
+        kept = {s['id'] for s in branch['searches']}
+        branch['revealed_names'] = [dict(r) for r in source.get('revealed_names') or [] if r.get('search_id') in kept]
+        branch['has_linked_names'] = any('model' in r.get('sent_to', []) for r in branch['revealed_names'])
     save_session(branch)
     return branch
 
@@ -453,6 +508,7 @@ def list_sessions(query=None, space=None):
             continue
         if visible_session(session) and (not needle or session_matches(session, needle)):
             item = {k: session[k] for k in ('id', 'title', 'updated_at', 'channel_origin')}
-            item.update(pinned=bool(session.get('pinned')), archived=bool(session.get('archived')), space=where)
+            item.update(pinned=bool(session.get('pinned')), archived=bool(session.get('archived')), space=where,
+                        has_linked_names=bool(session.get('has_linked_names')))
             result.append(item)
     return sorted(result, key=lambda s: s['updated_at'], reverse=True)

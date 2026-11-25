@@ -103,13 +103,49 @@ def prices(catalogue, model):
         raise BudgetError('Model pricing is unknown or unsupported; no paid request sent.') from None
 
 
-def reserve(messages, max_tokens, rates, model=None):
+def request_amount(messages, max_tokens, rates):
+    """The conservative amount reserve() would hold for this request."""
     if type(max_tokens) is not int or max_tokens <= 0 or not messages or any(
             set(m) != {'role', 'content'} or not isinstance(m['content'], str) for m in messages):
         raise BudgetError('Monthly guard requires bounded plain-text requests.')
     prompt, output, request = rates
     bound = 2 * (len(json.dumps(messages, ensure_ascii=False).encode('utf-8')) + 256 * len(messages) + 1024)
-    amount = ((bound * prompt + max_tokens * output + request) * Decimal('1.10')).quantize(Decimal('.000000001'), rounding=ROUND_CEILING)
+    return ((bound * prompt + max_tokens * output + request) * Decimal('1.10')).quantize(Decimal('.000000001'), rounding=ROUND_CEILING)
+
+
+def reserve_fixed(amount, model, kind, headroom=Decimal(0)):
+    """Reserve a known amount that is not a model call (a web search). Refused unless `amount + headroom` fits, so
+    the later paid calls of the same step are known to fit too. Recorded as its own entry with `kind`."""
+    amount = _money(amount).quantize(Decimal('.000000001'), rounding=ROUND_CEILING)
+    with _ledger_lock(_root()):
+        data = _read(); month = period(); remaining = max(Decimal(0), ceiling() - _used(data, month))
+        if data['blocked']:
+            raise BudgetError('Monthly ledger needs reconciliation; paid requests are blocked.')
+        if ceiling() == 0 or amount + _money(headroom) > remaining:
+            raise BudgetError('Monthly limit reached.')
+        if data['started_at'] is None:
+            data['started_at'] = storage.now()
+            storage.write_json(_root() / 'initialized.json', {'schema': 1, 'at': data['started_at']})
+        identifier = uuid4().hex
+        data['entries'].append({'id': identifier, 'month': month, 'at': storage.now(), 'reserved_usd': str(amount),
+                                'charged_usd': str(amount), 'state': 'reserved', 'model': str(model)[:200], 'kind': kind})
+        storage.write_json(_root() / 'ledger.json', data)
+    return identifier
+
+
+def settle_fixed(identifier, amount):
+    """Charge what a fixed reservation actually used (never more than was reserved)."""
+    with _ledger_lock(_root()):
+        data = _read()
+        entry = next((e for e in data['entries'] if e['id'] == identifier), None)
+        if entry is None or entry['state'] == 'settled':
+            return
+        entry.update(charged_usd=str(min(_money(amount), _money(entry['reserved_usd']))), state='settled')
+        storage.write_json(_root() / 'ledger.json', data)
+
+
+def reserve(messages, max_tokens, rates, model=None):
+    amount = request_amount(messages, max_tokens, rates)
     with _ledger_lock(_root()):
         data = _read(); month = period(); remaining = max(Decimal(0), ceiling() - _used(data, month))
         if data['blocked']:
