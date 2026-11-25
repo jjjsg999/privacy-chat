@@ -6,7 +6,7 @@ Test set: 550 invented snippets (1323 must-mask values). Terms list: eval-only, 
 
 | Setup | Recall % | Precision % | Covered / must-mask | True spans / counted spans | Run time (s, not scored) |
 |---|---|---|---|---|---|
-| A (standard) | 77.25 | 74.83 | 1022 / 1323 | 1106 / 1478 | 3.0 |
+| A (standard) | 77.25 | 74.83 | 1022 / 1323 | 1106 / 1478 | 3.2 |
 | B (layered) | 95.24 | 77.46 | 1260 / 1323 | 1289 / 1664 | 45.3 |
 
 ## Recall by category

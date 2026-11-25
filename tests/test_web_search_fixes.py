@@ -34,7 +34,8 @@ class PromptFileTests(unittest.TestCase):
 
     def test_prompt_never_tells_the_model_to_ask_for_real_values(self):
         text = (ROOT / 'prompts' / 'placeholders.md').read_text(encoding='utf-8')
-        self.assertIn('never ask the user to give the real name', text)
+        self.assertIn('never ask the user to give the real name', text.lower())
+        self.assertIn('do not call a word a stand-in, placeholder, token', text)
 
 
 class EveryPathTests(PipelineBase):
@@ -239,7 +240,11 @@ class SendAsWrittenTests(PipelineBase):
 
     def test_detectors_skipped_terms_still_applied(self):
         self.planner_replies = [plan(f'{self.EMAIL} news')]
-        events = self.post(message=f'Search for {self.EMAIL} and {CANARY}', web_search=True, send_as_written=True)
+        seen = []
+        real = self.privacy.analyzer.analyze
+        with patch.object(self.privacy.analyzer, 'analyze', side_effect=lambda text, language: seen.append(text) or real(text, language)):
+            events = self.post(message=f'Search for {self.EMAIL} and {CANARY}', web_search=True, send_as_written=True)
+        self.assertFalse(any('Search for' in text for text in seen))  # the detectors never saw the typed text
         sent = self.answers[-1][-1]['content']
         self.assertIn(self.EMAIL, sent)          # no detectors
         self.assertNotIn(CANARY, sent)           # the terms list still applies

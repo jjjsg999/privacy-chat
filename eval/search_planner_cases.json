@@ -67,6 +67,42 @@
       "conversation": [
         {"role": "user", "content": "Where are 10-year US Treasury yields now, and how do they feed into corporate bond pricing?"}
       ]
+    },
+    {
+      "id": "example1_masked_before_fix",
+      "note": "The user's first example as it was masked before the fixes: the person and the date masked.",
+      "expect_search": true, "explicit_search": true,
+      "token_map": {"PERSON__1": "Jensen Huang", "DATE_TIME__2": "this week"},
+      "conversation": [
+        {"role": "user", "content": "conduct a web search on what happened to PERSON__1 DATE_TIME__2"}
+      ]
+    },
+    {
+      "id": "example1_masked_after_fix",
+      "note": "The same message after the fixes: dates pass through; the name is still masked unless treated as public.",
+      "expect_search": true, "explicit_search": true,
+      "token_map": {"PERSON__1": "Jensen Huang"},
+      "conversation": [
+        {"role": "user", "content": "conduct a web search on what happened to PERSON__1 this week"}
+      ]
+    },
+    {
+      "id": "example2_masked_before_fix",
+      "note": "The user's second example as it was masked before the fixes: the topic masked as an organisation.",
+      "expect_search": true, "explicit_search": true,
+      "token_map": {"ORGANIZATION__1": "Digital Asset Custody"},
+      "conversation": [
+        {"role": "user", "content": "conduct a web search about the latest on MAS regulation about ORGANIZATION__1"}
+      ]
+    },
+    {
+      "id": "example2_masked_after_fix",
+      "note": "The same message after the fixes: the topic glossary leaves it readable.",
+      "expect_search": true, "explicit_search": true,
+      "token_map": {},
+      "conversation": [
+        {"role": "user", "content": "conduct a web search about the latest on MAS regulation about Digital Asset Custody"}
+      ]
     }
   ]
 }

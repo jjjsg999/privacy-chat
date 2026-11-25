@@ -47,12 +47,15 @@ def evaluate(case, reply, terms, seconds):
         row['error'] = str(exc)
         return row
     row.update(valid=True, queries=len(plan), over_limit=len(plan) > LIMIT)
+    row['missed_explicit'] = bool(case.get('explicit_search')) and not plan  # an explicit request must get a query
     this_year = datetime.now().year  # years older than this in a query usually mean the model guessed the date
     row['stale_years'] = sorted({y for item in plan for y in re.findall(r'\b(?:19|20)\d\d\b', item['query']) if int(y) < this_year})
     for item in plan:
         row['invented'] += sorted(set(TOKEN.findall(item['query'])) - given)
         try:
-            checked = web_search.check_query(item['query'], dict(case['token_map']), terms)
+            # As in the app with dates passing (the default): a date written out by the planner is fine.
+            checked = web_search.check_query(item['query'], dict(case['token_map']), terms,
+                                             allowed=lambda token, value: token.startswith('DATE_TIME__'))
             row['labels'].append(checked['kind'])
         except web_search.CheckError:
             row['labels'].append('failed check')
@@ -108,9 +111,12 @@ def report(rows, model):
         for query in row.get('planned', []):
             print(f'    planner wrote: {query}')
     valid = sum(r['valid'] for r in rows)
-    passed = valid >= 7 and not any(r['over_limit'] for r in rows) and not any(r['invented'] for r in rows)
+    missed = [r['case'] for r in rows if r.get('missed_explicit')]
+    passed = (valid >= len(rows) - 1 and not any(r['over_limit'] for r in rows) and not any(r['invented'] for r in rows)
+              and not missed)
     print(f'Valid {valid}/{len(rows)} · over limit {sum(r["over_limit"] for r in rows)} · '
-          f'invented {sum(bool(r["invented"]) for r in rows)} -> {"PASS" if passed else "FAIL"}')
+          f'invented {sum(bool(r["invented"]) for r in rows)} · explicit requests without a query: {missed or "none"}'
+          f' -> {"PASS" if passed else "FAIL"}')
     return passed
 
 
