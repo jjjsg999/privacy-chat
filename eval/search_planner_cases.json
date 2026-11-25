@@ -1,0 +1,72 @@
+{
+  "note": "Invented, already-masked conversations for the search planner check. token_map values are invented; no real people or companies other than public institutions.",
+  "terms": "CLIENT: Quillmere Freight\nCLIENT: Harbourlane Foods",
+  "cases": [
+    {
+      "id": "no_search_rewrite",
+      "expect_search": false,
+      "token_map": {"PERSON__1": "Orla Venn", "CLIENT__2": "Quillmere Freight"},
+      "conversation": [
+        {"role": "user", "content": "Please rewrite this note to PERSON__1 at CLIENT__2 so it sounds warmer: 'We received your documents. We will revert next week.'"}
+      ]
+    },
+    {
+      "id": "only_placeholders",
+      "expect_search": true,
+      "token_map": {"CLIENT__1": "Harbourlane Foods"},
+      "conversation": [
+        {"role": "user", "content": "Any news on CLIENT__1?"}
+      ]
+    },
+    {
+      "id": "currency_amount",
+      "expect_search": true,
+      "token_map": {"CLIENT__2": "Quillmere Freight", "PERSON__1": "Orla Venn"},
+      "conversation": [
+        {"role": "user", "content": "CLIENT__2 wants to refinance its S$180m term loan before year end and their CFO PERSON__1 is asking about pricing. What do the MAS capital rules mean for how we price it, and is there anything public on refinancing in the logistics sector?"}
+      ]
+    },
+    {
+      "id": "regulator_name",
+      "expect_search": true,
+      "token_map": {},
+      "conversation": [
+        {"role": "user", "content": "What has the HKMA said recently about licensing stablecoin issuers in Hong Kong?"}
+      ]
+    },
+    {
+      "id": "person_and_company",
+      "expect_search": true,
+      "token_map": {"PERSON__1": "Tamsin Rowe", "ORG__3": "Tarrow Capital"},
+      "conversation": [
+        {"role": "user", "content": "PERSON__1 is joining ORG__3 as CFO. What is ORG__3's credit rating, and how are mid-sized asset managers rated by Moody's in general?"}
+      ]
+    },
+    {
+      "id": "dates_and_sector",
+      "expect_search": true,
+      "token_map": {"CLIENT__1": "Harbourlane Foods", "DATE_TIME__2": "2025"},
+      "conversation": [
+        {"role": "user", "content": "CLIENT__1 had a weak DATE_TIME__2 because of cocoa prices. How have cocoa prices moved and what are analysts forecasting for packaged food margins?"}
+      ]
+    },
+    {
+      "id": "multi_turn_follow_up",
+      "expect_search": true,
+      "token_map": {"CLIENT__2": "Quillmere Freight"},
+      "conversation": [
+        {"role": "user", "content": "We are lending to CLIENT__2, a regional freight company. What risks should I think about?"},
+        {"role": "assistant", "content": "Key risks for CLIENT__2 include fuel costs, customer concentration, fleet financing and refinancing risk. I can go deeper on any of these."},
+        {"role": "user", "content": "How do the Basel III capital buffers affect banks lending to companies like them?"}
+      ]
+    },
+    {
+      "id": "general_factual",
+      "expect_search": true,
+      "token_map": {},
+      "conversation": [
+        {"role": "user", "content": "Where are 10-year US Treasury yields now, and how do they feed into corporate bond pricing?"}
+      ]
+    }
+  ]
+}
