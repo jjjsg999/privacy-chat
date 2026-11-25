@@ -7,6 +7,7 @@ import zlib
 from contextlib import aclosing
 from datetime import datetime
 from decimal import Decimal
+from pathlib import Path
 from urllib.parse import urlsplit
 from uuid import uuid4
 import httpx
@@ -236,25 +237,46 @@ def history_items(session, privacy, terms, fingerprint, first=0):
     return items
 
 
-def chat_context(session, message, privacy, config, *, channel, artifacts, new_masked=None, sources=None):
+def placeholder_prompt(web=False):
+    """prompts/placeholders.md (read on every request). It holds no placeholder-shaped text, so it passes unchanged
+    through the tokenizer on the paths that mask their system prompt (meetings, Adviser)."""
+    try:
+        text = meeting_prompt('placeholders.md').strip()
+    except ChatError:  # a data root without its own prompts folder (tests) still gets the app's copy
+        text = (Path(__file__).resolve().parent / 'prompts' / 'placeholders.md').read_text(encoding='utf-8').strip()
+    if web:
+        text += ('\n- In this web chat, when facts about a stand-in are missing, you may suggest a web search, or the '
+                 '"Send as written" switch below the message box, which sends the user\'s next message without masking.')
+    return text
+
+
+WEB_SEARCH_OFF_LINE = ('Web search is off in this chat. If the user asks you to search the web, tell them to switch on '
+                       'Web search below the message box.')
+
+
+def chat_context(session, message, privacy, config, *, channel, artifacts, new_masked=None, sources=None, status=None):
     """(built context, cache entry for the new user message) for a normal chat turn.
 
     `new_masked` is the new message's masked text when the caller already has it; `sources` ([{n, label, text}],
-    masked) are this turn's web sources, sent inside a delimited block after the message.
+    masked) are this turn's web sources and `status` (masked) says what the search did. Both are appended after
+    the message as delimited blocks, after masking, so their placeholders reach the model unchanged.
     """
     terms = parse_terms(config['sensitive_terms'])
     fingerprint = privacy.fingerprint(config['sensitive_terms'])
     items = history_items(session, privacy, terms, fingerprint)
     if new_masked is None:
         new_masked = privacy.tokenize(message, session['token_map'], terms)
-    items.append({'role': 'user', 'text': new_masked + context_builder.sources_section(sources), 'index': None})
+    items.append({'role': 'user', 'text': new_masked + context_builder.sources_section(sources) + context_builder.status_section(status),
+                  'index': None})
     instructions = tokenized_instructions(config, channel, privacy, session, terms)
-    base = ('You are a helpful personal assistant. Strings like PERSON__1 and CLIENT__2 '
-            'are privacy placeholders. Preserve them exactly; never infer their original values.')
+    base = 'You are a helpful personal assistant.\n\n' + placeholder_prompt(web=channel == 'web')
     if artifacts:  # artifacts are rendered by the web UI only, so only the streamed web chat is told about them
         base += '\n\n' + meeting_prompt('artifacts.md')
-    if sources:
+    if sources or status:
         base += '\n\n' + meeting_prompt('web_sources.md')
+    elif (channel == 'web' and storage.web_search_on(config) and session.get('web_search') is not True
+          and session.get('session_type', 'chat') == 'chat'):
+        base += '\n\n' + WEB_SEARCH_OFF_LINE
     built = fit_context(with_instructions(base, instructions), items, config, config['model'],
                         STREAM_MAX_TOKENS if artifacts else 6000, session.get('pinned_artifacts'), meeting=False)
     return built, cache_entry(message, new_masked, fingerprint)
@@ -272,7 +294,7 @@ async def chat(session, message, privacy, channel='web'):
                 if event['type'] == 'turn':
                     turn = event
     built, entry = chat_context(session, message, privacy, config, channel=channel, artifacts=False,
-                                new_masked=turn.get('new_masked'), sources=turn.get('sources'))
+                                new_masked=turn.get('new_masked'), sources=turn.get('sources'), status=turn.get('status'))
     outbound = built['messages']
     reply = await complete(outbound, config['model'])
     history = session['messages'] + [{'role': 'user', 'content': message, 'masked': entry, **turn.get('user_extra', {})}]
@@ -346,7 +368,7 @@ async def analyze_meeting(session, transcript, privacy, title=True):
     apply_privacy_mode(privacy, config)
     terms = parse_terms(config['sensitive_terms'])
     fingerprint = privacy.fingerprint(config['sensitive_terms'])
-    system = privacy.tokenize(meeting_prompt('meeting_assistant.md'), session['token_map'], terms)
+    system = privacy.tokenize(meeting_prompt('meeting_assistant.md'), session['token_map'], terms) + '\n\n' + placeholder_prompt()
     masked_transcript = privacy.tokenize(transcript, session['token_map'], terms)
     built = fit_context(system, [transcript_item(masked_transcript)], config, meeting_model(config), 6000, None, meeting=True)
     outbound = built['messages']
@@ -366,7 +388,7 @@ async def analyze_meeting(session, transcript, privacy, title=True):
 
 def _title_request(masked_intelligence):
     # The title is made from the (masked) analysis, not the transcript: a far smaller request with the same gist.
-    return [{'role': 'system', 'content': 'You name meetings. Return only a concise meeting title, at most six words.'},
+    return [{'role': 'system', 'content': 'You name meetings. Return only a concise meeting title, at most six words.\n\n' + placeholder_prompt()},
             {'role': 'user', 'content': 'Meeting analysis:\n\n' + masked_intelligence}]
 
 
@@ -395,7 +417,8 @@ def meeting_context(session, question, privacy, config, channel, wanted_out=6000
     terms = parse_terms(config['sensitive_terms'])
     fingerprint = privacy.fingerprint(config['sensitive_terms'])
     token_map = session['token_map']
-    system = privacy.tokenize(with_instructions(meeting_prompt('ask.md'), instructions_for(config, channel)), token_map, terms)
+    system = (privacy.tokenize(with_instructions(meeting_prompt('ask.md'), instructions_for(config, channel)), token_map, terms)
+              + '\n\n' + placeholder_prompt())
     items = [transcript_item(cached_mask(session, 'transcript_masked', session['transcript'], privacy, token_map, terms, fingerprint)),
              {'role': 'assistant', 'text': cached_mask(session, 'intelligence_masked', session['intelligence'], privacy, token_map, terms, fingerprint),
               'whole': True, 'internal': True, 'parse': False}]
@@ -619,7 +642,7 @@ async def stream_chat(session, message, privacy, extra=None):
                 else:
                     yield event
     built, entry = chat_context(session, message, privacy, config, channel='web', artifacts=True,
-                                new_masked=turn.get('new_masked'), sources=turn.get('sources'))
+                                new_masked=turn.get('new_masked'), sources=turn.get('sources'), status=turn.get('status'))
     failed = False
     if not turn:
         yield {'type': 'start', 'session_id': session['id']}
@@ -678,6 +701,50 @@ def source_turns(session):
 
 def turn_searches(session, turn_id):
     return [s for s in session.get('searches') or [] if s.get('turn') == turn_id and model_visible(s)]
+
+
+NO_SEARCH_NOTE = 'No web search needed for this message'
+
+
+def _removed_words(search):
+    """What was taken out of a query, in masked form: placeholders by token, amounts and dates by kind only."""
+    parts = []
+    for item in search.get('removed') or []:
+        word = item.get('token') if item.get('source') in ('terms', 'detector', 'unknown') else (
+            'a currency amount' if item.get('source') == 'amount' else 'a date')
+        if word and word not in parts:
+            parts.append(word)
+    return ', '.join(parts) or 'nothing'
+
+
+def search_status(session, turn_id, note=None):
+    """One masked block telling the model what web search did for this turn (never real values)."""
+    lines = ['Web search for this message:']
+    if note:
+        lines.append(note)
+    for number, s in enumerate([s for s in session.get('searches') or [] if s.get('turn') == turn_id], 1):
+        query = f'"{s["planner_query_masked"]}"' if s.get('planner_query_masked') else ''
+        numbers = [src['n'] for src in s.get('sources') or [] if 'n' in src]
+        cited = f' (sources [{min(numbers)}]–[{max(numbers)}])' if numbers else ''
+        if s.get('status') == 'budget':
+            lines.append('Web search was not run: the monthly spending limit was reached.')
+        elif s.get('status') == 'failed':
+            lines.append(f'Search {number} {query} failed (Reason: {s.get("error") or "unknown"}).')
+        elif s.get('kind') == 'skipped':
+            lines.append(f'Search {number} {query} was not run: too little was left without {_removed_words(s)}. '
+                         'The user can rerun it unmasked from its card.')
+        elif s.get('kind') == 'public':
+            lines.append(f'Search {number} {query} ran as written{cited}.')
+        elif s.get('kind') == 'generic':
+            lines.append(f'Search {number} {query} ran without {_removed_words(s)}{cited}.')
+        elif s.get('kind') == 'named':
+            lines.append(f'Search {number} {query} was rerun by the user with the hidden words restored{cited}.')
+        elif s.get('kind') == 'named_hidden':
+            lines.append(f'Search {number} {query} was rerun by the user with the hidden words restored; its results are hidden from you.')
+    if any(s.get('removed') and s.get('kind') in ('generic', 'skipped') for s in session.get('searches') or [] if s.get('turn') == turn_id):
+        lines.append('Removed words were not sent to the search engine. If the answer needs them, say so in one sentence '
+                     'and point the user to "Rerun unmasked" under the search cards.')
+    return '\n'.join(' '.join(line.split()) for line in lines)
 
 
 def sources_for_model(searches):
@@ -744,7 +811,8 @@ def planner_prompt(limit, today=None):
     """
     today = today or datetime.now().astimezone().date()
     return (meeting_prompt('search_planner.md').replace('{max_queries}', str(limit))
-            .replace('{today}', f'{today:%A} {today.day} {today:%B %Y} ({today.isoformat()})'))
+            .replace('{today}', f'{today:%A} {today.day} {today:%B %Y} ({today.isoformat()})')
+            + '\n\n' + placeholder_prompt())
 
 
 def planner_messages(session, new_masked, privacy, config, terms, fingerprint, model, limit):
@@ -840,19 +908,25 @@ def _settle(reservation, amount):
         pass  # the full reservation stays charged, as for any unsettled call
 
 
-async def web_turn(session, message, privacy, config, answer_tokens):
+async def web_turn(session, message, privacy, config, answer_tokens, new_masked=None):
     """Plan, check, search, read and mask for a new message. Yields UI events, then one {'type': 'turn'} item with
-    what the answer needs: new_masked, sources, user_extra (the message id) and reply_extra (a planner note)."""
+    what the answer needs: new_masked, sources, status (masked: what the search did), user_extra (the message id)
+    and reply_extra (a note shown under the reply). Every outcome leaves a card or a note for the user."""
     opts = config['web_search']
     terms = parse_terms(config['sensitive_terms'])
     fingerprint = privacy.fingerprint(config['sensitive_terms'])
     session.setdefault('searches', [])
     turn_id = f'm_{uuid4().hex[:16]}'
-    new_masked = privacy.tokenize(message, session['token_map'], terms)
+    if new_masked is None:
+        new_masked = privacy.tokenize(message, session['token_map'], terms)
     engine_name = web_search.active_engine(opts)
     unit, limit = search_unit_cost(config, engine_name), opts['max_searches_per_message']
     planner_model = opts['planner_model'] or config['model']
     result = {'type': 'turn', 'new_masked': new_masked, 'user_extra': {'id': turn_id}, 'reply_extra': {}, 'sources': None}
+
+    def finish(note=None):
+        result['status'] = search_status(session, turn_id, note)
+        return result
 
     def skip_note(reason):
         result['reply_extra']['web_note'] = f'Web search skipped: the planner reply could not be read (Reason: {reason})'
@@ -862,7 +936,7 @@ async def web_turn(session, message, privacy, config, answer_tokens):
         planner = planner_messages(session, new_masked, privacy, config, terms, fingerprint, planner_model, limit)
     except ContextRefused:
         yield skip_note('conversation too long for the planner model')
-        yield result
+        yield finish('Web search was skipped: the conversation is too long for the planner.')
         return
     # Budget: the planner call, every possible search and the answer must fit before the planner is called.
     room = sum(len(json.dumps(m, ensure_ascii=False)) for m in planner) + limit * 6 * web_search.TEXT_CAPS.get(context_mode(config, False), 6000)
@@ -874,7 +948,7 @@ async def web_turn(session, message, privacy, config, answer_tokens):
         record = new_search(turn_id, turn_id, kind='skipped', status='budget', error='monthly limit reached', engine=engine_name)
         session['searches'].append(record)
         yield {'type': 'search_skipped', 'search': storage.public_search(record)}
-        yield result
+        yield finish()
         return
     yield {'type': 'planner_started'}
     used = Decimal(0)
@@ -882,7 +956,12 @@ async def web_turn(session, message, privacy, config, answer_tokens):
         plan, reason = await plan_searches(planner, planner_model, limit)
         if plan is None:
             yield skip_note(reason)
-            yield result
+            yield finish(f'Web search was skipped: the planner reply could not be read (Reason: {reason}).')
+            return
+        if not plan:
+            result['reply_extra']['web_note'] = NO_SEARCH_NOTE
+            yield {'type': 'search_none', 'message': NO_SEARCH_NOTE}
+            yield finish('No web search was needed for this message.')
             return
         for planned in plan:
             record = new_search(turn_id, turn_id, engine=engine_name, planner_query_masked=planned['query'], purpose=planned['purpose'])
@@ -913,7 +992,7 @@ async def web_turn(session, message, privacy, config, answer_tokens):
     for search in visible:
         search.setdefault('sent_with', []).append(turn_id)
     result['sources'] = sources_for_model(visible) or None
-    yield result
+    yield finish()
 
 
 class SearchActionError(ChatError):
@@ -944,7 +1023,7 @@ async def _answer_event(session, event, query, turn, event_id, privacy, config):
         search.setdefault('sent_with', []).append(event_id)
     built, _ = chat_context(session, message['content'], privacy, config, channel='web', artifacts=True,
                             new_masked=event_masked_text(message, privacy, session['token_map'], terms),
-                            sources=sources_for_model(visible) or None)
+                            sources=sources_for_model(visible) or None, status=search_status(session, turn))
     extra = {k: message[k] for k in ('id', 'event', 'event_query', 'for_turn')}
     failed = False
     async with aclosing(_stream_turn(session, message['content'], built['messages'], config['model'], extra,

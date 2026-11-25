@@ -44,6 +44,8 @@ async def answer(persona_id, question, privacy, token_map, *, history=(), purpos
     config = storage.settings()
     engine.apply_privacy_mode(privacy, config)
     outbound = engine.private_messages(messages, privacy, token_map, parse_terms(config['sensitive_terms']))
+    # Added after masking: it describes the stand-ins in words and must not itself pass through the detectors.
+    outbound[0] = {'role': 'system', 'content': outbound[0]['content'] + '\n\n' + engine.placeholder_prompt()}
     # The same builder as every other path: a long adviser history is cut by the saved "chats" context setting.
     items = [{'role': m['role'], 'text': m['content'], 'parse': False} for m in outbound[1:]]
     outbound = engine.fit_context(outbound[0]['content'], items, config, config['model'], 3000, None, meeting=False)['messages']

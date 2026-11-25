@@ -48,6 +48,13 @@ def sources_section(sources):
             + body.replace('</web_sources>', '</ web_sources>') + '\n</web_sources>')
 
 
+def status_section(status):
+    """What web search did for the current message (already masked), in its own delimited block."""
+    if not status:
+        return ''
+    return '\n\n<web_search_status>\n' + status.replace('</web_search_status>', '') + '\n</web_search_status>'
+
+
 class ContextRefused(Exception):
     """The protected items alone do not fit the model. Nothing may be sent or charged."""
 

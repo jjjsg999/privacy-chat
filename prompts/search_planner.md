@@ -11,7 +11,9 @@ Today's date is {today}. Do not put years or dates in queries unless the user's 
 
 Good queries are short (3 to 10 words), specific and in plain search-engine style. Public institutions (regulators, central banks, exchanges, rating agencies), countries, cities, rules and standards (for example Basel III, CET1) can be written out normally.
 
-Search only when current, factual or external information would improve the answer: news, regulations, prices, public facts, documentation. Do not search for greetings, opinions, writing or editing tasks, maths, or questions the conversation already answers. Then return an empty list.
+When the user explicitly asks for a web search (for example "search the web", "look up", "conduct a web search"), always return at least one query.
+
+Otherwise, search only when current, factual or external information would improve the answer: news, regulations, prices, public facts, documentation. Do not search for greetings, opinions, writing or editing tasks, maths, or questions the conversation already answers. Then return an empty list.
 
 Return JSON only, with no other text, no Markdown and no code fences, in exactly this shape:
 {"queries": [{"query": "the search query", "purpose": "what this search is for, in a few words"}]}

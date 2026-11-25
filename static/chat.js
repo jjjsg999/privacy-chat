@@ -649,7 +649,7 @@ function handleSearchEvent(event, live) {
   if (event.type === 'planner_started') status('Planning web searches…');
   else if (event.type === 'search_started') { status('Searching the web…'); live.update(event.search); }
   else if (event.type === 'search_done' || event.type === 'search_skipped') { live.update(event.search); status('Waiting for the model…'); }
-  else if (event.type === 'planner_failed') live.note(event.message);
+  else if (event.type === 'planner_failed' || event.type === 'search_none') live.note(event.message);
 }
 async function readEvents(response, handle) {
   const reader = response.body.getReader(), decoder = new TextDecoder();

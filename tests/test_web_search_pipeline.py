@@ -25,7 +25,9 @@ def plan(*queries):
     return json.dumps({'queries': [{'query': q, 'purpose': 'p'} for q in queries]})
 
 
-class Pipeline(unittest.TestCase):
+class PipelineBase(unittest.TestCase):
+    """Storage in a temp folder, a mocked provider and a mocked search engine; helpers only, no tests."""
+
     def setUp(self):
         for env in (patch.dict('os.environ', {'TELEGRAM_BOT_TOKEN': '', 'PRIVACY_LLM_FAKE_SEARCH': ''}),):
             env.start()
@@ -106,6 +108,9 @@ class Pipeline(unittest.TestCase):
     def everything_sent(self):
         return json.dumps([self.planner_calls, self.answers, self.engine_queries, self.page_urls], ensure_ascii=False)
 
+
+class Pipeline(PipelineBase):
+
     # --- rule 1: no automatic rehydration (canary) ---
 
     def test_canary_never_leaves_in_the_generic_pipeline(self):
@@ -141,7 +146,7 @@ class Pipeline(unittest.TestCase):
         self.assertEqual(self.engine_queries, [])
         self.assertEqual(session['searches'][0]['status'], 'failed')
         self.assertEqual(len(self.answers), 1)  # the answer still goes ahead, without sources
-        self.assertNotIn('<web_sources>', json.dumps(self.answers[0]))
+        self.assertNotIn('<web_sources>', self.answers[0][-1]['content'])
 
     # --- rule 5: web text is untrusted data ---
 
