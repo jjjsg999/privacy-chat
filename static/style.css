@@ -588,3 +588,19 @@ h3.ws-alert{color:var(--ws-named)}
 .saw-warn{flex-basis:100%;font-size:.8125rem;color:var(--ws-named)}
 .saw-warn[hidden]{display:none}
 .saw-chip{color:var(--ws-named);background:var(--ws-named-bg);border-color:var(--ws-named-line)}
+/* "What was sent" dialog */
+.sent-dialog{width:min(720px,calc(100vw - 32px));max-height:calc(100vh - 48px);border:1px solid var(--ctl);border-radius:12px;background:var(--card);color:var(--ink);padding:18px 20px}
+.sent-dialog::backdrop{background:rgb(0 0 0 / .35)}
+.sent-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sent-head h2{margin:0;font-size:1.0625rem}
+.sent-body{margin:10px 0;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--paper);white-space:pre-wrap;overflow-wrap:anywhere;line-height:2.2}
+.sent-chip{display:inline-flex;flex-direction:column;align-items:flex-start;vertical-align:middle;line-height:1.25;margin:0 2px;padding:2px 7px;border:1px solid var(--ws-generic-line);border-radius:6px;background:var(--ws-generic-bg);color:var(--ink)}
+.sent-chip small{font-size:.6875rem;color:var(--ws-generic)}
+.sent-chip.terms{border-color:var(--ws-public-line);background:var(--ws-public-bg)}
+.sent-chip.terms small{color:var(--ws-public)}
+.sent-items{list-style:none;margin:8px 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.sent-file{margin:6px 0;font-size:.875rem}
+.sent-file summary{cursor:pointer}
+#sent-term-form{margin-top:12px}
+#sent-status{margin:8px 0 0;font-size:.875rem;color:var(--green)}
+#sent-status.error{color:var(--error)}

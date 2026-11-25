@@ -1,6 +1,7 @@
 import { marked } from './vendor/marked.js';
 import { splitArtifacts, collectArtifacts, createPane, artifactLabel, artifactsToMarkdown, COMPACT_REQUEST } from './artifacts.js';
 import * as ws from './web-search.js';
+import * as sent from './sent-preview.js';
 
 function renderMarkdown(element, text) {
   element.classList.add('markdown');
@@ -298,6 +299,7 @@ function messageActions(session, message, index, article) {
   if (session.id) add(message.pinned ? 'Unpin' : 'Pin', message.pinned ? 'Stop keeping this message in every request' : 'Keep this message in every request', () => setPin({kind: 'message', index, pinned: !message.pinned}));
   const chat = session.id && (session.session_type || 'chat') === 'chat';
   if (chat && message.role === 'user') add('Edit', 'Edit this message and resend', () => startEdit(article, message, index));
+  if (session.id && message.role === 'user') add('What was sent', 'What the model received for this message', () => sent.open(session.id, index));
   if (chat && message.role === 'assistant') add('Branch', 'Branch into a new conversation from this reply', () => branchFrom(index));
   return bar;
 }
@@ -791,6 +793,7 @@ $('composer').onsubmit = async event => {
 };
 $('message').onkeydown = event => { if (event.key === 'Enter' && !event.shiftKey && !event.isComposing && window.matchMedia('(min-width:760px)').matches) { event.preventDefault(); $('composer').requestSubmit(); } };
 refreshSessions().catch(error => status(error.message, true));
+sent.init({api});
 ws.init({api, status, getCurrent: () => current, render, isBusy: () => busy, runAction})
   .then(on => { if (on) { render(current, {keepScroll: true}); refreshSessions().catch(() => {}); } }).catch(() => {});
 const linkedSession = new URLSearchParams(location.search).get('session');

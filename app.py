@@ -209,6 +209,39 @@ def web_search_view(config=None):
             'privacy_eval': latest_privacy_eval()}
 
 
+class NewTerm(BaseModel):
+    term: str = Field(min_length=1, max_length=200)
+    kind: str | None = Field(default=None, max_length=40, pattern=r'^[A-Z][A-Z0-9_]*$')
+
+
+@app.post('/api/terms')
+async def add_term(value: NewTerm):
+    """"Add a missed name to your terms list": one more line in the same sensitive_terms.txt Settings edits."""
+    term = ' '.join(value.term.split())
+    if not term or term.startswith('#'):
+        raise HTTPException(422, 'Enter a name or word.')
+    from privacy_engine import parse_terms
+    async with chat_lock:
+        if any(existing.casefold() == term.casefold() for _, existing in parse_terms(storage.settings()['sensitive_terms'])):
+            return {'added': False, 'message': f'{term} is already on your terms list.'}
+        try:
+            storage.add_term(term, value.kind)
+        except OSError:
+            raise HTTPException(500, 'Could not save the terms list.') from None
+    return {'added': True, 'message': f'{term} added to your terms list. It is masked from your next message on.'}
+
+
+@app.get('/api/sessions/{session_id}/messages/{index}/sent')
+async def message_sent(session_id: str, index: int):
+    """What the model received for one of your messages: segments with each masked part, on demand only."""
+    try:
+        return storage.sent_preview(read_session(session_id), index)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from None
+    except LookupError as exc:
+        raise HTTPException(404, str(exc)) from None
+
+
 class PublicName(BaseModel):
     name: str = Field(min_length=1, max_length=storage.INSTITUTION_NAME_MAX)
 

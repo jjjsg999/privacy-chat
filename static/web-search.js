@@ -198,7 +198,7 @@ function card(session, search, position, count) {
   }
   if (named && search.status === 'done') {
     const revealed = (session.revealed_names || []).filter(r => r.search_id === search.id);
-    if (!hidden && revealed.length) foot.append(el('span', 'ws-meta', `Rerun unmasked by you at ${time(revealed[0].at)}`));
+    if (!hidden) foot.append(el('span', 'ws-meta', `Rerun unmasked by you at ${time(revealed[0]?.at || search.created_at)}`));
   }
   if (!hidden && search.sources?.length) {
     const links = el('div', 'ws-links');

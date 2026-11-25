@@ -393,6 +393,57 @@ def public_session(session):
     return result
 
 
+def _segments(masked, token_map, terms):
+    """[{text, masked, token?, kind?, source?}] for masked text: each placeholder shown with its original words."""
+    from privacy_engine import TOKEN, term_matches
+    segments, cursor = [], 0
+    for match in TOKEN.finditer(masked):
+        if match.start() > cursor:
+            segments.append({'text': masked[cursor:match.start()], 'masked': False})
+        token, value = match[0], token_map.get(match[0])
+        if value is None or token.startswith('LITERAL__'):  # placeholder-shaped text the user typed: sent as itself
+            segments.append({'text': value if value is not None else token, 'masked': False})
+        else:
+            segments.append({'text': value, 'masked': True, 'token': token, 'kind': token.rsplit('__', 1)[0],
+                             'source': 'terms' if term_matches(value, terms) else 'detector'})
+        cursor = match.end()
+    if cursor < len(masked):
+        segments.append({'text': masked[cursor:], 'masked': False})
+    return segments
+
+
+def sent_preview(session, index):
+    """"What the model received" for one user message, from its stored masked text (on demand only; normal session
+    responses never carry masked text). Attached files are listed apart, with the items masked in each."""
+    import context_builder
+    from privacy_engine import parse_terms
+    messages = session.get('messages', [])
+    if not 0 <= index < len(messages) or messages[index].get('role') != 'user' or messages[index].get('event'):
+        raise ValueError('Choose one of your own messages.')
+    message = messages[index]
+    entry = message.get('masked')
+    if not isinstance(entry, dict) or not isinstance(entry.get('text'), str):
+        raise LookupError('This message was sent before the app kept a copy of what it sent.')
+    masked, token_map = entry['text'], session.get('token_map') or {}
+    terms = parse_terms(settings().get('sensitive_terms', ''))
+    blocks = list(context_builder.FILE_RE.finditer(masked))
+    meta = message.get('attachments') or []
+    files = []
+    for k, block in enumerate(blocks):
+        items = [s for s in _segments(block.group(2), token_map, terms) if s['masked']]
+        files.append({'name': (meta[k].get('name') if k < len(meta) else None) or 'attached file', 'masked_count': len(items), 'items': items})
+    typed = masked[:blocks[0].start()].rstrip() if blocks else masked
+    return {'index': index, 'sent_as_written': bool(message.get('sent_as_written')),
+            'segments': _segments(typed, token_map, terms), 'files': files}
+
+
+def add_term(term, kind=None):
+    """Append one line to the terms list ("KIND: term" or just the term), keeping everything else as saved."""
+    current = TERMS.read_text(encoding='utf-8') if TERMS.exists() else ''
+    line = f'{kind}: {term}' if kind else term
+    atomic_write(TERMS, current + ('' if not current or current.endswith('\n') else '\n') + line + '\n')
+
+
 def prune_searches(session):
     """After edit-and-resend: drop the searches tied to messages that are no longer in the chat."""
     if 'searches' not in session:

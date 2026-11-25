@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 
 STATIC = Path(__file__).resolve().parent.parent / 'static'
-PAGES = {'index.html': ['chat.js', 'web-search.js'],
+PAGES = {'index.html': ['chat.js', 'web-search.js', 'sent-preview.js'],
          'settings.html': ['settings.js', 'web-search-settings.js', 'spaces-settings.js']}
 LOOKUP = re.compile(r"""(?:\$|getElementById)\(\s*['"]([\w-]+)['"]\s*\)""")
 

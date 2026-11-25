@@ -275,6 +275,39 @@ class SendAsWrittenTests(PipelineBase):
         self.assertIn(self.EMAIL, self.answers[-1][-1]['content'])
 
 
+class SentPreviewTests(SendAsWrittenTests):
+    """"What was sent": segments on demand; normal session responses still carry no masked text."""
+
+    def test_preview_segments_and_files(self):
+        events = self.post(message=f'Ask {CANARY} and {self.EMAIL}',
+                           attachments=[{'name': 'brief.txt', 'kind': 'exact', 'text': f'Contact {self.EMAIL} today'}])
+        session_id = events[0]['session_id']
+
+        async def preview(index):
+            return await app.message_sent(session_id, index)
+        data = asyncio.run(preview(0))
+        masked = [s for s in data['segments'] if s['masked']]
+        self.assertEqual([(s['text'], s['kind'], s['source']) for s in masked],
+                         [(CANARY, 'CLIENT', 'terms'), (self.EMAIL, 'EMAIL_ADDRESS', 'detector')])
+        self.assertTrue(all(s['token'].startswith(s['kind'] + '__') for s in masked))
+        self.assertEqual(''.join(s['text'] for s in data['segments']), f'Ask {CANARY} and {self.EMAIL}')
+        self.assertEqual((data['files'][0]['name'], data['files'][0]['masked_count']), ('brief.txt', 1))
+        self.assertFalse(data['sent_as_written'])
+        with self.assertRaises(app.HTTPException):
+            asyncio.run(preview(1))  # not one of your messages
+        public = storage.public_session(storage.load_session(session_id))
+        self.assertNotIn('"masked"', json.dumps(public))
+        self.assertNotIn('CLIENT__', json.dumps(public['messages']))  # no masked text in the messages
+
+    def test_add_a_missed_name_to_the_terms_list(self):
+        result = asyncio.run(app.add_term(app.NewTerm(term='  Halyard  Partners ')))
+        self.assertTrue(result['added'])
+        self.assertIn('Halyard Partners', storage.settings()['sensitive_terms'].splitlines())
+        again = asyncio.run(app.add_term(app.NewTerm(term='halyard partners')))
+        self.assertFalse(again['added'])
+        self.assertTrue(storage.settings()['sensitive_terms'].startswith(f'CLIENT: {CANARY}'))  # existing lines kept
+
+
 class NewChatPathTests(PipelineBase):
     """Regression: the first message of a new web chat, through the real /api/chat/stream handler."""
 
