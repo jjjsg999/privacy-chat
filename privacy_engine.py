@@ -403,6 +403,41 @@ class PrivacyEngine:
             text = text[:start] + allocate(kind, text[start:end]) + text[end:]
         return text
 
+    def mask_web_text(self, text, token_map, terms):
+        """Mask public web text against what this chat already protects, and nothing more.
+
+        1. placeholder-shaped text is reserved as LITERAL (as in tokenize), 2. every real value already in the chat's
+        token map becomes its placeholder, 3. the terms list is applied (new matches get tokens). The detectors are
+        never run: web text is public, and detecting names in it would mask public names and cost seconds per page.
+        """
+        def allocate(kind, value):
+            return allocate_token(token_map, kind, value, text)
+
+        def outside_tokens(pattern, replace):
+            parts, cursor = [], 0
+            for token_match in TOKEN.finditer(text):
+                parts.append(pattern.sub(replace, text[cursor:token_match.start()]))
+                parts.append(token_match[0])
+                cursor = token_match.end()
+            parts.append(pattern.sub(replace, text[cursor:]))
+            return ''.join(parts)
+
+        text = TOKEN.sub(lambda m: allocate('LITERAL', m[0]), text or '')
+        # Known values go first so a differently-cased mention ("ACME LTD") reuses the chat's token instead of a new one.
+        known = sorted(((token, value) for token, value in token_map.items()
+                        if not token.startswith('LITERAL__') and isinstance(value, str) and value.strip()),
+                       key=lambda pair: len(pair[1]), reverse=True)
+        if known:
+            by_value = {}
+            for token, value in known:
+                by_value.setdefault(value.casefold(), token)
+            pattern = re.compile(BOUND_L + '(?:' + '|'.join(re.escape(value) for _, value in known) + ')' + BOUND_R, re.I)
+            text = outside_tokens(pattern, lambda m: by_value.get(m[0].casefold()) or allocate('SENSITIVE', m[0]))
+        if terms:
+            pattern, lookup = terms_pattern(terms)
+            text = outside_tokens(pattern, lambda m: allocate(lookup[m.lastgroup], m[0]))
+        return text
+
     @staticmethod
     def rehydrate(text, token_map):
         return TOKEN.sub(lambda m: token_map.get(m[0], m[0]), text)
