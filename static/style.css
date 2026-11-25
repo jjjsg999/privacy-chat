@@ -471,3 +471,14 @@ body:has(#artifact-pane:not([hidden])) #details,body:has(#artifact-pane:not([hid
   .crumb-space,.crumb-sep{display:none}
 }
 body.resizing #artifact-frame{pointer-events:none}
+/* Conversation text size (sidebar control; the value is set by theme.js). Zooming each child keeps #messages' own scrolling unscaled. */
+#messages>*{zoom:var(--chat-zoom,1)}
+.text-size{display:flex;align-items:center;gap:6px;margin-top:auto;font-size:.875rem;color:var(--muted)}
+.text-size>span{flex:1}
+.text-size button{min-height:36px;min-width:44px;padding:4px 8px;font-size:.875rem}
+.text-size button[aria-disabled=true]{color:var(--muted);background:var(--chip);border-color:var(--line);cursor:default}
+.text-size output{min-width:3.2em;text-align:center;color:var(--ink);font-variant-numeric:tabular-nums}
+.text-size+#theme-toggle{margin-top:0}
+@media(max-width:759px){
+  .text-size button{min-height:44px}
+}
