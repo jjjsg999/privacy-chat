@@ -1,5 +1,6 @@
 import { marked } from './vendor/marked.js';
 import { splitArtifacts, collectArtifacts, createPane, artifactLabel, artifactsToMarkdown, COMPACT_REQUEST } from './artifacts.js';
+import * as ws from './web-search.js';
 
 function renderMarkdown(element, text) {
   element.classList.add('markdown');
@@ -140,6 +141,12 @@ function render(session, options = {}) {
   const latestContext = lastContextIndex(session?.messages || []);
   for (const [index, message] of (session?.messages || []).entries()) {
     const article = document.createElement('article');
+    if (message.event) {  // a web search rerun or send-to-model: one line, not a chat bubble, never edited or resent
+      article.className = 'message event';
+      const inner = document.createElement('div'); inner.className = 'msg-inner';
+      inner.append(ws.eventRow(message)); article.append(inner); $('messages').append(article);
+      continue;
+    }
     article.className = `message ${message.role}`;
     // Each message is a full-width row: a label column (who, model, pinned) and a content column.
     const inner = document.createElement('div'); inner.className = 'msg-inner';
@@ -183,6 +190,12 @@ function render(session, options = {}) {
       content.append(transcript);
     } else {
       content.append(body);
+    }
+    if (message.role === 'assistant' && session.id && ws.enabled()) {  // web search cards and the planner note sit above the answer
+      const searches = ws.searchesFor(session, session.messages[index - 1]?.id);
+      if (searches.length) body.before(ws.cards(session, searches));
+      if (message.web_note) body.before(ws.note(message.web_note));
+      ws.linkCitations(body, session);
     }
     if (message.role === 'user' && message.attachments?.length) {
       const typed = message.typed || '';
@@ -230,6 +243,7 @@ function render(session, options = {}) {
   $('export').hidden = !session?.messages?.length;
   pane.sync(session?.id);
   renderDetails(session);
+  ws.sync(session);
 }
 const lastContextIndex = messages => { for (let i = messages.length - 1; i >= 0; i--) if (messages[i].role === 'assistant' && messages[i].context) return i; return -1; };
 // The "Conversation details" panel. All text is set with textContent; pins and artifact buttons reuse the chat's own handlers.
@@ -263,6 +277,7 @@ function renderDetails(session) {
     button.onclick = () => pane.open(id, -1, session?.id);
     li.append(button); return li;
   }) : [emptyItem('No artifacts yet.')]));
+  ws.renderDetails(session);
 }
 // Copy on every message; Edit on your messages and Branch on replies, for normal saved chats only.
 function messageActions(session, message, index, article) {
@@ -377,9 +392,11 @@ function exportMarkdown() {
   if (!current?.messages?.length) return;
   const lines = [`# ${current.title || 'Conversation'}`, '',
     `Exported ${new Date().toLocaleString()} · ${current.session_type === 'meeting' ? 'Meeting' : 'Chat'} · ${current.channel_origin === 'telegram' ? 'Telegram' : 'Web'}`, ''];
-  for (const message of current.messages) {
+  for (const [index, message] of current.messages.entries()) {
+    if (message.event) { lines.push(`*${message.content}*`, ''); continue; }
     lines.push(`## ${message.role === 'user' ? 'You' : 'Assistant'}`, '', message.role === 'assistant' ? artifactsToMarkdown(message.content) : message.content, '');
     if (message.role === 'assistant' && (message.model || message.stopped)) lines.push(`*${[message.model, message.stopped ? 'stopped early' : ''].filter(Boolean).join(' · ')}*`, '');
+    if (message.role === 'assistant') { const searches = ws.exportLines(current, current.messages[index - 1]?.id); if (searches.length) lines.push(...searches, ''); }
   }
   const slug = (current.title || 'conversation').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'conversation';
   const link = document.createElement('a');
@@ -403,6 +420,8 @@ async function refreshSessions() {
     button.className = 'session-open';
     button.classList.toggle('active', session.id === current?.id);
     const badge = document.createElement('small'); badge.textContent = `${session.space !== space ? spaceName(session.space) + ' · ' : ''}${session.pinned ? 'Pinned · ' : ''}${session.channel_origin === 'telegram' ? 'Telegram' : 'Web'} · ${new Date(session.updated_at).toLocaleString()}`;
+    const linked = ws.sidebarMarker(session);
+    if (linked) button.append(linked);
     button.append(badge); button.disabled = busy;
     button.onclick = async () => {
       if (busy) return;
@@ -552,6 +571,9 @@ async function streamTurn(message, files = [], editIndex = null) {
     messages: [...(previous?.messages || []).slice(0, editIndex === null ? undefined : editIndex), userMessage, {role: 'assistant', content: ''}]});
   current = previous;
   const body = $('messages').lastElementChild.querySelector('.body');
+  const liveBox = document.createElement('div'); body.before(liveBox);
+  const live = ws.liveCards(liveBox, previous || {});
+  const searchChoice = previous ? null : ws.newChatWebSearch();  // a new chat takes the composer's web search switch
   let text = '', frame = 0, sessionId = previous?.id || null, final = null, failure = null, aborted = false;
   const paint = () => {
     frame = 0; renderMessageBody(body, text, null, -1);
@@ -563,7 +585,8 @@ async function streamTurn(message, files = [], editIndex = null) {
   $('send').hidden = true; $('stop').hidden = false;
   try {
     const response = await fetch('/api/chat/stream', {method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({session_id: previous?.id || null, message, attachments: files, ...(previous ? {} : {space}), ...(editIndex === null ? {} : {edit_index: editIndex})}),
+      body: JSON.stringify({session_id: previous?.id || null, message, attachments: files, ...(previous ? {} : {space}), ...(editIndex === null ? {} : {edit_index: editIndex}),
+        ...(searchChoice === null ? {} : {web_search: searchChoice})}),
       signal: controller.signal});
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
@@ -577,6 +600,7 @@ async function streamTurn(message, files = [], editIndex = null) {
       else if (event.type === 'done') final = event.session;
       else if (event.type === 'title' && final) final.title = event.title;
       else if (event.type === 'error') failure = event.message;
+      else handleSearchEvent(event, live);
     };
     for (;;) {
       const {value, done} = await reader.read();
@@ -619,6 +643,57 @@ async function streamTurn(message, files = [], editIndex = null) {
   if (saved) render(saved, stayPut); else render(previous, stayPut);
   status(failure ? failure : (saved ? 'Stopped. The partial reply was saved.' : 'Stopped.'), !!failure);
   return {saved: !!saved};
+}
+// Web search stream events: cards appear (and update) above the reply while it is prepared.
+function handleSearchEvent(event, live) {
+  if (event.type === 'planner_started') status('Planning web searches…');
+  else if (event.type === 'search_started') { status('Searching the web…'); live.update(event.search); }
+  else if (event.type === 'search_done' || event.type === 'search_skipped') { live.update(event.search); status('Waiting for the model…'); }
+  else if (event.type === 'planner_failed') live.note(event.message);
+}
+async function readEvents(response, handle) {
+  const reader = response.body.getReader(), decoder = new TextDecoder();
+  let buffer = '';
+  for (;;) {
+    const {value, done} = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, {stream: true});
+    let end;
+    while ((end = buffer.indexOf('\n')) >= 0) {
+      const line = buffer.slice(0, end).trim(); buffer = buffer.slice(end + 1);
+      if (line) handle(JSON.parse(line));
+    }
+  }
+}
+// A rerun or send-to-model click: streams the search card and, unless hidden from AI, a new reply.
+async function runAction(url, payload) {
+  if (busy || !current?.id) return;
+  const previous = current;
+  setBusy(true); busy = true;
+  status('Searching the web…');
+  render({...previous, messages: [...previous.messages, {role: 'assistant', content: ''}]}, {keepScroll: true});
+  current = previous;
+  const body = $('messages').lastElementChild.querySelector('.body');
+  const liveBox = document.createElement('div'); body.before(liveBox);
+  const live = ws.liveCards(liveBox, previous);
+  let text = '', final = null, failure = null;
+  try {
+    const response = await fetch(url, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload || {})});
+    if (!response.ok) { const data = await response.json().catch(() => ({})); throw new Error(typeof data.detail === 'string' ? data.detail : 'Please retry.'); }
+    await readEvents(response, event => {
+      if (event.type === 'delta') { text += event.text; status(''); renderMessageBody(body, text, null, -1); if (follow) scrollToBottom(); }
+      else if (event.type === 'done') final = event.session;
+      else if (event.type === 'error') failure = event.message;
+      else handleSearchEvent(event, live);
+    });
+  } catch (error) { failure = failure || error.message; }
+  finally { setBusy(false); busy = false; }
+  if (final) { render(final, {keepScroll: !follow}); status(''); }
+  else {
+    try { render(await api(`/api/sessions/${encodeURIComponent(previous.id)}`), {keepScroll: true}); } catch (_) { render(previous, {keepScroll: true}); }
+    status(failure || 'Stopped.', true);
+  }
+  await refreshSessions().catch(error => status(error.message, true));
 }
 let attachments = [];
 let uploadLimits = {max_attachments: 5};
@@ -700,6 +775,8 @@ $('composer').onsubmit = async event => {
 };
 $('message').onkeydown = event => { if (event.key === 'Enter' && !event.shiftKey && !event.isComposing && window.matchMedia('(min-width:760px)').matches) { event.preventDefault(); $('composer').requestSubmit(); } };
 refreshSessions().catch(error => status(error.message, true));
+ws.init({api, status, getCurrent: () => current, render, isBusy: () => busy, runAction})
+  .then(on => { if (on) { render(current, {keepScroll: true}); refreshSessions().catch(() => {}); } }).catch(() => {});
 const linkedSession = new URLSearchParams(location.search).get('session');
 if (linkedSession) api(`/api/sessions/${encodeURIComponent(linkedSession)}`).then(session => {
   render(session); const transcript = document.querySelector('.meeting-panel');

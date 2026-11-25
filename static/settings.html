@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Settings · Privacy LLM</title><link rel="stylesheet" href="/static/style.css"><script src="/static/theme.js"></script><script src="/static/settings.js" defer></script><script src="/static/navigation.js" defer></script><script src="/static/spaces-settings.js" defer></script><script src="/static/sidebar-resize.js" defer></script></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Settings · Privacy LLM</title><link rel="stylesheet" href="/static/style.css"><script src="/static/theme.js"></script><script src="/static/settings.js" defer></script><script src="/static/navigation.js" defer></script><script src="/static/spaces-settings.js" defer></script><script src="/static/web-search-settings.js" defer></script><script src="/static/sidebar-resize.js" defer></script></head>
 <body class="workspace-page"><aside id="sidebar"><a class="brand" href="/"><span class="brand-tile" aria-hidden="true"><svg class="ico" viewBox="0 0 24 24" width="18" height="18" focusable="false"><path d="M7 11V8a5 5 0 0 1 10 0v3"/><rect x="5" y="11" width="14" height="10" rx="2"/></svg></span><span class="brand-name">Privacy <span class="dim">LLM</span></span></a><p class="eyebrow">YOUR PERSONAL WORKSPACE</p><nav class="main-nav" aria-label="Main navigation"><a href="/"><svg class="ico" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M4 5h16v11H9l-5 4z"/></svg>Meetings &amp; chat</a><a href="/adviser"><svg class="ico" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Adviser chat</a><a href="/memory"><svg class="ico" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg>Memory</a><a href="/settings" aria-current="page"><svg class="ico" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>Settings</a></nav></aside><div class="workspace-main"><header><button id="toggle-sidebar" aria-label="Toggle navigation" aria-expanded="false" aria-controls="sidebar">☰</button><h1>Settings</h1><span class="local-badge">Local workspace</span></header><div class="workspace-scroll"><main class="settings-content">
 
   <p class="eyebrow">YOUR WORKSPACE, YOUR PREFERENCES</p><h1>Settings</h1><p class="intro">One place for your model and privacy preferences.</p>
@@ -60,5 +60,42 @@
     <section class="settings-card"><h2>Chat diagnosis</h2><label class="favourite-filter"><input name="chat_diagnosis" type="checkbox"> Chat diagnosis to show text sent to LLM API</label><p class="hint">Records the exact text sent for new meeting analyses. Open Full transcript to compare the original with the privacy-processed system prompt and transcript. Older meetings without a recording cannot show an exact API version. Disabling hides existing recordings and stops new recordings; saved recordings remain local.</p></section>
     <div class="settings-actions"><p id="status" role="status"></p><button class="primary" type="submit" id="save">Save settings</button></div>
   </form>
+
+  <section class="settings-card" id="web-search-card" aria-labelledby="ws-title"><h2 id="ws-title">Web search</h2>
+    <label class="ws-check"><input type="checkbox" id="ws-feature"><span><strong>Turn on web search</strong><br><span class="hint">Shows the web search switch in web chats. Telegram and Adviser chats never search.</span></span></label>
+    <div id="ws-settings" class="ws-settings" hidden>
+      <p class="hint">Every search runs without names first and is labelled Public, Generic or Named. A name leaves this machine only when you rerun a search with it.</p>
+      <div class="ws-group"><h3>Search engine and limits</h3>
+        <div class="ws-row"><label for="ws-default">New chats start with web search</label><select id="ws-default"><option value="false">Off</option><option value="true">On</option></select></div>
+        <div class="ws-row"><div><label for="ws-engine">Search engine</label><span class="hint">ddgs needs no key but scrapes search sites, so it can break or be rate-limited.</span></div><select id="ws-engine"></select></div>
+        <div class="ws-row"><label for="ws-max">Searches per message</label><select id="ws-max"><option value="1">Up to 1</option><option value="2">Up to 2</option><option value="3">Up to 3</option><option value="4">Up to 4</option><option value="5">Up to 5</option></select></div>
+        <div class="ws-row"><label for="ws-pages">Pages read per search</label><select id="ws-pages"><option value="0">0 · snippets only</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
+        <p id="ws-cost" class="hint ws-row"></p>
+      </div>
+      <div class="ws-group"><div class="ws-group-head"><h3>What a search query may contain</h3><span class="hint">Queries are written from masked text, so this list only decides what happens to placeholders.</span></div>
+        <div class="ws-table">
+          <div class="ws-th">Item</div><div class="ws-th">In a query</div><div class="ws-th">Note</div>
+          <div><strong>Countries and major cities</strong></div><div><span class="ws-chip ws-public">Sent as written</span></div><div id="ws-places-note">Follows your place-name setting (common public)</div>
+          <div><strong>Public institutions</strong></div><div><span class="ws-chip ws-public">Sent as written</span></div><div>Regulators, central banks, exchanges, rating agencies. See the list below</div>
+          <div><strong>Percentages, basis points, rule names</strong></div><div><span class="ws-chip ws-public">Sent as written</span></div><div>For example 25bp, CET1 4.5%, Basel III</div>
+          <div><strong><label for="ws-dates">Dates and years</label></strong></div><div><select id="ws-dates"><option value="remove">Removed (as today)</option><option value="years">Years sent, dates removed</option></select></div><div class="ws-warn-text">Open decision: dates are masked in chats today, so years drop out of queries</div>
+          <div><strong>Currency amounts</strong></div><div><span class="ws-chip ws-generic">Removed</span></div><div>For example S$180m. Never sent, even in a named search</div>
+          <div><strong>People and companies found by the detector</strong></div><div><span class="ws-chip ws-generic">Removed</span></div><div>Search runs without it; one click reruns with it</div>
+          <div><strong><label for="ws-terms">Names on your terms list</label></strong></div><div><select id="ws-terms"><option value="rerun">Removed · rerun to add</option><option value="never">Never searched by name</option></select></div><div>Search runs without it; one click reruns with it, unless set to Never</div>
+        </div>
+      </div>
+      <div class="ws-group"><div class="ws-group-head"><h3>Public institutions</h3><span class="hint">These names are never masked, in chats or in searches. Your terms list still wins.</span></div>
+        <div class="ws-row"><label for="ws-inst-mode">Institution names</label><select id="ws-inst-mode"><option value="common_public">Left readable (this list)</option><option value="mask_all">Masked like other names</option></select></div>
+        <div class="ws-row"><ul id="ws-inst" class="ws-inst" aria-label="Public institutions"></ul></div>
+        <div class="ws-row ws-add"><div><label for="ws-inst-new">Add an institution</label><input id="ws-inst-new" maxlength="120" placeholder="For example IOSCO" autocomplete="off"></div><button type="button" id="ws-inst-add">Add</button></div>
+        <div class="ws-row"><p id="ws-eval" class="ws-eval" hidden></p></div>
+      </div>
+      <div class="ws-group"><h3>Searching by name</h3>
+        <div class="ws-row"><label class="ws-check"><input type="checkbox" id="ws-hidden-rerun"><span><strong>Offer "Rerun with name, hide from AI"</strong><br><span class="hint">You read the results; the chat model never sees them, so nothing gets linked.</span></span></label></div>
+        <div class="ws-row"><label class="ws-check"><input type="checkbox" id="ws-banner-setting"><span><strong>Show a banner in chats where a name is linked</strong><br><span class="hint">Also marks the chat in the sidebar.</span></span></label></div>
+      </div>
+    </div>
+    <p id="ws-status" role="status" aria-live="polite"></p>
+  </section>
 
 </main></div></div></body></html>
