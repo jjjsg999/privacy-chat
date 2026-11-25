@@ -51,7 +51,78 @@ def settings():
     # Spaces group chats for organising only. Ids are stable; renaming changes only the name.
     result['spaces'] = _clean_spaces(result.get('spaces'))
     result['telegram_space'] = telegram_space(result)
+    # Feature switches (off unless switched on in Settings) and web search options, cleaned to valid values.
+    result['features'] = clean_features(result.get('features'))
+    result['web_search'] = clean_web_search(result.get('web_search'))
+    # "common_public" leaves regulators, central banks, exchanges and rating agencies readable; "mask_all" masks them.
+    result['institution_names'] = result.get('institution_names') if result.get('institution_names') in ('common_public', 'mask_all') else 'common_public'
+    result['public_institutions_added'] = clean_names(result.get('public_institutions_added'))
+    result['public_institutions_removed'] = clean_names(result.get('public_institutions_removed'))
     return result
+
+
+# ---------------------------------------------------------------- features and web search settings
+
+FEATURES = {'web_search': False}
+WEB_SEARCH_DEFAULTS = {
+    'enabled_for_new_chats': False,
+    'engine': 'brave',
+    'max_searches_per_message': 3,
+    'pages_per_search': 2,
+    'dates_in_queries': 'remove',
+    'terms_list_names': 'rerun',
+    'offer_hidden_rerun': True,
+    'show_link_banner': True,
+    'cost_per_search_usd': 0.005,
+    'planner_model': '',
+}
+WEB_SEARCH_CHOICES = {'engine': ('brave', 'ddgs'), 'dates_in_queries': ('remove', 'years'), 'terms_list_names': ('rerun', 'never')}
+WEB_SEARCH_RANGES = {'max_searches_per_message': (1, 5), 'pages_per_search': (0, 4)}
+INSTITUTION_NAME_MAX, INSTITUTION_LIST_MAX = 120, 500
+
+
+def clean_features(value):
+    value = value if isinstance(value, dict) else {}
+    return {name: value[name] if type(value.get(name)) is bool else default for name, default in FEATURES.items()}
+
+
+def clean_web_search(value):
+    """Saved web search options; anything missing or invalid falls back to its default."""
+    value = value if isinstance(value, dict) else {}
+    result = {}
+    for name, default in WEB_SEARCH_DEFAULTS.items():
+        item = value.get(name, default)
+        if name in WEB_SEARCH_CHOICES:
+            ok = item in WEB_SEARCH_CHOICES[name]
+        elif name in WEB_SEARCH_RANGES:
+            low, high = WEB_SEARCH_RANGES[name]
+            ok = type(item) is int and low <= item <= high
+        elif name == 'cost_per_search_usd':
+            ok = isinstance(item, (int, float)) and not isinstance(item, bool) and 0 <= item <= 1
+        elif name == 'planner_model':
+            ok = isinstance(item, str) and (item == '' or re.fullmatch(r'\S+/\S+', item) is not None) and len(item) <= 200
+        else:
+            ok = type(item) is bool
+        result[name] = item if ok else default
+    return result
+
+
+def clean_names(value):
+    found, seen = [], set()
+    for name in value if isinstance(value, list) else []:
+        if isinstance(name, str):
+            name = ' '.join(name.split())[:INSTITUTION_NAME_MAX]
+            if name and name.casefold() not in seen:
+                found.append(name)
+                seen.add(name.casefold())
+    return found[:INSTITUTION_LIST_MAX]
+
+
+def save_settings_keys(**changes):
+    """Write a few top-level settings keys, keeping everything else as saved."""
+    config = _raw_settings()
+    config.update(changes)
+    _save_config(config)
 
 
 def openrouter_api_key():

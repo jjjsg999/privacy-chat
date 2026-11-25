@@ -5,6 +5,7 @@ import zlib
 from contextlib import aclosing
 import httpx
 import context_builder
+import public_institutions
 from context_builder import ContextRefused
 from privacy_engine import parse_terms, StreamRehydrator
 import storage
@@ -146,6 +147,9 @@ def apply_privacy_mode(privacy, config):
     """Pass the saved detector setting (standard | layered) to the shared privacy engine."""
     privacy.mode = config.get('privacy_detectors', 'standard')
     privacy.place_names = config.get('place_names', 'common_public')
+    privacy.institution_names = config.get('institution_names', 'common_public')
+    privacy.institutions = public_institutions.effective_list(config.get('public_institutions_added'),
+                                                              config.get('public_institutions_removed'))
 
 
 def with_instructions(prompt, instructions):

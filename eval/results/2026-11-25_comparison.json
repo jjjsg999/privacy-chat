@@ -1,0 +1,7067 @@
+{
+  "date": "2026-11-25",
+  "place_names": "mask_all",
+  "snippets": 550,
+  "eval_terms": 44,
+  "must_mask_values": 1323,
+  "adoption_rule": {
+    "min_recall_gain_points": 2.0,
+    "max_precision_drop_points": 5.0
+  },
+  "setups": {
+    "A": {
+      "recall_pct": 77.25,
+      "precision_pct": 72.21,
+      "must_mask_values": 1323,
+      "covered": 1022,
+      "spans_counted": 1533,
+      "spans_true": 1107,
+      "spans_excluded_inside_neutral": 247,
+      "must_pass_words_masked": 331,
+      "recall_by_category": {
+        "account": {
+          "must": 63,
+          "covered": 50,
+          "recall_pct": 79.37
+        },
+        "address": {
+          "must": 69,
+          "covered": 1,
+          "recall_pct": 1.45
+        },
+        "email": {
+          "must": 108,
+          "covered": 108,
+          "recall_pct": 100.0
+        },
+        "person": {
+          "must": 723,
+          "covered": 507,
+          "recall_pct": 70.12
+        },
+        "phone": {
+          "must": 115,
+          "covered": 111,
+          "recall_pct": 96.52
+        },
+        "terms": {
+          "must": 245,
+          "covered": 245,
+          "recall_pct": 100.0
+        }
+      },
+      "sanity_violations": [],
+      "missed": [
+        {
+          "snippet": "gen-003",
+          "value": "Kwame Draper",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-007",
+          "value": "李明豪",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-007",
+          "value": "Chien-shu Hung",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-010",
+          "value": "Caleb Delacroix",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-013",
+          "value": "272 Wexley Lane",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-016",
+          "value": "3691-231-2261",
+          "category": "account"
+        },
+        {
+          "snippet": "gen-017",
+          "value": "Marcus Okonkwo",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-019",
+          "value": "73 Hollis Avenue, Apt 5B",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-019",
+          "value": "+852 5061 9158",
+          "category": "phone"
+        },
+        {
+          "snippet": "gen-020",
+          "value": "Chun-kuo Hung",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-023",
+          "value": "Imani Thornbury",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-025",
+          "value": "Naomi Novak",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-025",
+          "value": "51 Orchard Hill Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-026",
+          "value": "Caleb Patel",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-028",
+          "value": "謝豪芬",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-028",
+          "value": "楊美婷",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-029",
+          "value": "謝偉俊",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-031",
+          "value": "Gregory Eriksen",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-031",
+          "value": "8028-394-6940",
+          "category": "account"
+        },
+        {
+          "snippet": "gen-035",
+          "value": "黃淑家",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-036",
+          "value": "Kuo-ting Wu",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-038",
+          "value": "71 Hollis Avenue",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-042",
+          "value": "Chloe Okonkwo",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-043",
+          "value": "Beatrice Ferreira",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-043",
+          "value": "Isabel Osei",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-043",
+          "value": "Isabel Osei",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-049",
+          "value": "Greta Rasmussen",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-054",
+          "value": "張俊玲",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-054",
+          "value": "Naomi Delacroix",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-055",
+          "value": "Ethan Draper",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-055",
+          "value": "43 Ravenscroft Road, Apt 7D",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-058",
+          "value": "Caleb Castellano",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-061",
+          "value": "287 Fenwick Road, Apt 1B",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-062",
+          "value": "376 Wexley Lane",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-065",
+          "value": "134 Ravenscroft Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-066",
+          "value": "張淑倫",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-066",
+          "value": "蔡玲宏",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-074",
+          "value": "Ting-mei Yang",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-075",
+          "value": "王欣志",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-078",
+          "value": "68 Corrigan Street",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-080",
+          "value": "371 Orchard Hill Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-081",
+          "value": "蔡芬宏",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-081",
+          "value": "Beatrice Rasmussen",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-083",
+          "value": "Ethan Calloway",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-085",
+          "value": "No. 70, Lane 385, Anhe Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-085",
+          "value": "Nadia Yoder",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-086",
+          "value": "Leila Lindqvist",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-088",
+          "value": "+852 5822 4266",
+          "category": "phone"
+        },
+        {
+          "snippet": "gen-092",
+          "value": "Nadia Wexford",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-092",
+          "value": "372 Tanglewood Drive",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-094",
+          "value": "5466-016-3731",
+          "category": "account"
+        },
+        {
+          "snippet": "gen-097",
+          "value": "98 Wexley Lane",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-099",
+          "value": "Isabel Ellery",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-101",
+          "value": "Yusuf Delacroix",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-103",
+          "value": "吳俊志",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-103",
+          "value": "Hung-ting Wang",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-105",
+          "value": "No. 99, Lane 319, Xinyi Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-106",
+          "value": "王淑家",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-106",
+          "value": "蔡淑家",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-107",
+          "value": "Greta Okonkwo",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-107",
+          "value": "186 Hollis Avenue",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-111",
+          "value": "黃宏家",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-112",
+          "value": "楊豪芬",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-112",
+          "value": "洪俊偉",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-119",
+          "value": "謝建婷",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-121",
+          "value": "Kwame Hallworth",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-121",
+          "value": "252 Alder Court",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-128",
+          "value": "Hsin-hung Hung",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-129",
+          "value": "謝豪玲",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-129",
+          "value": "Henry Kowalski",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-133",
+          "value": "7901-011-6488",
+          "category": "account"
+        },
+        {
+          "snippet": "gen-133",
+          "value": "Lydia Ashdown",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-134",
+          "value": "334 Kingfisher Walk",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-134",
+          "value": "+852 5086 3166",
+          "category": "phone"
+        },
+        {
+          "snippet": "gen-138",
+          "value": "113 Wexley Lane",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-139",
+          "value": "林婷倫",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-142",
+          "value": "Julia Sorensen",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-142",
+          "value": "11 Marlowe Terrace, Apt 4D",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-142",
+          "value": "Nadia Quinlan",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-145",
+          "value": "Fen-wei Wang",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-147",
+          "value": "吳雅怡",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-151",
+          "value": "Nathan Ashdown",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-151",
+          "value": "175 Tanglewood Drive",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-157",
+          "value": "Greta Osei",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-157",
+          "value": "79 Marlowe Terrace",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-162",
+          "value": "Tobias Fontaine",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-172",
+          "value": "楊偉家",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-176",
+          "value": "Isabel Quinlan",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-177",
+          "value": "洪家婷",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-177",
+          "value": "劉淑偉",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-178",
+          "value": "Beatrice Rasmussen",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-178",
+          "value": "99 Corrigan Street",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-181",
+          "value": "Beatrice Fontaine",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-182",
+          "value": "Naomi Patel",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-182",
+          "value": "105 Tanglewood Drive, Apt 6D",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-184",
+          "value": "6174 2990 5722",
+          "category": "account"
+        },
+        {
+          "snippet": "gen-185",
+          "value": "Andre Banerjee",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-185",
+          "value": "94 Kingfisher Walk",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-187",
+          "value": "Rajesh Voss",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-189",
+          "value": "吳志婷",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-189",
+          "value": "Amara Okonkwo",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-191",
+          "value": "Greta Eriksen",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-194",
+          "value": "許宏君",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-196",
+          "value": "8189-181-9928",
+          "category": "account"
+        },
+        {
+          "snippet": "gen-197",
+          "value": "Chun-ming Chang",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-200",
+          "value": "劉美建",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-201",
+          "value": "陳怡志",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-201",
+          "value": "許庭怡",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-202",
+          "value": "Isabel Fontaine",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-203",
+          "value": "鄭怡豪",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-204",
+          "value": "Caleb Draper",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-205",
+          "value": "吳淑雅",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-210",
+          "value": "許雅志",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-210",
+          "value": "吳欣玲",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-217",
+          "value": "Imani Delacroix",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-217",
+          "value": "132 Pembrook Place",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-217",
+          "value": "Beatrice Voss",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-221",
+          "value": "Liu Ling-lun",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-222",
+          "value": "3105-538-5375",
+          "category": "account"
+        },
+        {
+          "snippet": "gen-223",
+          "value": "Nadia Yoder",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-223",
+          "value": "Priya Lindqvist",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-224",
+          "value": "陳倫偉",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-225",
+          "value": "許雅豪",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-225",
+          "value": "黃美庭",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-226",
+          "value": "7620 6224 8348",
+          "category": "account"
+        },
+        {
+          "snippet": "gen-227",
+          "value": "Imani Whitcombe",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-227",
+          "value": "22 Corrigan Street",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-233",
+          "value": "Tobias Mbeki",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-237",
+          "value": "No. 18, Lane 143, Anhe Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-237",
+          "value": "Isabel Mbeki",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-238",
+          "value": "No. 15, Lane 368, Minsheng Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-238",
+          "value": "Julia Osei",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-239",
+          "value": "楊庭淑",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-243",
+          "value": "鄭欣偉",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-243",
+          "value": "蔡庭明",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-246",
+          "value": "陳淑美",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-248",
+          "value": "Greta Navarro",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-248",
+          "value": "44 Orchard Hill Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-249",
+          "value": "劉婷志",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-249",
+          "value": "蔡俊國",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-251",
+          "value": "Imani Halvorsen",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-253",
+          "value": "Mei-shu Lin",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-254",
+          "value": "吳淑偉",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-256",
+          "value": "No. 36, Lane 349, Anhe Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-258",
+          "value": "鄭建君",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-261",
+          "value": "97000-47623635",
+          "category": "account"
+        },
+        {
+          "snippet": "gen-263",
+          "value": "Fen-hsin Hung",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-265",
+          "value": "Sofia Osei",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-266",
+          "value": "124 Saltmarsh Close",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-269",
+          "value": "Tobias Mbeki",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-269",
+          "value": "24 Corrigan Street",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-272",
+          "value": "Rajesh Mbeki",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-274",
+          "value": "王淑宏",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-274",
+          "value": "Chih-fen Hsu",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-275",
+          "value": "Ting-shu Kuo",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-275",
+          "value": "謝倫怡",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-277",
+          "value": "No. 90, Lane 10, Xinyi Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-280",
+          "value": "9382-220-0444",
+          "category": "account"
+        },
+        {
+          "snippet": "gen-281",
+          "value": "No. 20, Lane 21, Xinyi Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-284",
+          "value": "黃淑芬",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-285",
+          "value": "Ting-hsin Kuo",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-286",
+          "value": "Caleb Ellery",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-286",
+          "value": "Caleb Ellery",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-287",
+          "value": "許志豪",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-288",
+          "value": "劉欣明",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-290",
+          "value": "Victor Thornbury",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-293",
+          "value": "張雅俊",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-295",
+          "value": "Fen-chia Liu",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-298",
+          "value": "333 Linden Row, Apt 7A",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-300",
+          "value": "王玲明",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-300",
+          "value": "謝志倫",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-301",
+          "value": "Lydia Eriksen",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-303",
+          "value": "謝君俊",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-306",
+          "value": "Chih-hung Chang",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-310",
+          "value": "Nathan Voss",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-310",
+          "value": "330 Marlowe Terrace, Apt 7D",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-310",
+          "value": "Sofia Sandoval",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-311",
+          "value": "Ethan Calloway",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-316",
+          "value": "謝淑庭",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-316",
+          "value": "鄭豪家",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-317",
+          "value": "Priya Whitcombe",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-318",
+          "value": "Caleb Yoder",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-319",
+          "value": "鄭偉雅",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-320",
+          "value": "Gregory Lombardi",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-325",
+          "value": "176 Pembrook Place, Apt 5A",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-328",
+          "value": "Greta Kapoor",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-328",
+          "value": "4519 7161 3450",
+          "category": "account"
+        },
+        {
+          "snippet": "gen-329",
+          "value": "黃偉玲",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-331",
+          "value": "No. 38, Lane 186, Fuxing Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-332",
+          "value": "Hsin-mei Liu",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-334",
+          "value": "林俊雅",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-334",
+          "value": "Isabel Navarro",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-335",
+          "value": "No. 77, Lane 85, Fuxing Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-336",
+          "value": "謝家芬",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-337",
+          "value": "Nathan Tremaine",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-337",
+          "value": "77 Saltmarsh Close",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-338",
+          "value": "Chia-yi Liu",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-339",
+          "value": "90 Saltmarsh Close",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-341",
+          "value": "李家怡",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-343",
+          "value": "3886 3218 9258",
+          "category": "account"
+        },
+        {
+          "snippet": "gen-348",
+          "value": "Isabel Castellano",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-349",
+          "value": "蔡俊國",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-353",
+          "value": "Victor Fontaine",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-353",
+          "value": "No. 21, Lane 284, Zhongshan Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-359",
+          "value": "許志俊",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-361",
+          "value": "19 Wexley Lane",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-362",
+          "value": "Chloe Winslow",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-364",
+          "value": "318 Linden Row",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-364",
+          "value": "Renata Moreau",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-366",
+          "value": "Imani Winslow",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-370",
+          "value": "洪國宏",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-372",
+          "value": "李建君",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-372",
+          "value": "郭玲俊",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-373",
+          "value": "鄭欣芬",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-373",
+          "value": "洪芬玲",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-377",
+          "value": "Felix Okonkwo",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-378",
+          "value": "許淑明",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-379",
+          "value": "96 Ravenscroft Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-385",
+          "value": "Hannah Calloway",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-388",
+          "value": "Beatrice Quinlan",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-390",
+          "value": "楊婷家",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-391",
+          "value": "+852 5016 8259",
+          "category": "phone"
+        },
+        {
+          "snippet": "gen-393",
+          "value": "王偉俊",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-393",
+          "value": "Victor Sorensen",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-394",
+          "value": "Marcus Draper",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-397",
+          "value": "170 Saltmarsh Close",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-401",
+          "value": "13 Marlowe Terrace, Apt 7A",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-402",
+          "value": "許家國",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-406",
+          "value": "Renata Winslow",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-407",
+          "value": "60 Fenwick Road, Apt 5D",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-410",
+          "value": "吳明倫",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-411",
+          "value": "李欣俊",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-411",
+          "value": "Imani Kapoor",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-412",
+          "value": "Clara Okonkwo",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-412",
+          "value": "187 Kingfisher Walk, Apt 4A",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-415",
+          "value": "Renata Halvorsen",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-415",
+          "value": "28 Linden Row",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-417",
+          "value": "Isabel Haddad",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-419",
+          "value": "Hao-shu Liu",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-419",
+          "value": "吳偉美",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-420",
+          "value": "Yusuf Lombardi",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-421",
+          "value": "謝倫怡",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-424",
+          "value": "164 Orchard Hill Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-427",
+          "value": "林庭明",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-428",
+          "value": "296 Alder Court",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-429",
+          "value": "黃倫建",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-429",
+          "value": "李淑欣",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-433",
+          "value": "Renata Pemberton",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-437",
+          "value": "吳偉家",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-438",
+          "value": "李庭倫",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-440",
+          "value": "Renata Lombardi",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-441",
+          "value": "洪婷玲",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-441",
+          "value": "Gregory Voss",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-446",
+          "value": "173 Kingfisher Walk",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-449",
+          "value": "楊偉怡",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-451",
+          "value": "Lucas Delacroix",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-452",
+          "value": "Lydia Lombardi",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-452",
+          "value": "No. 22, Lane 229, Zhongshan Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-456",
+          "value": "70 Corrigan Street",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-457",
+          "value": "276 Alder Court, Apt 2D",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-462",
+          "value": "Shu-hsin Hsieh",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-464",
+          "value": "Imani Ellery",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-466",
+          "value": "347 Corrigan Street",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-467",
+          "value": "Lydia Gallagher",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-467",
+          "value": "No. 64, Lane 224, Fuxing Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-471",
+          "value": "謝欣家",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-471",
+          "value": "Oliver Fontaine",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-475",
+          "value": "Priya Tremaine",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-479",
+          "value": "吳君倫",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-481",
+          "value": "劉芬怡",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-485",
+          "value": "Marcus Gallagher",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-487",
+          "value": "Lydia Ellery",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-491",
+          "value": "張俊明",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-496",
+          "value": "黃偉志",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-499",
+          "value": "29 Birchmont Way, Apt 4D",
+          "category": "address"
+        },
+        {
+          "snippet": "ff-06",
+          "value": "陳淑芬",
+          "category": "person"
+        },
+        {
+          "snippet": "ff-06",
+          "value": "林俊宏",
+          "category": "person"
+        },
+        {
+          "snippet": "ff-10",
+          "value": "40 Harrow Lane",
+          "category": "address"
+        },
+        {
+          "snippet": "ff-16",
+          "value": "9 Thistledown Court, Apt 3C",
+          "category": "address"
+        },
+        {
+          "snippet": "ff-17",
+          "value": "Nadia Farouk",
+          "category": "person"
+        },
+        {
+          "snippet": "ff-20",
+          "value": "李美玲",
+          "category": "person"
+        },
+        {
+          "snippet": "ff-20",
+          "value": "No. 17, Lane 205, Anhe Road",
+          "category": "address"
+        },
+        {
+          "snippet": "ff-22",
+          "value": "Adaeze",
+          "category": "person"
+        },
+        {
+          "snippet": "ff-22",
+          "value": "Callum",
+          "category": "person"
+        },
+        {
+          "snippet": "ff-23",
+          "value": "77 Bramblewick Road",
+          "category": "address"
+        },
+        {
+          "snippet": "ff-29",
+          "value": "18 Quillfeather Street",
+          "category": "address"
+        },
+        {
+          "snippet": "ff-30",
+          "value": "Frances",
+          "category": "person"
+        },
+        {
+          "snippet": "ff-32",
+          "value": "Hiro",
+          "category": "person"
+        },
+        {
+          "snippet": "ff-32",
+          "value": "2290 4471 8836",
+          "category": "account"
+        },
+        {
+          "snippet": "ff-34",
+          "value": "陳志明",
+          "category": "person"
+        },
+        {
+          "snippet": "ff-34",
+          "value": "Jessamyn",
+          "category": "person"
+        },
+        {
+          "snippet": "ff-35",
+          "value": "Rosalind",
+          "category": "person"
+        },
+        {
+          "snippet": "ff-36",
+          "value": "5 Pennywhistle Close",
+          "category": "address"
+        },
+        {
+          "snippet": "ff-44",
+          "value": "Alasdair",
+          "category": "person"
+        },
+        {
+          "snippet": "ff-46",
+          "value": "Carys",
+          "category": "person"
+        },
+        {
+          "snippet": "ff-46",
+          "value": "52 Lavender Hill",
+          "category": "address"
+        },
+        {
+          "snippet": "ff-48",
+          "value": "Hamid",
+          "category": "person"
+        },
+        {
+          "snippet": "ff-49",
+          "value": "Ewan",
+          "category": "person"
+        },
+        {
+          "snippet": "ff-49",
+          "value": "61 Cormorant Wharf, flat 4",
+          "category": "address"
+        },
+        {
+          "snippet": "ff-49",
+          "value": "9 Saltwick Road",
+          "category": "address"
+        },
+        {
+          "snippet": "ff-49",
+          "value": "Bridget",
+          "category": "person"
+        }
+      ],
+      "false_positives": [
+        {
+          "snippet": "gen-000",
+          "value": "Tokyo",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-000",
+          "value": "Mumbai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-000",
+          "value": "Australia",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-002",
+          "value": "Notion",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-003",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-004",
+          "value": "Taipei",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-004",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-005",
+          "value": "Mumbai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-006",
+          "value": "Kubernetes",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-008",
+          "value": "the quarter",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-010",
+          "value": "Kenya",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-011",
+          "value": "Sydney",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-011",
+          "value": "Madrid",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-011",
+          "value": "Portugal",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-013",
+          "value": "this week",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-013",
+          "value": "Slack",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-015",
+          "value": "Notion",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-019",
+          "value": "Candlewick Studios Support",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-021",
+          "value": "Norway",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-022",
+          "value": "Paris",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-022",
+          "value": "Poland",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-024",
+          "value": "Notion",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-025",
+          "value": "Madrid",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-025",
+          "value": "Hotel",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-025",
+          "value": "www.example.com/portal.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-027",
+          "value": "Mexico",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-028",
+          "value": "14 之前完成",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-032",
+          "value": "Taipei",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-032",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-032",
+          "value": "Vietnam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-036",
+          "value": "the Japan quarter",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-037",
+          "value": "the attached quarter before tomorrow morning",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-043",
+          "value": "Intro",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-043",
+          "value": "New York",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-043",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-045",
+          "value": "Norway",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-046",
+          "value": "Intro",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-046",
+          "value": "Hong Kong",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-046",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-048",
+          "value": "Berlin",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-050",
+          "value": "WhatsApp",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-052",
+          "value": "Japan",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-055",
+          "value": "Quarrier Hardware Support",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-056",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-057",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-058",
+          "value": "Intro",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-058",
+          "value": "Sydney",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-058",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-058",
+          "value": "Reach",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-061",
+          "value": "WhatsApp",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-063",
+          "value": "Brazil",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-064",
+          "value": "Paris",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-069",
+          "value": "Sydney",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-069",
+          "value": "Singapore",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-069",
+          "value": "Japan",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-070",
+          "value": "Quarterly",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-070",
+          "value": "France",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-070",
+          "value": "Chile",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-070",
+          "value": "Salesforce",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-070",
+          "value": "www.example.com/portal.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-073",
+          "value": "Quarterly",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-073",
+          "value": "India",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-073",
+          "value": "Kenya",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-073",
+          "value": "Zoom",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-073",
+          "value": "https://docs.example.org/spec.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-076",
+          "value": "Intro",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-076",
+          "value": "Seoul",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-076",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-077",
+          "value": "India",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-084",
+          "value": "Jira",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-085",
+          "value": "this week",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-085",
+          "value": "Slack",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-087",
+          "value": "Chile",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-089",
+          "value": "Berlin",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-094",
+          "value": "Germany",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-095",
+          "value": "Singapore",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-095",
+          "value": "Dubai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-095",
+          "value": "Norway",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-096",
+          "value": "Berlin",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-097",
+          "value": "this week",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-097",
+          "value": "WhatsApp",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-098",
+          "value": "New York",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-099",
+          "value": "Paris",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-100",
+          "value": "Kenya",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-102",
+          "value": "Kubernetes",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-104",
+          "value": "Toronto",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-104",
+          "value": "Madrid",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-104",
+          "value": "Brazil",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-110",
+          "value": "Jira",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-112",
+          "value": "14 之前完成",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-118",
+          "value": "Quarterly",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-118",
+          "value": "Norway",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-118",
+          "value": "Vietnam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-118",
+          "value": "http://www.example.com/deck/7.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-121",
+          "value": "Seoul",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-121",
+          "value": "http://www.example.com/deck/7.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-122",
+          "value": "Poland",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-125",
+          "value": "Jira",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-126",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-127",
+          "value": "Taipei",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-127",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-133",
+          "value": "Australia",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-135",
+          "value": "Mumbai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-135",
+          "value": "Vietnam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-136",
+          "value": "Quarterly",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-136",
+          "value": "India",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-136",
+          "value": "Mexico",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-136",
+          "value": "Zoom",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-136",
+          "value": "www.example.com/portal.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-137",
+          "value": "Norway",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-139",
+          "value": "Jira",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-142",
+          "value": "Madrid",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-142",
+          "value": "Hotel",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-142",
+          "value": "https://docs.example.org/spec.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-145",
+          "value": "Singapore",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-146",
+          "value": "Jira",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-149",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-151",
+          "value": "Madrid",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-151",
+          "value": "Hotel",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-151",
+          "value": "https://www.example.com/plans/2026.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-153",
+          "value": "Portugal",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-154",
+          "value": "Dubai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-154",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-155",
+          "value": "Paris",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-155",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-155",
+          "value": "Germany",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-156",
+          "value": "Singapore",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-157",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-157",
+          "value": "Hotel",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-157",
+          "value": "www.example.com/portal.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-159",
+          "value": "Portugal",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-161",
+          "value": "Kubernetes",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-162",
+          "value": "New York",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-163",
+          "value": "Paris",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-164",
+          "value": "Zoom",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-165",
+          "value": "Canada",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-167",
+          "value": "France",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-171",
+          "value": "the Kenya quarter",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-176",
+          "value": "Sydney",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-178",
+          "value": "London",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-178",
+          "value": "Hotel",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-178",
+          "value": "http://www.example.com/deck/7.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-179",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-180",
+          "value": "Tokyo",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-180",
+          "value": "the quarter",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-181",
+          "value": "India",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-183",
+          "value": "Taipei",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-184",
+          "value": "Vietnam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-186",
+          "value": "Salesforce",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-187",
+          "value": "Intro",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-187",
+          "value": "Taipei",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-187",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-187",
+          "value": "Reach",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-188",
+          "value": "Egypt",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-190",
+          "value": "Sydney",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-190",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-192",
+          "value": "Poland",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-193",
+          "value": "the attached quarter before March 14",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-195",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-199",
+          "value": "WhatsApp",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-199",
+          "value": "Paris",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-199",
+          "value": "Poland",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-203",
+          "value": "Mumbai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-204",
+          "value": "Mumbai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-206",
+          "value": "New York",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-206",
+          "value": "Toronto",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-206",
+          "value": "India",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-208",
+          "value": "London",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-208",
+          "value": "France",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-213",
+          "value": "Singapore",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-214",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-214",
+          "value": "Chile",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-216",
+          "value": "Poland",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-217",
+          "value": "Dubai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-217",
+          "value": "Hotel",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-217",
+          "value": "https://docs.example.org/spec.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-219",
+          "value": "New York",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-219",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-219",
+          "value": "Vietnam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-223",
+          "value": "New York",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-223",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-223",
+          "value": "Reach",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-226",
+          "value": "Norway",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-229",
+          "value": "Quarterly",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-229",
+          "value": "Mexico",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-229",
+          "value": "Egypt",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-229",
+          "value": "Kubernetes",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-229",
+          "value": "http://www.example.com/deck/7.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-230",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-231",
+          "value": "Slack",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-232",
+          "value": "Quarterly",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-232",
+          "value": "Brazil",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-232",
+          "value": "Germany",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-232",
+          "value": "Zoom",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-232",
+          "value": "https://docs.example.org/spec.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-234",
+          "value": "Australia",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-236",
+          "value": "Slack",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-238",
+          "value": "this week",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-238",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-239",
+          "value": "Paris 見，deadline",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-240",
+          "value": "Madrid",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-240",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-240",
+          "value": "Kenya",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-241",
+          "value": "London",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-247",
+          "value": "Seoul",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-247",
+          "value": "Norway",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-250",
+          "value": "Sydney",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-250",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-252",
+          "value": "WhatsApp",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-253",
+          "value": "Hong Kong",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-254",
+          "value": "the quarter",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-256",
+          "value": "this week",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-256",
+          "value": "WhatsApp",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-259",
+          "value": "Sydney",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-259",
+          "value": "Mexico",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-267",
+          "value": "Berlin",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-268",
+          "value": "Kenya",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-270",
+          "value": "Taipei",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-270",
+          "value": "Seoul",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-270",
+          "value": "Germany",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-271",
+          "value": "Mexico",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-272",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-273",
+          "value": "Salesforce",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-277",
+          "value": "this week",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-282",
+          "value": "Seoul",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-285",
+          "value": "France",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-286",
+          "value": "Intro",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-286",
+          "value": "Paris",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-286",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-290",
+          "value": "Berlin",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-293",
+          "value": "London 見，deadline",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-294",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-295",
+          "value": "Tokyo",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-297",
+          "value": "Egypt",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-298",
+          "value": "this week",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-302",
+          "value": "Notion",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-304",
+          "value": "WhatsApp",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-304",
+          "value": "London",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-304",
+          "value": "Canada",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-305",
+          "value": "Chile",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-306",
+          "value": "France",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-308",
+          "value": "Mexico",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-310",
+          "value": "Hong Kong",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-310",
+          "value": "Hotel",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-310",
+          "value": "https://www.example.com/plans/2026.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-312",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-312",
+          "value": "Vietnam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-314",
+          "value": "Sydney",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-315",
+          "value": "Vietnam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-316",
+          "value": "9 之前完成",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-318",
+          "value": "Notion",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-319",
+          "value": "Jira",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-323",
+          "value": "WhatsApp",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-324",
+          "value": "Berlin",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-324",
+          "value": "Seoul",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-324",
+          "value": "Portugal",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-325",
+          "value": "this week",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-325",
+          "value": "Notion",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-326",
+          "value": "Mumbai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-326",
+          "value": "Hong Kong",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-326",
+          "value": "Kenya",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-329",
+          "value": "Mumbai 見，shipment",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-330",
+          "value": "Mumbai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-334",
+          "value": "WhatsApp",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-337",
+          "value": "Dubai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-337",
+          "value": "Hotel",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-337",
+          "value": "http://www.example.com/deck/7.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-340",
+          "value": "Sydney",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-340",
+          "value": "Germany",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-341",
+          "value": "Madrid",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-342",
+          "value": "Toronto",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-342",
+          "value": "the quarter",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-346",
+          "value": "Quarterly",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-346",
+          "value": "Poland",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-346",
+          "value": "Portugal",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-346",
+          "value": "WhatsApp",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-346",
+          "value": "http://www.example.com/deck/7.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-348",
+          "value": "Mumbai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-348",
+          "value": "Vietnam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-349",
+          "value": "WhatsApp",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-350",
+          "value": "Singapore",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-351",
+          "value": "Australia",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-354",
+          "value": "London",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-354",
+          "value": "Chile",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-360",
+          "value": "Jira",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-361",
+          "value": "Rookhaven Bank Support",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-364",
+          "value": "this week",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-364",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-365",
+          "value": "Kubernetes",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-366",
+          "value": "Toronto",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-367",
+          "value": "Seoul",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-371",
+          "value": "Hong Kong",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-373",
+          "value": "Q3 之前完成。",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-379",
+          "value": "Candlewick Studios Support",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-381",
+          "value": "Jira",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-382",
+          "value": "Singapore",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-382",
+          "value": "Poland",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-384",
+          "value": "Kubernetes",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-388",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-389",
+          "value": "Hong Kong",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-389",
+          "value": "Berlin",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-389",
+          "value": "Germany",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-394",
+          "value": "Berlin",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-397",
+          "value": "this week",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-398",
+          "value": "Jira",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-399",
+          "value": "Toronto",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-399",
+          "value": "France",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-400",
+          "value": "Canada",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-403",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-403",
+          "value": "Chile",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-404",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-405",
+          "value": "Madrid",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-406",
+          "value": "Tokyo",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-406",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-412",
+          "value": "Paris",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-412",
+          "value": "Hotel",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-412",
+          "value": "http://www.example.com/deck/7.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-413",
+          "value": "Australia",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-414",
+          "value": "the quarter",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-414",
+          "value": "Brazil",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-415",
+          "value": "Toronto",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-415",
+          "value": "Hotel",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-415",
+          "value": "https://www.example.com/plans/2026.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-416",
+          "value": "Notion",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-423",
+          "value": "Vietnam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-424",
+          "value": "Rookhaven Bank Support",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-425",
+          "value": "Zoom",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-430",
+          "value": "Dubai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-430",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-434",
+          "value": "Slack",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-435",
+          "value": "Seoul",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-442",
+          "value": "Intro",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-442",
+          "value": "Hong Kong",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-442",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-444",
+          "value": "Paris",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-444",
+          "value": "Australia",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-445",
+          "value": "Quarterly",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-445",
+          "value": "Australia",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-445",
+          "value": "Norway",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-445",
+          "value": "https://www.example.com/plans/2026.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-448",
+          "value": "Australia",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-450",
+          "value": "Vietnam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-451",
+          "value": "Sydney",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-451",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-454",
+          "value": "Vietnam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-455",
+          "value": "Norway",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-457",
+          "value": "Rookhaven Bank Support",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-460",
+          "value": "Intro",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-460",
+          "value": "New York",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-460",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-462",
+          "value": "the Chile quarter",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-463",
+          "value": "Sydney",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-463",
+          "value": "Egypt",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-464",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-465",
+          "value": "Slack",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-468",
+          "value": "Madrid",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-470",
+          "value": "Paris",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-472",
+          "value": "Norway",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-473",
+          "value": "Chile",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-474",
+          "value": "Zoom",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-477",
+          "value": "Hong Kong",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-480",
+          "value": "the quarter",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-482",
+          "value": "Toronto",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-487",
+          "value": "the latest quarter",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-489",
+          "value": "London",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-489",
+          "value": "Poland",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-491",
+          "value": "Taipei",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-492",
+          "value": "Kubernetes",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-494",
+          "value": "London",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-494",
+          "value": "Taipei",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-494",
+          "value": "Egypt",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-495",
+          "value": "New York",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-496",
+          "value": "9 之前完成",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-497",
+          "value": "Taipei",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-497",
+          "value": "Hong Kong",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-497",
+          "value": "Mexico",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-498",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-499",
+          "value": "this week",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-499",
+          "value": "Kubernetes",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-02",
+          "value": "yesterday",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-02",
+          "value": "Singapore",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-04",
+          "value": "Germany",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-07",
+          "value": "Taipei",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-09",
+          "value": "Salesforce",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-09",
+          "value": "Slack",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-09",
+          "value": "Jira",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-09",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-12",
+          "value": "Brazil",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-13",
+          "value": "Rotterdam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-17",
+          "value": "NDA",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-18",
+          "value": "five working days",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-19",
+          "value": "Intro",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-19",
+          "value": "London",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-19",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-20",
+          "value": "Customer Care",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-21",
+          "value": "Quarterly",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-21",
+          "value": "quarterly",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-21",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-21",
+          "value": "Brazil",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-21",
+          "value": "Canada",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-22",
+          "value": "4471",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-25",
+          "value": "three years",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-25",
+          "value": "Hong Kong",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-28",
+          "value": "Notion",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-29",
+          "value": "Dad",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-31",
+          "value": "Tokyo",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-33",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-35",
+          "value": "AGAIN",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-37",
+          "value": "Canada",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-39",
+          "value": "5521",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-40",
+          "value": "Mistral",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-40",
+          "value": "Slack",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-42",
+          "value": "Dubai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-42",
+          "value": "Mumbai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-44",
+          "value": "Q3.",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-45",
+          "value": "Brazil",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-45",
+          "value": "Japan",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-45",
+          "value": "Kenya",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-45",
+          "value": "Paris",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-45",
+          "value": "Berlin",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-46",
+          "value": "Mum",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-47",
+          "value": "CFO",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-47",
+          "value": "Lagos",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-48",
+          "value": "Chile",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-49",
+          "value": "Leeds",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-50",
+          "value": "Poland",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        }
+      ]
+    },
+    "B": {
+      "recall_pct": 95.24,
+      "precision_pct": 75.03,
+      "must_mask_values": 1323,
+      "covered": 1260,
+      "spans_counted": 1718,
+      "spans_true": 1289,
+      "spans_excluded_inside_neutral": 240,
+      "must_pass_words_masked": 335,
+      "recall_by_category": {
+        "account": {
+          "must": 63,
+          "covered": 63,
+          "recall_pct": 100.0
+        },
+        "address": {
+          "must": 69,
+          "covered": 44,
+          "recall_pct": 63.77
+        },
+        "email": {
+          "must": 108,
+          "covered": 108,
+          "recall_pct": 100.0
+        },
+        "person": {
+          "must": 723,
+          "covered": 685,
+          "recall_pct": 94.74
+        },
+        "phone": {
+          "must": 115,
+          "covered": 115,
+          "recall_pct": 100.0
+        },
+        "terms": {
+          "must": 245,
+          "covered": 245,
+          "recall_pct": 100.0
+        }
+      },
+      "sanity_violations": [],
+      "missed": [
+        {
+          "snippet": "gen-019",
+          "value": "73 Hollis Avenue, Apt 5B",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-020",
+          "value": "Chun-kuo Hung",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-029",
+          "value": "謝偉俊",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-035",
+          "value": "黃淑家",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-078",
+          "value": "68 Corrigan Street",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-092",
+          "value": "372 Tanglewood Drive",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-099",
+          "value": "Isabel Ellery",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-103",
+          "value": "吳俊志",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-105",
+          "value": "No. 99, Lane 319, Xinyi Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-106",
+          "value": "蔡淑家",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-111",
+          "value": "黃宏家",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-119",
+          "value": "謝建婷",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-121",
+          "value": "Kwame Hallworth",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-121",
+          "value": "252 Alder Court",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-128",
+          "value": "Hsin-hung Hung",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-129",
+          "value": "謝豪玲",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-138",
+          "value": "113 Wexley Lane",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-151",
+          "value": "Nathan Ashdown",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-151",
+          "value": "175 Tanglewood Drive",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-194",
+          "value": "許宏君",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-200",
+          "value": "劉美建",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-217",
+          "value": "132 Pembrook Place",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-224",
+          "value": "陳倫偉",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-225",
+          "value": "許雅豪",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-225",
+          "value": "黃美庭",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-237",
+          "value": "No. 18, Lane 143, Anhe Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-239",
+          "value": "楊庭淑",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-243",
+          "value": "鄭欣偉",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-243",
+          "value": "蔡庭明",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-246",
+          "value": "陳淑美",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-254",
+          "value": "吳淑偉",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-263",
+          "value": "Fen-hsin Hung",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-281",
+          "value": "No. 20, Lane 21, Xinyi Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-285",
+          "value": "Ting-hsin Kuo",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-287",
+          "value": "許志豪",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-293",
+          "value": "張雅俊",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-310",
+          "value": "330 Marlowe Terrace, Apt 7D",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-331",
+          "value": "No. 38, Lane 186, Fuxing Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-335",
+          "value": "No. 77, Lane 85, Fuxing Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-341",
+          "value": "李家怡",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-348",
+          "value": "Isabel Castellano",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-353",
+          "value": "No. 21, Lane 284, Zhongshan Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-379",
+          "value": "96 Ravenscroft Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-390",
+          "value": "楊婷家",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-397",
+          "value": "170 Saltmarsh Close",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-402",
+          "value": "許家國",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-410",
+          "value": "吳明倫",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-415",
+          "value": "28 Linden Row",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-419",
+          "value": "吳偉美",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-421",
+          "value": "謝倫怡",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-437",
+          "value": "吳偉家",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-438",
+          "value": "李庭倫",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-446",
+          "value": "173 Kingfisher Walk",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-449",
+          "value": "楊偉怡",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-452",
+          "value": "No. 22, Lane 229, Zhongshan Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-457",
+          "value": "276 Alder Court, Apt 2D",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-466",
+          "value": "347 Corrigan Street",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-467",
+          "value": "No. 64, Lane 224, Fuxing Road",
+          "category": "address"
+        },
+        {
+          "snippet": "gen-471",
+          "value": "謝欣家",
+          "category": "person"
+        },
+        {
+          "snippet": "gen-479",
+          "value": "吳君倫",
+          "category": "person"
+        },
+        {
+          "snippet": "ff-20",
+          "value": "No. 17, Lane 205, Anhe Road",
+          "category": "address"
+        },
+        {
+          "snippet": "ff-49",
+          "value": "61 Cormorant Wharf, flat 4",
+          "category": "address"
+        },
+        {
+          "snippet": "ff-49",
+          "value": "9 Saltwick Road",
+          "category": "address"
+        }
+      ],
+      "false_positives": [
+        {
+          "snippet": "gen-000",
+          "value": "Tokyo",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-000",
+          "value": "Mumbai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-000",
+          "value": "Australia",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-002",
+          "value": "Notion",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-003",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-004",
+          "value": "Taipei",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-004",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-005",
+          "value": "Mumbai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-006",
+          "value": "Kubernetes",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-008",
+          "value": "the quarter",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-010",
+          "value": "Kenya",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-011",
+          "value": "Sydney",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-011",
+          "value": "Madrid",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-011",
+          "value": "Portugal",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-013",
+          "value": "this week",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-013",
+          "value": "Slack",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-015",
+          "value": "Notion",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-019",
+          "value": "Candlewick Studios Support",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-021",
+          "value": "Norway",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-022",
+          "value": "Paris",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-022",
+          "value": "Poland",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-024",
+          "value": "Notion",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-025",
+          "value": "Madrid",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-025",
+          "value": "Hotel",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-025",
+          "value": "www.example.com/portal.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-027",
+          "value": "Mexico",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-028",
+          "value": "14 之前完成",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-032",
+          "value": "Taipei",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-032",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-032",
+          "value": "Vietnam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-036",
+          "value": "the Japan quarter",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-037",
+          "value": "the attached quarter before tomorrow morning",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-043",
+          "value": "Intro",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-043",
+          "value": "New York",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-043",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-045",
+          "value": "Norway",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-046",
+          "value": "Intro",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-046",
+          "value": "Hong Kong",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-046",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-048",
+          "value": "Berlin",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-050",
+          "value": "WhatsApp",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-052",
+          "value": "Japan",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-055",
+          "value": "Quarrier Hardware Support",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-056",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-057",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-058",
+          "value": "Intro",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-058",
+          "value": "Sydney",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-058",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-058",
+          "value": "Reach",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-061",
+          "value": "WhatsApp",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-062",
+          "value": "Dads",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-063",
+          "value": "Brazil",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-064",
+          "value": "Paris",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-069",
+          "value": "Sydney",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-069",
+          "value": "Singapore",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-069",
+          "value": "Japan",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-070",
+          "value": "Quarterly",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-070",
+          "value": "France",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-070",
+          "value": "Chile",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-070",
+          "value": "Salesforce",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-070",
+          "value": "www.example.com/portal.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-073",
+          "value": "Quarterly",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-073",
+          "value": "India",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-073",
+          "value": "Kenya",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-073",
+          "value": "Zoom",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-073",
+          "value": "https://docs.example.org/spec.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-076",
+          "value": "Intro",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-076",
+          "value": "Seoul",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-076",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-077",
+          "value": "India",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-084",
+          "value": "Jira",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-085",
+          "value": "this week",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-085",
+          "value": "Slack",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-087",
+          "value": "Chile",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-089",
+          "value": "Berlin",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-094",
+          "value": "Germany",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-095",
+          "value": "Singapore",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-095",
+          "value": "Dubai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-095",
+          "value": "Norway",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-096",
+          "value": "Berlin",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-097",
+          "value": "this week",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-097",
+          "value": "WhatsApp",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-098",
+          "value": "New York",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-099",
+          "value": "Paris",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-100",
+          "value": "Kenya",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-102",
+          "value": "Kubernetes",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-104",
+          "value": "Toronto",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-104",
+          "value": "Madrid",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-104",
+          "value": "Brazil",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-110",
+          "value": "Jira",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-112",
+          "value": "14 之前完成",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-118",
+          "value": "Quarterly",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-118",
+          "value": "Norway",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-118",
+          "value": "Vietnam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-118",
+          "value": "http://www.example.com/deck/7.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-121",
+          "value": "Seoul",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-121",
+          "value": "http://www.example.com/deck/7.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-122",
+          "value": "Poland",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-125",
+          "value": "Jira",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-126",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-127",
+          "value": "Taipei",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-127",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-133",
+          "value": "Australia",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-135",
+          "value": "Mumbai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-135",
+          "value": "Vietnam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-136",
+          "value": "Quarterly",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-136",
+          "value": "India",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-136",
+          "value": "Mexico",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-136",
+          "value": "Zoom",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-136",
+          "value": "www.example.com/portal.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-137",
+          "value": "Norway",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-139",
+          "value": "Jira",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-142",
+          "value": "Madrid",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-142",
+          "value": "Hotel",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-142",
+          "value": "https://docs.example.org/spec.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-145",
+          "value": "Singapore",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-146",
+          "value": "Jira",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-149",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-151",
+          "value": "Madrid",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-151",
+          "value": "Hotel",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-151",
+          "value": "https://www.example.com/plans/2026.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-153",
+          "value": "Portugal",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-154",
+          "value": "Dubai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-154",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-155",
+          "value": "Paris",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-155",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-155",
+          "value": "Germany",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-156",
+          "value": "Singapore",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-157",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-157",
+          "value": "Hotel",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-157",
+          "value": "www.example.com/portal.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-159",
+          "value": "Portugal",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-161",
+          "value": "Kubernetes",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-162",
+          "value": "New York",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-163",
+          "value": "Paris",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-164",
+          "value": "Zoom",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-165",
+          "value": "Canada",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-167",
+          "value": "France",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-171",
+          "value": "the Kenya quarter",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-176",
+          "value": "Sydney",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-178",
+          "value": "London",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-178",
+          "value": "Hotel",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-178",
+          "value": "http://www.example.com/deck/7.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-179",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-180",
+          "value": "Tokyo",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-180",
+          "value": "the quarter",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-181",
+          "value": "India",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-183",
+          "value": "Taipei",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-184",
+          "value": "Vietnam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-186",
+          "value": "Salesforce",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-187",
+          "value": "Intro",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-187",
+          "value": "Taipei",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-187",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-187",
+          "value": "Reach",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-188",
+          "value": "Egypt",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-190",
+          "value": "Sydney",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-190",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-192",
+          "value": "Poland",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-193",
+          "value": "the attached quarter before March 14",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-195",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-199",
+          "value": "WhatsApp",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-199",
+          "value": "Paris",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-199",
+          "value": "Poland",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-203",
+          "value": "Mumbai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-204",
+          "value": "Mumbai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-206",
+          "value": "New York",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-206",
+          "value": "Toronto",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-206",
+          "value": "India",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-208",
+          "value": "London",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-208",
+          "value": "France",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-213",
+          "value": "Singapore",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-214",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-214",
+          "value": "Chile",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-216",
+          "value": "Poland",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-217",
+          "value": "Dubai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-217",
+          "value": "Hotel",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-217",
+          "value": "https://docs.example.org/spec.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-219",
+          "value": "New York",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-219",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-219",
+          "value": "Vietnam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-223",
+          "value": "New York",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-223",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-223",
+          "value": "Reach",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-226",
+          "value": "Norway",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-229",
+          "value": "Quarterly",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-229",
+          "value": "Mexico",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-229",
+          "value": "Egypt",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-229",
+          "value": "Kubernetes",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-229",
+          "value": "http://www.example.com/deck/7.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-230",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-231",
+          "value": "Slack",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-232",
+          "value": "Quarterly",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-232",
+          "value": "Brazil",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-232",
+          "value": "Germany",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-232",
+          "value": "Zoom",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-232",
+          "value": "https://docs.example.org/spec.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-234",
+          "value": "Australia",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-236",
+          "value": "Slack",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-238",
+          "value": "this week",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-238",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-239",
+          "value": "Paris 見，deadline",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-240",
+          "value": "Madrid",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-240",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-240",
+          "value": "Kenya",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-241",
+          "value": "London",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-247",
+          "value": "Seoul",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-247",
+          "value": "Norway",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-250",
+          "value": "Sydney",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-250",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-252",
+          "value": "WhatsApp",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-253",
+          "value": "Hong Kong",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-254",
+          "value": "the quarter",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-256",
+          "value": "this week",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-256",
+          "value": "WhatsApp",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-259",
+          "value": "Sydney",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-259",
+          "value": "Mexico",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-267",
+          "value": "Berlin",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-268",
+          "value": "Kenya",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-270",
+          "value": "Taipei",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-270",
+          "value": "Seoul",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-270",
+          "value": "Germany",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-271",
+          "value": "Mexico",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-272",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-273",
+          "value": "Salesforce",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-277",
+          "value": "this week",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-282",
+          "value": "Seoul",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-285",
+          "value": "France",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-286",
+          "value": "Intro",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-286",
+          "value": "Paris",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-286",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-290",
+          "value": "Berlin",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-293",
+          "value": "London 見，deadline",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-294",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-295",
+          "value": "Tokyo",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-297",
+          "value": "Egypt",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-298",
+          "value": "this week",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-302",
+          "value": "Notion",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-304",
+          "value": "WhatsApp",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-304",
+          "value": "London",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-304",
+          "value": "Canada",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-305",
+          "value": "Chile",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-306",
+          "value": "France",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-307",
+          "value": "a quarter",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-308",
+          "value": "Mexico",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-310",
+          "value": "Hong Kong",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-310",
+          "value": "Hotel",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-310",
+          "value": "https://www.example.com/plans/2026.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-312",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-312",
+          "value": "Vietnam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-314",
+          "value": "Sydney",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-315",
+          "value": "Vietnam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-316",
+          "value": "9 之前完成",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-318",
+          "value": "Notion",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-319",
+          "value": "Jira",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-323",
+          "value": "WhatsApp",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-324",
+          "value": "Berlin",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-324",
+          "value": "Seoul",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-324",
+          "value": "Portugal",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-325",
+          "value": "this week",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-325",
+          "value": "Notion",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-326",
+          "value": "Mumbai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-326",
+          "value": "Hong Kong",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-326",
+          "value": "Kenya",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-329",
+          "value": "Mumbai 見，shipment",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-330",
+          "value": "Mumbai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-334",
+          "value": "WhatsApp",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-335",
+          "value": "Dads",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-337",
+          "value": "Dubai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-337",
+          "value": "Hotel",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-337",
+          "value": "http://www.example.com/deck/7.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-340",
+          "value": "Sydney",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-340",
+          "value": "Germany",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-341",
+          "value": "Madrid",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-342",
+          "value": "Toronto",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-342",
+          "value": "the quarter",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-346",
+          "value": "Quarterly",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-346",
+          "value": "Poland",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-346",
+          "value": "Portugal",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-346",
+          "value": "WhatsApp",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-346",
+          "value": "http://www.example.com/deck/7.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-348",
+          "value": "Mumbai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-348",
+          "value": "Vietnam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-349",
+          "value": "WhatsApp",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-350",
+          "value": "Singapore",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-351",
+          "value": "Australia",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-354",
+          "value": "London",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-354",
+          "value": "Chile",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-360",
+          "value": "Jira",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-361",
+          "value": "Rookhaven Bank Support",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-364",
+          "value": "this week",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-364",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-365",
+          "value": "Kubernetes",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-366",
+          "value": "Toronto",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-367",
+          "value": "Seoul",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-371",
+          "value": "Hong Kong",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-379",
+          "value": "Candlewick Studios Support",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-381",
+          "value": "Jira",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-382",
+          "value": "Singapore",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-382",
+          "value": "Poland",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-384",
+          "value": "Kubernetes",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-388",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-389",
+          "value": "Hong Kong",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-389",
+          "value": "Berlin",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-389",
+          "value": "Germany",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-394",
+          "value": "Berlin",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-397",
+          "value": "this week",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-398",
+          "value": "Jira",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-399",
+          "value": "Toronto",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-399",
+          "value": "France",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-400",
+          "value": "Canada",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-403",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-403",
+          "value": "Chile",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-404",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-405",
+          "value": "Madrid",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-406",
+          "value": "Tokyo",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-406",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-410",
+          "value": "[10:45]",
+          "kind": "ADDRESS",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-410",
+          "value": "明天 Toronto 見，headcount 請帶著。",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-412",
+          "value": "Paris",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-412",
+          "value": "Hotel",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-412",
+          "value": "http://www.example.com/deck/7.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-413",
+          "value": "Australia",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-414",
+          "value": "the quarter",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-414",
+          "value": "Brazil",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-415",
+          "value": "Toronto",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-415",
+          "value": "Hotel",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-415",
+          "value": "https://www.example.com/plans/2026.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-416",
+          "value": "Notion",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-423",
+          "value": "Vietnam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-424",
+          "value": "Rookhaven Bank Support",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-425",
+          "value": "Zoom",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-430",
+          "value": "Dubai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-430",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-434",
+          "value": "Slack",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-435",
+          "value": "Seoul",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-442",
+          "value": "Intro",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-442",
+          "value": "Hong Kong",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-442",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-444",
+          "value": "Paris",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-444",
+          "value": "Australia",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-445",
+          "value": "Quarterly",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-445",
+          "value": "Australia",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-445",
+          "value": "Norway",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-445",
+          "value": "https://www.example.com/plans/2026.",
+          "kind": "URL",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-448",
+          "value": "Australia",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-450",
+          "value": "Vietnam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-451",
+          "value": "Sydney",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-451",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-454",
+          "value": "Vietnam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-455",
+          "value": "Norway",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-457",
+          "value": "Rookhaven Bank Support",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-460",
+          "value": "Intro",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-460",
+          "value": "New York",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-460",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-462",
+          "value": "the Chile quarter",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-463",
+          "value": "Sydney",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-463",
+          "value": "Egypt",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-464",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-465",
+          "value": "Slack",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-468",
+          "value": "Madrid",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-470",
+          "value": "Paris",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-472",
+          "value": "Norway",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-473",
+          "value": "Chile",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-474",
+          "value": "Zoom",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-477",
+          "value": "Hong Kong",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-480",
+          "value": "the quarter",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-482",
+          "value": "Toronto",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-487",
+          "value": "the latest quarter",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-489",
+          "value": "London",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-489",
+          "value": "Poland",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-491",
+          "value": "Taipei",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-492",
+          "value": "Kubernetes",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-494",
+          "value": "London",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-494",
+          "value": "Taipei",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-494",
+          "value": "Egypt",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-495",
+          "value": "New York",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-496",
+          "value": "9 之前完成",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "gen-497",
+          "value": "Taipei",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-497",
+          "value": "Hong Kong",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-497",
+          "value": "Mexico",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-498",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "gen-499",
+          "value": "Kubernetes",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-02",
+          "value": "yesterday",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-02",
+          "value": "Singapore",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-04",
+          "value": "Germany",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-07",
+          "value": "Taipei",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-09",
+          "value": "Salesforce",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-09",
+          "value": "Slack",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-09",
+          "value": "Jira",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-09",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-12",
+          "value": "Brazil",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-13",
+          "value": "Rotterdam",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-17",
+          "value": "NDA",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-18",
+          "value": "five working days",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-19",
+          "value": "Intro",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-19",
+          "value": "London",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-19",
+          "value": "last year",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-20",
+          "value": "Customer Care",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-21",
+          "value": "Quarterly",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-21",
+          "value": "quarterly",
+          "kind": "DATE_TIME",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-21",
+          "value": "Figma",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-21",
+          "value": "Brazil",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-21",
+          "value": "Canada",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-22",
+          "value": "4471",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-25",
+          "value": "three years",
+          "kind": "DATE_TIME",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-25",
+          "value": "Hong Kong",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-28",
+          "value": "Notion",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-29",
+          "value": "Dad",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-31",
+          "value": "Tokyo",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-33",
+          "value": "Chicago",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-35",
+          "value": "AGAIN",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-37",
+          "value": "Canada",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-39",
+          "value": "5521",
+          "kind": "ADDRESS",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-40",
+          "value": "Mistral",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-40",
+          "value": "Slack",
+          "kind": "ORGANIZATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-42",
+          "value": "Dubai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-42",
+          "value": "Mumbai",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-44",
+          "value": "Q3.",
+          "kind": "US_DRIVER_LICENSE",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-45",
+          "value": "Brazil",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-45",
+          "value": "Japan",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-45",
+          "value": "Kenya",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-45",
+          "value": "Paris",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-45",
+          "value": "Berlin",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-46",
+          "value": "Mum",
+          "kind": "PERSON",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-47",
+          "value": "CFO",
+          "kind": "ORGANIZATION",
+          "must_pass_word": false
+        },
+        {
+          "snippet": "ff-47",
+          "value": "Lagos",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-48",
+          "value": "Chile",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-49",
+          "value": "Leeds",
+          "kind": "PERSON",
+          "must_pass_word": true
+        },
+        {
+          "snippet": "ff-50",
+          "value": "Poland",
+          "kind": "LOCATION",
+          "must_pass_word": true
+        }
+      ]
+    }
+  },
+  "verdict": {
+    "verdict": "ADOPT",
+    "recall_gain_points": 17.99,
+    "precision_change_points": 2.82,
+    "rule": "adopt if recall gain >= 2.0 points AND precision drop <= 5.0 points"
+  },
+  "run_seconds": {
+    "A": 2.7,
+    "B": 22.1
+  }
+}

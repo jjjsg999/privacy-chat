@@ -10,6 +10,7 @@ import os
 import re
 from pathlib import Path
 
+import public_institutions
 from public_places import PUBLIC_PLACES, is_public_place
 
 # Bump when masking behaviour changes in a way that should invalidate every cached masked text.
@@ -197,10 +198,39 @@ def parse_terms(text):
     return sorted(terms, key=lambda pair: len(pair[1]), reverse=True)
 
 
+def terms_pattern(terms):
+    """(compiled pattern, {group name: kind}) for parsed terms: whole words (CJK-aware), ignoring case."""
+    lookup = {f'T{i}': kind for i, (kind, _) in enumerate(terms)}
+    pattern = re.compile(BOUND_L + '(?:' + '|'.join(f'(?P<T{i}>{re.escape(value)})' for i, (_, value) in enumerate(terms)) + ')' + BOUND_R, re.I)
+    return pattern, lookup
+
+
+def allocate_token(token_map, kind, value, text):
+    """The placeholder for `value`: its existing token, or a new KIND__n that is free in the map and in `text`."""
+    for token, original in token_map.items():
+        if original == value:
+            return token
+    token = f'{kind}__{len(token_map) + 1}'
+    while token in token_map or token in text:
+        token = f'{kind}__{int(token.rsplit("__", 1)[1]) + 1}'
+    token_map[token] = value
+    return token
+
+
+def term_matches(value, terms):
+    """True if `value` is one of the terms, using the same matching as masking (case, boundaries, CJK)."""
+    if not terms or not value:
+        return False
+    return terms_pattern(terms)[0].fullmatch(value) is not None
+
+
 class PrivacyEngine:
-    def __init__(self, analyzer=None, mode='standard', privacy_filter=None, place_names='common_public'):
+    def __init__(self, analyzer=None, mode='standard', privacy_filter=None, place_names='common_public',
+                 institution_names='common_public', institutions=None):
         self.mode = mode
         self.place_names = place_names
+        self.institution_names = institution_names
+        self.institutions = public_institutions.effective_list() if institutions is None else institutions
         self._privacy_filter = privacy_filter
         if analyzer is None:
             import spacy.util
@@ -247,11 +277,44 @@ class PrivacyEngine:
             raise ValueError(f'place_names must be one of {PLACE_MODES}, got {value!r}')
         self._place_names = value
 
+    @property
+    def institution_names(self):
+        return self._institution_names
+
+    @institution_names.setter
+    def institution_names(self, value):
+        value = 'common_public' if value is None else value
+        if value not in public_institutions.MODES:
+            raise ValueError(f'institution_names must be one of {public_institutions.MODES}, got {value!r}')
+        self._institution_names = value
+
+    @property
+    def institutions(self):
+        return self._institutions
+
+    @institutions.setter
+    def institutions(self, names):
+        self._institutions = list(names or [])
+        self._institution_re = public_institutions.pattern(self._institutions, BOUND_L, BOUND_R)
+
+    def _public_institution_spans(self, text):
+        """[(start, end)] of public institution names in `text`, or [] when institution_names is mask_all."""
+        if self.institution_names == 'mask_all' or self._institution_re is None:
+            return []
+        return [(m.start(), m.end()) for m in self._institution_re.finditer(text)]
+
+    @staticmethod
+    def _inside(start, end, spans):
+        return any(s <= start and end <= e for s, e in spans)
+
     def _detect(self, text):
         findings = self.analyzer.analyze(text=text, language='en')
-        if self.place_names == 'mask_all':
-            return findings
-        return [f for f in findings if not (f.entity_type == 'LOCATION' and is_public_place(text[f.start:f.end]))]
+        if self.place_names != 'mask_all':
+            findings = [f for f in findings if not (f.entity_type == 'LOCATION' and is_public_place(text[f.start:f.end]))]
+        institutions = self._public_institution_spans(text)
+        if institutions:  # a finding inside a public institution's name (MAS, Bank of England) stays readable
+            findings = [f for f in findings if not self._inside(f.start, f.end, institutions)]
+        return findings
 
     def fingerprint(self, terms_text=''):
         """Short hash of everything that decides what masking does: the terms list, the detector setup and versions.
@@ -262,6 +325,9 @@ class PrivacyEngine:
         parts = [PRIVACY_VERSION, self.mode, self.place_names, terms_text or '']
         if self.place_names == 'common_public':
             parts.append(hashlib.sha256('\n'.join(sorted(PUBLIC_PLACES)).encode('utf-8')).hexdigest())
+        parts.append('institutions:' + self.institution_names)
+        if self.institution_names == 'common_public':
+            parts.append(hashlib.sha256('\n'.join(sorted(self.institutions)).encode('utf-8')).hexdigest())
         for package in ('presidio-analyzer', 'spacy', 'en-core-web-sm'):
             try:
                 parts.append(package + metadata.version(package))
@@ -285,8 +351,7 @@ class PrivacyEngine:
         blank = ''.join(blank)
         spans = []
         if terms:
-            lookup = {f'T{i}': kind for i, (kind, _) in enumerate(terms)}
-            pattern = re.compile(BOUND_L + '(?:' + '|'.join(f'(?P<T{i}>{re.escape(value)})' for i, (_, value) in enumerate(terms)) + ')' + BOUND_R, re.I)
+            pattern, lookup = terms_pattern(terms)
             spans += [(m.start(), m.end(), lookup[m.lastgroup], 'terms') for m in pattern.finditer(blank)]
         for item in self._detect(blank):
             metadata = getattr(item, 'recognition_metadata', None) or {}
@@ -294,22 +359,16 @@ class PrivacyEngine:
             spans.append((item.start, item.end, item.entity_type, source))
         if self._privacy_filter is None:
             self._privacy_filter = load_privacy_filter()
+        institutions = self._public_institution_spans(blank)  # the terms list still wins: its spans are never dropped
         for start, end, label in self._privacy_filter.detect(blank):
-            if label in PRIVACY_FILTER_LABELS:  # private_date is ignored this round
+            if label in PRIVACY_FILTER_LABELS and not self._inside(start, end, institutions):  # private_date is ignored this round
                 spans.append((start, end, PRIVACY_FILTER_LABELS[label], 'privacy_filter'))
         spans = [s for s in spans if not any(s[0] < end and s[1] > start for start, end in protected)]
         return merge_spans(spans)
 
     def tokenize(self, text, token_map, terms):
         def allocate(kind, value):
-            for token, original in token_map.items():
-                if original == value:
-                    return token
-            token = f'{kind}__{len(token_map) + 1}'
-            while token in token_map or token in text:
-                token = f'{kind}__{int(token.rsplit("__", 1)[1]) + 1}'
-            token_map[token] = value
-            return token
+            return allocate_token(token_map, kind, value, text)  # `text` is read at call time, as before
 
         # Reserve literal placeholder-shaped user text to preserve round trips.
         text = TOKEN.sub(lambda m: allocate('LITERAL', m[0]), text)
@@ -318,8 +377,7 @@ class PrivacyEngine:
                 text = text[:start] + allocate(kind, text[start:end]) + text[end:]
             return text
         if terms:
-            lookup = {f'T{i}': kind for i, (kind, _) in enumerate(terms)}
-            pattern = re.compile(BOUND_L + '(?:' + '|'.join(f'(?P<T{i}>{re.escape(value)})' for i, (_, value) in enumerate(terms)) + ')' + BOUND_R, re.I)
+            pattern, lookup = terms_pattern(terms)
             parts, cursor = [], 0
             for token_match in TOKEN.finditer(text):
                 parts.append(pattern.sub(lambda m: allocate(lookup[m.lastgroup], m[0]), text[cursor:token_match.start()]))

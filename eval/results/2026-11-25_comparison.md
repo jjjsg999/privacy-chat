@@ -1,0 +1,1260 @@
+# Privacy filter comparison (2026-11-25)
+
+**Verdict: ADOPT.** adopt if recall gain >= 2.0 points AND precision drop <= 5.0 points. Recall change +17.99 points, precision change +2.82 points.
+
+Test set: 550 invented snippets (1323 must-mask values). Terms list: eval-only, 44 entries.
+
+| Setup | Recall % | Precision % | Covered / must-mask | True spans / counted spans | Run time (s, not scored) |
+|---|---|---|---|---|---|
+| A (standard) | 77.25 | 72.21 | 1022 / 1323 | 1107 / 1533 | 2.7 |
+| B (layered) | 95.24 | 75.03 | 1260 / 1323 | 1289 / 1718 | 22.1 |
+
+## Recall by category
+
+| Category | A | B |
+|---|---|---|
+| account (63) | 79.37 | 100.0 |
+| address (69) | 1.45 | 63.77 |
+| email (108) | 100.0 | 100.0 |
+| person (723) | 70.12 | 94.74 |
+| phone (115) | 96.52 | 100.0 |
+| terms (245) | 100.0 | 100.0 |
+
+## Setup A (standard)
+
+Sanity check (covered value still verbatim in masked output): 0 violations. Must-pass words masked: 331. Spans excluded as inside neutral: 247.
+
+### Missed values (301)
+
+- gen-003 [person] `Kwame Draper`
+- gen-007 [person] `李明豪`
+- gen-007 [person] `Chien-shu Hung`
+- gen-010 [person] `Caleb Delacroix`
+- gen-013 [address] `272 Wexley Lane`
+- gen-016 [account] `3691-231-2261`
+- gen-017 [person] `Marcus Okonkwo`
+- gen-019 [address] `73 Hollis Avenue, Apt 5B`
+- gen-019 [phone] `+852 5061 9158`
+- gen-020 [person] `Chun-kuo Hung`
+- gen-023 [person] `Imani Thornbury`
+- gen-025 [person] `Naomi Novak`
+- gen-025 [address] `51 Orchard Hill Road`
+- gen-026 [person] `Caleb Patel`
+- gen-028 [person] `謝豪芬`
+- gen-028 [person] `楊美婷`
+- gen-029 [person] `謝偉俊`
+- gen-031 [person] `Gregory Eriksen`
+- gen-031 [account] `8028-394-6940`
+- gen-035 [person] `黃淑家`
+- gen-036 [person] `Kuo-ting Wu`
+- gen-038 [address] `71 Hollis Avenue`
+- gen-042 [person] `Chloe Okonkwo`
+- gen-043 [person] `Beatrice Ferreira`
+- gen-043 [person] `Isabel Osei`
+- gen-043 [person] `Isabel Osei`
+- gen-049 [person] `Greta Rasmussen`
+- gen-054 [person] `張俊玲`
+- gen-054 [person] `Naomi Delacroix`
+- gen-055 [person] `Ethan Draper`
+- gen-055 [address] `43 Ravenscroft Road, Apt 7D`
+- gen-058 [person] `Caleb Castellano`
+- gen-061 [address] `287 Fenwick Road, Apt 1B`
+- gen-062 [address] `376 Wexley Lane`
+- gen-065 [address] `134 Ravenscroft Road`
+- gen-066 [person] `張淑倫`
+- gen-066 [person] `蔡玲宏`
+- gen-074 [person] `Ting-mei Yang`
+- gen-075 [person] `王欣志`
+- gen-078 [address] `68 Corrigan Street`
+- gen-080 [address] `371 Orchard Hill Road`
+- gen-081 [person] `蔡芬宏`
+- gen-081 [person] `Beatrice Rasmussen`
+- gen-083 [person] `Ethan Calloway`
+- gen-085 [address] `No. 70, Lane 385, Anhe Road`
+- gen-085 [person] `Nadia Yoder`
+- gen-086 [person] `Leila Lindqvist`
+- gen-088 [phone] `+852 5822 4266`
+- gen-092 [person] `Nadia Wexford`
+- gen-092 [address] `372 Tanglewood Drive`
+- gen-094 [account] `5466-016-3731`
+- gen-097 [address] `98 Wexley Lane`
+- gen-099 [person] `Isabel Ellery`
+- gen-101 [person] `Yusuf Delacroix`
+- gen-103 [person] `吳俊志`
+- gen-103 [person] `Hung-ting Wang`
+- gen-105 [address] `No. 99, Lane 319, Xinyi Road`
+- gen-106 [person] `王淑家`
+- gen-106 [person] `蔡淑家`
+- gen-107 [person] `Greta Okonkwo`
+- gen-107 [address] `186 Hollis Avenue`
+- gen-111 [person] `黃宏家`
+- gen-112 [person] `楊豪芬`
+- gen-112 [person] `洪俊偉`
+- gen-119 [person] `謝建婷`
+- gen-121 [person] `Kwame Hallworth`
+- gen-121 [address] `252 Alder Court`
+- gen-128 [person] `Hsin-hung Hung`
+- gen-129 [person] `謝豪玲`
+- gen-129 [person] `Henry Kowalski`
+- gen-133 [account] `7901-011-6488`
+- gen-133 [person] `Lydia Ashdown`
+- gen-134 [address] `334 Kingfisher Walk`
+- gen-134 [phone] `+852 5086 3166`
+- gen-138 [address] `113 Wexley Lane`
+- gen-139 [person] `林婷倫`
+- gen-142 [person] `Julia Sorensen`
+- gen-142 [address] `11 Marlowe Terrace, Apt 4D`
+- gen-142 [person] `Nadia Quinlan`
+- gen-145 [person] `Fen-wei Wang`
+- gen-147 [person] `吳雅怡`
+- gen-151 [person] `Nathan Ashdown`
+- gen-151 [address] `175 Tanglewood Drive`
+- gen-157 [person] `Greta Osei`
+- gen-157 [address] `79 Marlowe Terrace`
+- gen-162 [person] `Tobias Fontaine`
+- gen-172 [person] `楊偉家`
+- gen-176 [person] `Isabel Quinlan`
+- gen-177 [person] `洪家婷`
+- gen-177 [person] `劉淑偉`
+- gen-178 [person] `Beatrice Rasmussen`
+- gen-178 [address] `99 Corrigan Street`
+- gen-181 [person] `Beatrice Fontaine`
+- gen-182 [person] `Naomi Patel`
+- gen-182 [address] `105 Tanglewood Drive, Apt 6D`
+- gen-184 [account] `6174 2990 5722`
+- gen-185 [person] `Andre Banerjee`
+- gen-185 [address] `94 Kingfisher Walk`
+- gen-187 [person] `Rajesh Voss`
+- gen-189 [person] `吳志婷`
+- gen-189 [person] `Amara Okonkwo`
+- gen-191 [person] `Greta Eriksen`
+- gen-194 [person] `許宏君`
+- gen-196 [account] `8189-181-9928`
+- gen-197 [person] `Chun-ming Chang`
+- gen-200 [person] `劉美建`
+- gen-201 [person] `陳怡志`
+- gen-201 [person] `許庭怡`
+- gen-202 [person] `Isabel Fontaine`
+- gen-203 [person] `鄭怡豪`
+- gen-204 [person] `Caleb Draper`
+- gen-205 [person] `吳淑雅`
+- gen-210 [person] `許雅志`
+- gen-210 [person] `吳欣玲`
+- gen-217 [person] `Imani Delacroix`
+- gen-217 [address] `132 Pembrook Place`
+- gen-217 [person] `Beatrice Voss`
+- gen-221 [person] `Liu Ling-lun`
+- gen-222 [account] `3105-538-5375`
+- gen-223 [person] `Nadia Yoder`
+- gen-223 [person] `Priya Lindqvist`
+- gen-224 [person] `陳倫偉`
+- gen-225 [person] `許雅豪`
+- gen-225 [person] `黃美庭`
+- gen-226 [account] `7620 6224 8348`
+- gen-227 [person] `Imani Whitcombe`
+- gen-227 [address] `22 Corrigan Street`
+- gen-233 [person] `Tobias Mbeki`
+- gen-237 [address] `No. 18, Lane 143, Anhe Road`
+- gen-237 [person] `Isabel Mbeki`
+- gen-238 [address] `No. 15, Lane 368, Minsheng Road`
+- gen-238 [person] `Julia Osei`
+- gen-239 [person] `楊庭淑`
+- gen-243 [person] `鄭欣偉`
+- gen-243 [person] `蔡庭明`
+- gen-246 [person] `陳淑美`
+- gen-248 [person] `Greta Navarro`
+- gen-248 [address] `44 Orchard Hill Road`
+- gen-249 [person] `劉婷志`
+- gen-249 [person] `蔡俊國`
+- gen-251 [person] `Imani Halvorsen`
+- gen-253 [person] `Mei-shu Lin`
+- gen-254 [person] `吳淑偉`
+- gen-256 [address] `No. 36, Lane 349, Anhe Road`
+- gen-258 [person] `鄭建君`
+- gen-261 [account] `97000-47623635`
+- gen-263 [person] `Fen-hsin Hung`
+- gen-265 [person] `Sofia Osei`
+- gen-266 [address] `124 Saltmarsh Close`
+- gen-269 [person] `Tobias Mbeki`
+- gen-269 [address] `24 Corrigan Street`
+- gen-272 [person] `Rajesh Mbeki`
+- gen-274 [person] `王淑宏`
+- gen-274 [person] `Chih-fen Hsu`
+- gen-275 [person] `Ting-shu Kuo`
+- gen-275 [person] `謝倫怡`
+- gen-277 [address] `No. 90, Lane 10, Xinyi Road`
+- gen-280 [account] `9382-220-0444`
+- gen-281 [address] `No. 20, Lane 21, Xinyi Road`
+- gen-284 [person] `黃淑芬`
+- gen-285 [person] `Ting-hsin Kuo`
+- gen-286 [person] `Caleb Ellery`
+- gen-286 [person] `Caleb Ellery`
+- gen-287 [person] `許志豪`
+- gen-288 [person] `劉欣明`
+- gen-290 [person] `Victor Thornbury`
+- gen-293 [person] `張雅俊`
+- gen-295 [person] `Fen-chia Liu`
+- gen-298 [address] `333 Linden Row, Apt 7A`
+- gen-300 [person] `王玲明`
+- gen-300 [person] `謝志倫`
+- gen-301 [person] `Lydia Eriksen`
+- gen-303 [person] `謝君俊`
+- gen-306 [person] `Chih-hung Chang`
+- gen-310 [person] `Nathan Voss`
+- gen-310 [address] `330 Marlowe Terrace, Apt 7D`
+- gen-310 [person] `Sofia Sandoval`
+- gen-311 [person] `Ethan Calloway`
+- gen-316 [person] `謝淑庭`
+- gen-316 [person] `鄭豪家`
+- gen-317 [person] `Priya Whitcombe`
+- gen-318 [person] `Caleb Yoder`
+- gen-319 [person] `鄭偉雅`
+- gen-320 [person] `Gregory Lombardi`
+- gen-325 [address] `176 Pembrook Place, Apt 5A`
+- gen-328 [person] `Greta Kapoor`
+- gen-328 [account] `4519 7161 3450`
+- gen-329 [person] `黃偉玲`
+- gen-331 [address] `No. 38, Lane 186, Fuxing Road`
+- gen-332 [person] `Hsin-mei Liu`
+- gen-334 [person] `林俊雅`
+- gen-334 [person] `Isabel Navarro`
+- gen-335 [address] `No. 77, Lane 85, Fuxing Road`
+- gen-336 [person] `謝家芬`
+- gen-337 [person] `Nathan Tremaine`
+- gen-337 [address] `77 Saltmarsh Close`
+- gen-338 [person] `Chia-yi Liu`
+- gen-339 [address] `90 Saltmarsh Close`
+- gen-341 [person] `李家怡`
+- gen-343 [account] `3886 3218 9258`
+- gen-348 [person] `Isabel Castellano`
+- gen-349 [person] `蔡俊國`
+- gen-353 [person] `Victor Fontaine`
+- gen-353 [address] `No. 21, Lane 284, Zhongshan Road`
+- gen-359 [person] `許志俊`
+- gen-361 [address] `19 Wexley Lane`
+- gen-362 [person] `Chloe Winslow`
+- gen-364 [address] `318 Linden Row`
+- gen-364 [person] `Renata Moreau`
+- gen-366 [person] `Imani Winslow`
+- gen-370 [person] `洪國宏`
+- gen-372 [person] `李建君`
+- gen-372 [person] `郭玲俊`
+- gen-373 [person] `鄭欣芬`
+- gen-373 [person] `洪芬玲`
+- gen-377 [person] `Felix Okonkwo`
+- gen-378 [person] `許淑明`
+- gen-379 [address] `96 Ravenscroft Road`
+- gen-385 [person] `Hannah Calloway`
+- gen-388 [person] `Beatrice Quinlan`
+- gen-390 [person] `楊婷家`
+- gen-391 [phone] `+852 5016 8259`
+- gen-393 [person] `王偉俊`
+- gen-393 [person] `Victor Sorensen`
+- gen-394 [person] `Marcus Draper`
+- gen-397 [address] `170 Saltmarsh Close`
+- gen-401 [address] `13 Marlowe Terrace, Apt 7A`
+- gen-402 [person] `許家國`
+- gen-406 [person] `Renata Winslow`
+- gen-407 [address] `60 Fenwick Road, Apt 5D`
+- gen-410 [person] `吳明倫`
+- gen-411 [person] `李欣俊`
+- gen-411 [person] `Imani Kapoor`
+- gen-412 [person] `Clara Okonkwo`
+- gen-412 [address] `187 Kingfisher Walk, Apt 4A`
+- gen-415 [person] `Renata Halvorsen`
+- gen-415 [address] `28 Linden Row`
+- gen-417 [person] `Isabel Haddad`
+- gen-419 [person] `Hao-shu Liu`
+- gen-419 [person] `吳偉美`
+- gen-420 [person] `Yusuf Lombardi`
+- gen-421 [person] `謝倫怡`
+- gen-424 [address] `164 Orchard Hill Road`
+- gen-427 [person] `林庭明`
+- gen-428 [address] `296 Alder Court`
+- gen-429 [person] `黃倫建`
+- gen-429 [person] `李淑欣`
+- gen-433 [person] `Renata Pemberton`
+- gen-437 [person] `吳偉家`
+- gen-438 [person] `李庭倫`
+- gen-440 [person] `Renata Lombardi`
+- gen-441 [person] `洪婷玲`
+- gen-441 [person] `Gregory Voss`
+- gen-446 [address] `173 Kingfisher Walk`
+- gen-449 [person] `楊偉怡`
+- gen-451 [person] `Lucas Delacroix`
+- gen-452 [person] `Lydia Lombardi`
+- gen-452 [address] `No. 22, Lane 229, Zhongshan Road`
+- gen-456 [address] `70 Corrigan Street`
+- gen-457 [address] `276 Alder Court, Apt 2D`
+- gen-462 [person] `Shu-hsin Hsieh`
+- gen-464 [person] `Imani Ellery`
+- gen-466 [address] `347 Corrigan Street`
+- gen-467 [person] `Lydia Gallagher`
+- gen-467 [address] `No. 64, Lane 224, Fuxing Road`
+- gen-471 [person] `謝欣家`
+- gen-471 [person] `Oliver Fontaine`
+- gen-475 [person] `Priya Tremaine`
+- gen-479 [person] `吳君倫`
+- gen-481 [person] `劉芬怡`
+- gen-485 [person] `Marcus Gallagher`
+- gen-487 [person] `Lydia Ellery`
+- gen-491 [person] `張俊明`
+- gen-496 [person] `黃偉志`
+- gen-499 [address] `29 Birchmont Way, Apt 4D`
+- ff-06 [person] `陳淑芬`
+- ff-06 [person] `林俊宏`
+- ff-10 [address] `40 Harrow Lane`
+- ff-16 [address] `9 Thistledown Court, Apt 3C`
+- ff-17 [person] `Nadia Farouk`
+- ff-20 [person] `李美玲`
+- ff-20 [address] `No. 17, Lane 205, Anhe Road`
+- ff-22 [person] `Adaeze`
+- ff-22 [person] `Callum`
+- ff-23 [address] `77 Bramblewick Road`
+- ff-29 [address] `18 Quillfeather Street`
+- ff-30 [person] `Frances`
+- ff-32 [person] `Hiro`
+- ff-32 [account] `2290 4471 8836`
+- ff-34 [person] `陳志明`
+- ff-34 [person] `Jessamyn`
+- ff-35 [person] `Rosalind`
+- ff-36 [address] `5 Pennywhistle Close`
+- ff-44 [person] `Alasdair`
+- ff-46 [person] `Carys`
+- ff-46 [address] `52 Lavender Hill`
+- ff-48 [person] `Hamid`
+- ff-49 [person] `Ewan`
+- ff-49 [address] `61 Cormorant Wharf, flat 4`
+- ff-49 [address] `9 Saltwick Road`
+- ff-49 [person] `Bridget`
+
+### False positives (426)
+
+- gen-000 [LOCATION, must-pass word] `Tokyo`
+- gen-000 [LOCATION, must-pass word] `Mumbai`
+- gen-000 [LOCATION, must-pass word] `Australia`
+- gen-002 [LOCATION, must-pass word] `Notion`
+- gen-003 [ORGANIZATION, must-pass word] `Figma`
+- gen-004 [LOCATION, must-pass word] `Taipei`
+- gen-004 [DATE_TIME] `last year`
+- gen-005 [LOCATION, must-pass word] `Mumbai`
+- gen-006 [ORGANIZATION, must-pass word] `Kubernetes`
+- gen-008 [DATE_TIME, must-pass word] `the quarter`
+- gen-010 [LOCATION, must-pass word] `Kenya`
+- gen-011 [LOCATION, must-pass word] `Sydney`
+- gen-011 [LOCATION, must-pass word] `Madrid`
+- gen-011 [LOCATION, must-pass word] `Portugal`
+- gen-013 [DATE_TIME] `this week`
+- gen-013 [ORGANIZATION, must-pass word] `Slack`
+- gen-015 [LOCATION, must-pass word] `Notion`
+- gen-019 [ORGANIZATION] `Candlewick Studios Support`
+- gen-021 [LOCATION, must-pass word] `Norway`
+- gen-022 [LOCATION, must-pass word] `Paris`
+- gen-022 [LOCATION, must-pass word] `Poland`
+- gen-024 [ORGANIZATION, must-pass word] `Notion`
+- gen-025 [LOCATION, must-pass word] `Madrid`
+- gen-025 [ORGANIZATION] `Hotel`
+- gen-025 [URL] `www.example.com/portal.`
+- gen-027 [LOCATION, must-pass word] `Mexico`
+- gen-028 [DATE_TIME] `14 之前完成`
+- gen-032 [LOCATION, must-pass word] `Taipei`
+- gen-032 [LOCATION, must-pass word] `Chicago`
+- gen-032 [LOCATION, must-pass word] `Vietnam`
+- gen-036 [DATE_TIME, must-pass word] `the Japan quarter`
+- gen-037 [DATE_TIME, must-pass word] `the attached quarter before tomorrow morning`
+- gen-043 [PERSON] `Intro`
+- gen-043 [LOCATION, must-pass word] `New York`
+- gen-043 [DATE_TIME] `last year`
+- gen-045 [LOCATION, must-pass word] `Norway`
+- gen-046 [PERSON] `Intro`
+- gen-046 [LOCATION, must-pass word] `Hong Kong`
+- gen-046 [DATE_TIME] `last year`
+- gen-048 [LOCATION, must-pass word] `Berlin`
+- gen-050 [ORGANIZATION, must-pass word] `WhatsApp`
+- gen-052 [LOCATION, must-pass word] `Japan`
+- gen-055 [ORGANIZATION] `Quarrier Hardware Support`
+- gen-056 [LOCATION, must-pass word] `Chicago`
+- gen-057 [ORGANIZATION, must-pass word] `Figma`
+- gen-058 [PERSON] `Intro`
+- gen-058 [LOCATION, must-pass word] `Sydney`
+- gen-058 [DATE_TIME] `last year`
+- gen-058 [ORGANIZATION] `Reach`
+- gen-061 [ORGANIZATION, must-pass word] `WhatsApp`
+- gen-063 [LOCATION, must-pass word] `Brazil`
+- gen-064 [LOCATION, must-pass word] `Paris`
+- gen-069 [LOCATION, must-pass word] `Sydney`
+- gen-069 [LOCATION, must-pass word] `Singapore`
+- gen-069 [LOCATION, must-pass word] `Japan`
+- gen-070 [DATE_TIME] `Quarterly`
+- gen-070 [LOCATION, must-pass word] `France`
+- gen-070 [LOCATION, must-pass word] `Chile`
+- gen-070 [LOCATION, must-pass word] `Salesforce`
+- gen-070 [URL] `www.example.com/portal.`
+- gen-073 [DATE_TIME] `Quarterly`
+- gen-073 [LOCATION, must-pass word] `India`
+- gen-073 [LOCATION, must-pass word] `Kenya`
+- gen-073 [LOCATION, must-pass word] `Zoom`
+- gen-073 [URL] `https://docs.example.org/spec.`
+- gen-076 [PERSON] `Intro`
+- gen-076 [LOCATION, must-pass word] `Seoul`
+- gen-076 [DATE_TIME] `last year`
+- gen-077 [LOCATION, must-pass word] `India`
+- gen-084 [PERSON, must-pass word] `Jira`
+- gen-085 [DATE_TIME] `this week`
+- gen-085 [ORGANIZATION, must-pass word] `Slack`
+- gen-087 [LOCATION, must-pass word] `Chile`
+- gen-089 [LOCATION, must-pass word] `Berlin`
+- gen-094 [LOCATION, must-pass word] `Germany`
+- gen-095 [LOCATION, must-pass word] `Singapore`
+- gen-095 [LOCATION, must-pass word] `Dubai`
+- gen-095 [LOCATION, must-pass word] `Norway`
+- gen-096 [LOCATION, must-pass word] `Berlin`
+- gen-097 [DATE_TIME] `this week`
+- gen-097 [ORGANIZATION, must-pass word] `WhatsApp`
+- gen-098 [LOCATION, must-pass word] `New York`
+- gen-099 [LOCATION, must-pass word] `Paris`
+- gen-100 [LOCATION, must-pass word] `Kenya`
+- gen-102 [ORGANIZATION, must-pass word] `Kubernetes`
+- gen-104 [LOCATION, must-pass word] `Toronto`
+- gen-104 [LOCATION, must-pass word] `Madrid`
+- gen-104 [LOCATION, must-pass word] `Brazil`
+- gen-110 [PERSON, must-pass word] `Jira`
+- gen-112 [DATE_TIME] `14 之前完成`
+- gen-118 [DATE_TIME] `Quarterly`
+- gen-118 [LOCATION, must-pass word] `Norway`
+- gen-118 [LOCATION, must-pass word] `Vietnam`
+- gen-118 [URL] `http://www.example.com/deck/7.`
+- gen-121 [LOCATION, must-pass word] `Seoul`
+- gen-121 [URL] `http://www.example.com/deck/7.`
+- gen-122 [LOCATION, must-pass word] `Poland`
+- gen-125 [PERSON, must-pass word] `Jira`
+- gen-126 [ORGANIZATION, must-pass word] `Figma`
+- gen-127 [LOCATION, must-pass word] `Taipei`
+- gen-127 [DATE_TIME] `last year`
+- gen-133 [LOCATION, must-pass word] `Australia`
+- gen-135 [LOCATION, must-pass word] `Mumbai`
+- gen-135 [LOCATION, must-pass word] `Vietnam`
+- gen-136 [DATE_TIME] `Quarterly`
+- gen-136 [LOCATION, must-pass word] `India`
+- gen-136 [LOCATION, must-pass word] `Mexico`
+- gen-136 [LOCATION, must-pass word] `Zoom`
+- gen-136 [URL] `www.example.com/portal.`
+- gen-137 [LOCATION, must-pass word] `Norway`
+- gen-139 [PERSON, must-pass word] `Jira`
+- gen-142 [LOCATION, must-pass word] `Madrid`
+- gen-142 [ORGANIZATION] `Hotel`
+- gen-142 [URL] `https://docs.example.org/spec.`
+- gen-145 [LOCATION, must-pass word] `Singapore`
+- gen-146 [PERSON, must-pass word] `Jira`
+- gen-149 [ORGANIZATION, must-pass word] `Figma`
+- gen-151 [LOCATION, must-pass word] `Madrid`
+- gen-151 [ORGANIZATION] `Hotel`
+- gen-151 [URL] `https://www.example.com/plans/2026.`
+- gen-153 [LOCATION, must-pass word] `Portugal`
+- gen-154 [LOCATION, must-pass word] `Dubai`
+- gen-154 [DATE_TIME] `last year`
+- gen-155 [LOCATION, must-pass word] `Paris`
+- gen-155 [LOCATION, must-pass word] `Chicago`
+- gen-155 [LOCATION, must-pass word] `Germany`
+- gen-156 [LOCATION, must-pass word] `Singapore`
+- gen-157 [LOCATION, must-pass word] `Chicago`
+- gen-157 [ORGANIZATION] `Hotel`
+- gen-157 [URL] `www.example.com/portal.`
+- gen-159 [LOCATION, must-pass word] `Portugal`
+- gen-161 [PERSON, must-pass word] `Kubernetes`
+- gen-162 [LOCATION, must-pass word] `New York`
+- gen-163 [LOCATION, must-pass word] `Paris`
+- gen-164 [PERSON, must-pass word] `Zoom`
+- gen-165 [LOCATION, must-pass word] `Canada`
+- gen-167 [LOCATION, must-pass word] `France`
+- gen-171 [DATE_TIME, must-pass word] `the Kenya quarter`
+- gen-176 [LOCATION, must-pass word] `Sydney`
+- gen-178 [LOCATION, must-pass word] `London`
+- gen-178 [ORGANIZATION] `Hotel`
+- gen-178 [URL] `http://www.example.com/deck/7.`
+- gen-179 [ORGANIZATION, must-pass word] `Figma`
+- gen-180 [LOCATION, must-pass word] `Tokyo`
+- gen-180 [DATE_TIME, must-pass word] `the quarter`
+- gen-181 [LOCATION, must-pass word] `India`
+- gen-183 [LOCATION, must-pass word] `Taipei`
+- gen-184 [LOCATION, must-pass word] `Vietnam`
+- gen-186 [LOCATION, must-pass word] `Salesforce`
+- gen-187 [PERSON] `Intro`
+- gen-187 [LOCATION, must-pass word] `Taipei`
+- gen-187 [DATE_TIME] `last year`
+- gen-187 [ORGANIZATION] `Reach`
+- gen-188 [LOCATION, must-pass word] `Egypt`
+- gen-190 [LOCATION, must-pass word] `Sydney`
+- gen-190 [DATE_TIME] `last year`
+- gen-192 [LOCATION, must-pass word] `Poland`
+- gen-193 [DATE_TIME, must-pass word] `the attached quarter before March 14`
+- gen-195 [ORGANIZATION, must-pass word] `Figma`
+- gen-199 [ORGANIZATION, must-pass word] `WhatsApp`
+- gen-199 [LOCATION, must-pass word] `Paris`
+- gen-199 [LOCATION, must-pass word] `Poland`
+- gen-203 [LOCATION, must-pass word] `Mumbai`
+- gen-204 [LOCATION, must-pass word] `Mumbai`
+- gen-206 [LOCATION, must-pass word] `New York`
+- gen-206 [LOCATION, must-pass word] `Toronto`
+- gen-206 [LOCATION, must-pass word] `India`
+- gen-208 [LOCATION, must-pass word] `London`
+- gen-208 [LOCATION, must-pass word] `France`
+- gen-213 [LOCATION, must-pass word] `Singapore`
+- gen-214 [LOCATION, must-pass word] `Chicago`
+- gen-214 [LOCATION, must-pass word] `Chile`
+- gen-216 [LOCATION, must-pass word] `Poland`
+- gen-217 [LOCATION, must-pass word] `Dubai`
+- gen-217 [ORGANIZATION] `Hotel`
+- gen-217 [URL] `https://docs.example.org/spec.`
+- gen-219 [LOCATION, must-pass word] `New York`
+- gen-219 [LOCATION, must-pass word] `Chicago`
+- gen-219 [LOCATION, must-pass word] `Vietnam`
+- gen-223 [LOCATION, must-pass word] `New York`
+- gen-223 [DATE_TIME] `last year`
+- gen-223 [ORGANIZATION] `Reach`
+- gen-226 [LOCATION, must-pass word] `Norway`
+- gen-229 [DATE_TIME] `Quarterly`
+- gen-229 [LOCATION, must-pass word] `Mexico`
+- gen-229 [LOCATION, must-pass word] `Egypt`
+- gen-229 [LOCATION, must-pass word] `Kubernetes`
+- gen-229 [URL] `http://www.example.com/deck/7.`
+- gen-230 [ORGANIZATION, must-pass word] `Figma`
+- gen-231 [ORGANIZATION, must-pass word] `Slack`
+- gen-232 [DATE_TIME] `Quarterly`
+- gen-232 [LOCATION, must-pass word] `Brazil`
+- gen-232 [LOCATION, must-pass word] `Germany`
+- gen-232 [LOCATION, must-pass word] `Zoom`
+- gen-232 [URL] `https://docs.example.org/spec.`
+- gen-234 [LOCATION, must-pass word] `Australia`
+- gen-236 [ORGANIZATION, must-pass word] `Slack`
+- gen-238 [DATE_TIME] `this week`
+- gen-238 [ORGANIZATION, must-pass word] `Figma`
+- gen-239 [ORGANIZATION, must-pass word] `Paris 見，deadline`
+- gen-240 [LOCATION, must-pass word] `Madrid`
+- gen-240 [LOCATION, must-pass word] `Chicago`
+- gen-240 [LOCATION, must-pass word] `Kenya`
+- gen-241 [LOCATION, must-pass word] `London`
+- gen-247 [LOCATION, must-pass word] `Seoul`
+- gen-247 [LOCATION, must-pass word] `Norway`
+- gen-250 [LOCATION, must-pass word] `Sydney`
+- gen-250 [DATE_TIME] `last year`
+- gen-252 [ORGANIZATION, must-pass word] `WhatsApp`
+- gen-253 [LOCATION, must-pass word] `Hong Kong`
+- gen-254 [DATE_TIME, must-pass word] `the quarter`
+- gen-256 [DATE_TIME] `this week`
+- gen-256 [ORGANIZATION, must-pass word] `WhatsApp`
+- gen-259 [LOCATION, must-pass word] `Sydney`
+- gen-259 [LOCATION, must-pass word] `Mexico`
+- gen-267 [LOCATION, must-pass word] `Berlin`
+- gen-268 [LOCATION, must-pass word] `Kenya`
+- gen-270 [LOCATION, must-pass word] `Taipei`
+- gen-270 [LOCATION, must-pass word] `Seoul`
+- gen-270 [LOCATION, must-pass word] `Germany`
+- gen-271 [LOCATION, must-pass word] `Mexico`
+- gen-272 [ORGANIZATION, must-pass word] `Figma`
+- gen-273 [ORGANIZATION, must-pass word] `Salesforce`
+- gen-277 [DATE_TIME] `this week`
+- gen-282 [LOCATION, must-pass word] `Seoul`
+- gen-285 [LOCATION, must-pass word] `France`
+- gen-286 [PERSON] `Intro`
+- gen-286 [LOCATION, must-pass word] `Paris`
+- gen-286 [DATE_TIME] `last year`
+- gen-290 [LOCATION, must-pass word] `Berlin`
+- gen-293 [ORGANIZATION, must-pass word] `London 見，deadline`
+- gen-294 [ORGANIZATION, must-pass word] `Figma`
+- gen-295 [LOCATION, must-pass word] `Tokyo`
+- gen-297 [LOCATION, must-pass word] `Egypt`
+- gen-298 [DATE_TIME] `this week`
+- gen-302 [LOCATION, must-pass word] `Notion`
+- gen-304 [ORGANIZATION, must-pass word] `WhatsApp`
+- gen-304 [LOCATION, must-pass word] `London`
+- gen-304 [LOCATION, must-pass word] `Canada`
+- gen-305 [LOCATION, must-pass word] `Chile`
+- gen-306 [LOCATION, must-pass word] `France`
+- gen-308 [LOCATION, must-pass word] `Mexico`
+- gen-310 [LOCATION, must-pass word] `Hong Kong`
+- gen-310 [ORGANIZATION] `Hotel`
+- gen-310 [URL] `https://www.example.com/plans/2026.`
+- gen-312 [LOCATION, must-pass word] `Chicago`
+- gen-312 [LOCATION, must-pass word] `Vietnam`
+- gen-314 [LOCATION, must-pass word] `Sydney`
+- gen-315 [LOCATION, must-pass word] `Vietnam`
+- gen-316 [DATE_TIME] `9 之前完成`
+- gen-318 [LOCATION, must-pass word] `Notion`
+- gen-319 [PERSON, must-pass word] `Jira`
+- gen-323 [ORGANIZATION, must-pass word] `WhatsApp`
+- gen-324 [LOCATION, must-pass word] `Berlin`
+- gen-324 [LOCATION, must-pass word] `Seoul`
+- gen-324 [LOCATION, must-pass word] `Portugal`
+- gen-325 [DATE_TIME] `this week`
+- gen-325 [ORGANIZATION, must-pass word] `Notion`
+- gen-326 [LOCATION, must-pass word] `Mumbai`
+- gen-326 [LOCATION, must-pass word] `Hong Kong`
+- gen-326 [LOCATION, must-pass word] `Kenya`
+- gen-329 [ORGANIZATION, must-pass word] `Mumbai 見，shipment`
+- gen-330 [LOCATION, must-pass word] `Mumbai`
+- gen-334 [ORGANIZATION, must-pass word] `WhatsApp`
+- gen-337 [LOCATION, must-pass word] `Dubai`
+- gen-337 [ORGANIZATION] `Hotel`
+- gen-337 [URL] `http://www.example.com/deck/7.`
+- gen-340 [LOCATION, must-pass word] `Sydney`
+- gen-340 [LOCATION, must-pass word] `Germany`
+- gen-341 [LOCATION, must-pass word] `Madrid`
+- gen-342 [LOCATION, must-pass word] `Toronto`
+- gen-342 [DATE_TIME, must-pass word] `the quarter`
+- gen-346 [DATE_TIME] `Quarterly`
+- gen-346 [LOCATION, must-pass word] `Poland`
+- gen-346 [LOCATION, must-pass word] `Portugal`
+- gen-346 [ORGANIZATION, must-pass word] `WhatsApp`
+- gen-346 [URL] `http://www.example.com/deck/7.`
+- gen-348 [LOCATION, must-pass word] `Mumbai`
+- gen-348 [LOCATION, must-pass word] `Vietnam`
+- gen-349 [ORGANIZATION, must-pass word] `WhatsApp`
+- gen-350 [LOCATION, must-pass word] `Singapore`
+- gen-351 [LOCATION, must-pass word] `Australia`
+- gen-354 [LOCATION, must-pass word] `London`
+- gen-354 [LOCATION, must-pass word] `Chile`
+- gen-360 [PERSON, must-pass word] `Jira`
+- gen-361 [ORGANIZATION] `Rookhaven Bank Support`
+- gen-364 [DATE_TIME] `this week`
+- gen-364 [ORGANIZATION, must-pass word] `Figma`
+- gen-365 [PERSON, must-pass word] `Kubernetes`
+- gen-366 [LOCATION, must-pass word] `Toronto`
+- gen-367 [LOCATION, must-pass word] `Seoul`
+- gen-371 [LOCATION, must-pass word] `Hong Kong`
+- gen-373 [DATE_TIME] `Q3 之前完成。`
+- gen-379 [ORGANIZATION] `Candlewick Studios Support`
+- gen-381 [LOCATION, must-pass word] `Jira`
+- gen-382 [LOCATION, must-pass word] `Singapore`
+- gen-382 [LOCATION, must-pass word] `Poland`
+- gen-384 [LOCATION, must-pass word] `Kubernetes`
+- gen-388 [LOCATION, must-pass word] `Chicago`
+- gen-389 [LOCATION, must-pass word] `Hong Kong`
+- gen-389 [LOCATION, must-pass word] `Berlin`
+- gen-389 [LOCATION, must-pass word] `Germany`
+- gen-394 [LOCATION, must-pass word] `Berlin`
+- gen-397 [DATE_TIME] `this week`
+- gen-398 [PERSON, must-pass word] `Jira`
+- gen-399 [LOCATION, must-pass word] `Toronto`
+- gen-399 [LOCATION, must-pass word] `France`
+- gen-400 [LOCATION, must-pass word] `Canada`
+- gen-403 [LOCATION, must-pass word] `Chicago`
+- gen-403 [LOCATION, must-pass word] `Chile`
+- gen-404 [LOCATION, must-pass word] `Chicago`
+- gen-405 [LOCATION, must-pass word] `Madrid`
+- gen-406 [LOCATION, must-pass word] `Tokyo`
+- gen-406 [DATE_TIME] `last year`
+- gen-412 [LOCATION, must-pass word] `Paris`
+- gen-412 [ORGANIZATION] `Hotel`
+- gen-412 [URL] `http://www.example.com/deck/7.`
+- gen-413 [LOCATION, must-pass word] `Australia`
+- gen-414 [DATE_TIME, must-pass word] `the quarter`
+- gen-414 [LOCATION, must-pass word] `Brazil`
+- gen-415 [LOCATION, must-pass word] `Toronto`
+- gen-415 [ORGANIZATION] `Hotel`
+- gen-415 [URL] `https://www.example.com/plans/2026.`
+- gen-416 [LOCATION, must-pass word] `Notion`
+- gen-423 [LOCATION, must-pass word] `Vietnam`
+- gen-424 [ORGANIZATION] `Rookhaven Bank Support`
+- gen-425 [PERSON, must-pass word] `Zoom`
+- gen-430 [LOCATION, must-pass word] `Dubai`
+- gen-430 [DATE_TIME] `last year`
+- gen-434 [ORGANIZATION, must-pass word] `Slack`
+- gen-435 [LOCATION, must-pass word] `Seoul`
+- gen-442 [PERSON] `Intro`
+- gen-442 [LOCATION, must-pass word] `Hong Kong`
+- gen-442 [DATE_TIME] `last year`
+- gen-444 [LOCATION, must-pass word] `Paris`
+- gen-444 [LOCATION, must-pass word] `Australia`
+- gen-445 [DATE_TIME] `Quarterly`
+- gen-445 [LOCATION, must-pass word] `Australia`
+- gen-445 [LOCATION, must-pass word] `Norway`
+- gen-445 [URL] `https://www.example.com/plans/2026.`
+- gen-448 [LOCATION, must-pass word] `Australia`
+- gen-450 [LOCATION, must-pass word] `Vietnam`
+- gen-451 [LOCATION, must-pass word] `Sydney`
+- gen-451 [DATE_TIME] `last year`
+- gen-454 [LOCATION, must-pass word] `Vietnam`
+- gen-455 [LOCATION, must-pass word] `Norway`
+- gen-457 [ORGANIZATION] `Rookhaven Bank Support`
+- gen-460 [PERSON] `Intro`
+- gen-460 [LOCATION, must-pass word] `New York`
+- gen-460 [DATE_TIME] `last year`
+- gen-462 [DATE_TIME, must-pass word] `the Chile quarter`
+- gen-463 [LOCATION, must-pass word] `Sydney`
+- gen-463 [LOCATION, must-pass word] `Egypt`
+- gen-464 [LOCATION, must-pass word] `Chicago`
+- gen-465 [ORGANIZATION, must-pass word] `Slack`
+- gen-468 [LOCATION, must-pass word] `Madrid`
+- gen-470 [LOCATION, must-pass word] `Paris`
+- gen-472 [LOCATION, must-pass word] `Norway`
+- gen-473 [LOCATION, must-pass word] `Chile`
+- gen-474 [LOCATION, must-pass word] `Zoom`
+- gen-477 [LOCATION, must-pass word] `Hong Kong`
+- gen-480 [DATE_TIME, must-pass word] `the quarter`
+- gen-482 [LOCATION, must-pass word] `Toronto`
+- gen-487 [DATE_TIME, must-pass word] `the latest quarter`
+- gen-489 [LOCATION, must-pass word] `London`
+- gen-489 [LOCATION, must-pass word] `Poland`
+- gen-491 [LOCATION, must-pass word] `Taipei`
+- gen-492 [LOCATION, must-pass word] `Kubernetes`
+- gen-494 [LOCATION, must-pass word] `London`
+- gen-494 [LOCATION, must-pass word] `Taipei`
+- gen-494 [LOCATION, must-pass word] `Egypt`
+- gen-495 [LOCATION, must-pass word] `New York`
+- gen-496 [DATE_TIME] `9 之前完成`
+- gen-497 [LOCATION, must-pass word] `Taipei`
+- gen-497 [LOCATION, must-pass word] `Hong Kong`
+- gen-497 [LOCATION, must-pass word] `Mexico`
+- gen-498 [ORGANIZATION, must-pass word] `Figma`
+- gen-499 [DATE_TIME] `this week`
+- gen-499 [ORGANIZATION, must-pass word] `Kubernetes`
+- ff-02 [DATE_TIME] `yesterday`
+- ff-02 [LOCATION, must-pass word] `Singapore`
+- ff-04 [LOCATION, must-pass word] `Germany`
+- ff-07 [LOCATION, must-pass word] `Taipei`
+- ff-09 [PERSON, must-pass word] `Salesforce`
+- ff-09 [ORGANIZATION, must-pass word] `Slack`
+- ff-09 [PERSON, must-pass word] `Jira`
+- ff-09 [LOCATION, must-pass word] `Chicago`
+- ff-12 [LOCATION, must-pass word] `Brazil`
+- ff-13 [LOCATION, must-pass word] `Rotterdam`
+- ff-17 [ORGANIZATION, must-pass word] `NDA`
+- ff-18 [DATE_TIME] `five working days`
+- ff-19 [PERSON] `Intro`
+- ff-19 [LOCATION, must-pass word] `London`
+- ff-19 [DATE_TIME] `last year`
+- ff-20 [ORGANIZATION] `Customer Care`
+- ff-21 [DATE_TIME] `Quarterly`
+- ff-21 [DATE_TIME, must-pass word] `quarterly`
+- ff-21 [ORGANIZATION, must-pass word] `Figma`
+- ff-21 [LOCATION, must-pass word] `Brazil`
+- ff-21 [LOCATION, must-pass word] `Canada`
+- ff-22 [DATE_TIME] `4471`
+- ff-25 [DATE_TIME] `three years`
+- ff-25 [LOCATION, must-pass word] `Hong Kong`
+- ff-28 [PERSON, must-pass word] `Notion`
+- ff-29 [PERSON] `Dad`
+- ff-31 [LOCATION, must-pass word] `Tokyo`
+- ff-33 [LOCATION, must-pass word] `Chicago`
+- ff-35 [ORGANIZATION] `AGAIN`
+- ff-37 [LOCATION, must-pass word] `Canada`
+- ff-39 [DATE_TIME] `5521`
+- ff-40 [ORGANIZATION] `Mistral`
+- ff-40 [ORGANIZATION, must-pass word] `Slack`
+- ff-42 [LOCATION, must-pass word] `Dubai`
+- ff-42 [LOCATION, must-pass word] `Mumbai`
+- ff-44 [ORGANIZATION, must-pass word] `Q3.`
+- ff-45 [LOCATION, must-pass word] `Brazil`
+- ff-45 [LOCATION, must-pass word] `Japan`
+- ff-45 [LOCATION, must-pass word] `Kenya`
+- ff-45 [LOCATION, must-pass word] `Paris`
+- ff-45 [LOCATION, must-pass word] `Berlin`
+- ff-46 [PERSON] `Mum`
+- ff-47 [ORGANIZATION] `CFO`
+- ff-47 [LOCATION, must-pass word] `Lagos`
+- ff-48 [LOCATION, must-pass word] `Chile`
+- ff-49 [PERSON, must-pass word] `Leeds`
+- ff-50 [LOCATION, must-pass word] `Poland`
+
+## Setup B (layered)
+
+Sanity check (covered value still verbatim in masked output): 0 violations. Must-pass words masked: 335. Spans excluded as inside neutral: 240.
+
+### Missed values (63)
+
+- gen-019 [address] `73 Hollis Avenue, Apt 5B`
+- gen-020 [person] `Chun-kuo Hung`
+- gen-029 [person] `謝偉俊`
+- gen-035 [person] `黃淑家`
+- gen-078 [address] `68 Corrigan Street`
+- gen-092 [address] `372 Tanglewood Drive`
+- gen-099 [person] `Isabel Ellery`
+- gen-103 [person] `吳俊志`
+- gen-105 [address] `No. 99, Lane 319, Xinyi Road`
+- gen-106 [person] `蔡淑家`
+- gen-111 [person] `黃宏家`
+- gen-119 [person] `謝建婷`
+- gen-121 [person] `Kwame Hallworth`
+- gen-121 [address] `252 Alder Court`
+- gen-128 [person] `Hsin-hung Hung`
+- gen-129 [person] `謝豪玲`
+- gen-138 [address] `113 Wexley Lane`
+- gen-151 [person] `Nathan Ashdown`
+- gen-151 [address] `175 Tanglewood Drive`
+- gen-194 [person] `許宏君`
+- gen-200 [person] `劉美建`
+- gen-217 [address] `132 Pembrook Place`
+- gen-224 [person] `陳倫偉`
+- gen-225 [person] `許雅豪`
+- gen-225 [person] `黃美庭`
+- gen-237 [address] `No. 18, Lane 143, Anhe Road`
+- gen-239 [person] `楊庭淑`
+- gen-243 [person] `鄭欣偉`
+- gen-243 [person] `蔡庭明`
+- gen-246 [person] `陳淑美`
+- gen-254 [person] `吳淑偉`
+- gen-263 [person] `Fen-hsin Hung`
+- gen-281 [address] `No. 20, Lane 21, Xinyi Road`
+- gen-285 [person] `Ting-hsin Kuo`
+- gen-287 [person] `許志豪`
+- gen-293 [person] `張雅俊`
+- gen-310 [address] `330 Marlowe Terrace, Apt 7D`
+- gen-331 [address] `No. 38, Lane 186, Fuxing Road`
+- gen-335 [address] `No. 77, Lane 85, Fuxing Road`
+- gen-341 [person] `李家怡`
+- gen-348 [person] `Isabel Castellano`
+- gen-353 [address] `No. 21, Lane 284, Zhongshan Road`
+- gen-379 [address] `96 Ravenscroft Road`
+- gen-390 [person] `楊婷家`
+- gen-397 [address] `170 Saltmarsh Close`
+- gen-402 [person] `許家國`
+- gen-410 [person] `吳明倫`
+- gen-415 [address] `28 Linden Row`
+- gen-419 [person] `吳偉美`
+- gen-421 [person] `謝倫怡`
+- gen-437 [person] `吳偉家`
+- gen-438 [person] `李庭倫`
+- gen-446 [address] `173 Kingfisher Walk`
+- gen-449 [person] `楊偉怡`
+- gen-452 [address] `No. 22, Lane 229, Zhongshan Road`
+- gen-457 [address] `276 Alder Court, Apt 2D`
+- gen-466 [address] `347 Corrigan Street`
+- gen-467 [address] `No. 64, Lane 224, Fuxing Road`
+- gen-471 [person] `謝欣家`
+- gen-479 [person] `吳君倫`
+- ff-20 [address] `No. 17, Lane 205, Anhe Road`
+- ff-49 [address] `61 Cormorant Wharf, flat 4`
+- ff-49 [address] `9 Saltwick Road`
+
+### False positives (429)
+
+- gen-000 [LOCATION, must-pass word] `Tokyo`
+- gen-000 [LOCATION, must-pass word] `Mumbai`
+- gen-000 [LOCATION, must-pass word] `Australia`
+- gen-002 [LOCATION, must-pass word] `Notion`
+- gen-003 [ORGANIZATION, must-pass word] `Figma`
+- gen-004 [LOCATION, must-pass word] `Taipei`
+- gen-004 [DATE_TIME] `last year`
+- gen-005 [LOCATION, must-pass word] `Mumbai`
+- gen-006 [ORGANIZATION, must-pass word] `Kubernetes`
+- gen-008 [DATE_TIME, must-pass word] `the quarter`
+- gen-010 [LOCATION, must-pass word] `Kenya`
+- gen-011 [LOCATION, must-pass word] `Sydney`
+- gen-011 [LOCATION, must-pass word] `Madrid`
+- gen-011 [LOCATION, must-pass word] `Portugal`
+- gen-013 [DATE_TIME] `this week`
+- gen-013 [ORGANIZATION, must-pass word] `Slack`
+- gen-015 [LOCATION, must-pass word] `Notion`
+- gen-019 [ORGANIZATION] `Candlewick Studios Support`
+- gen-021 [LOCATION, must-pass word] `Norway`
+- gen-022 [LOCATION, must-pass word] `Paris`
+- gen-022 [LOCATION, must-pass word] `Poland`
+- gen-024 [ORGANIZATION, must-pass word] `Notion`
+- gen-025 [LOCATION, must-pass word] `Madrid`
+- gen-025 [ORGANIZATION] `Hotel`
+- gen-025 [URL] `www.example.com/portal.`
+- gen-027 [LOCATION, must-pass word] `Mexico`
+- gen-028 [DATE_TIME] `14 之前完成`
+- gen-032 [LOCATION, must-pass word] `Taipei`
+- gen-032 [LOCATION, must-pass word] `Chicago`
+- gen-032 [LOCATION, must-pass word] `Vietnam`
+- gen-036 [DATE_TIME, must-pass word] `the Japan quarter`
+- gen-037 [DATE_TIME, must-pass word] `the attached quarter before tomorrow morning`
+- gen-043 [PERSON] `Intro`
+- gen-043 [LOCATION, must-pass word] `New York`
+- gen-043 [DATE_TIME] `last year`
+- gen-045 [LOCATION, must-pass word] `Norway`
+- gen-046 [PERSON] `Intro`
+- gen-046 [LOCATION, must-pass word] `Hong Kong`
+- gen-046 [DATE_TIME] `last year`
+- gen-048 [LOCATION, must-pass word] `Berlin`
+- gen-050 [ORGANIZATION, must-pass word] `WhatsApp`
+- gen-052 [LOCATION, must-pass word] `Japan`
+- gen-055 [ORGANIZATION] `Quarrier Hardware Support`
+- gen-056 [LOCATION, must-pass word] `Chicago`
+- gen-057 [ORGANIZATION, must-pass word] `Figma`
+- gen-058 [PERSON] `Intro`
+- gen-058 [LOCATION, must-pass word] `Sydney`
+- gen-058 [DATE_TIME] `last year`
+- gen-058 [ORGANIZATION] `Reach`
+- gen-061 [ORGANIZATION, must-pass word] `WhatsApp`
+- gen-062 [PERSON] `Dads`
+- gen-063 [LOCATION, must-pass word] `Brazil`
+- gen-064 [LOCATION, must-pass word] `Paris`
+- gen-069 [LOCATION, must-pass word] `Sydney`
+- gen-069 [LOCATION, must-pass word] `Singapore`
+- gen-069 [LOCATION, must-pass word] `Japan`
+- gen-070 [DATE_TIME] `Quarterly`
+- gen-070 [LOCATION, must-pass word] `France`
+- gen-070 [LOCATION, must-pass word] `Chile`
+- gen-070 [LOCATION, must-pass word] `Salesforce`
+- gen-070 [URL] `www.example.com/portal.`
+- gen-073 [DATE_TIME] `Quarterly`
+- gen-073 [LOCATION, must-pass word] `India`
+- gen-073 [LOCATION, must-pass word] `Kenya`
+- gen-073 [LOCATION, must-pass word] `Zoom`
+- gen-073 [URL] `https://docs.example.org/spec.`
+- gen-076 [PERSON] `Intro`
+- gen-076 [LOCATION, must-pass word] `Seoul`
+- gen-076 [DATE_TIME] `last year`
+- gen-077 [LOCATION, must-pass word] `India`
+- gen-084 [PERSON, must-pass word] `Jira`
+- gen-085 [DATE_TIME] `this week`
+- gen-085 [ORGANIZATION, must-pass word] `Slack`
+- gen-087 [LOCATION, must-pass word] `Chile`
+- gen-089 [LOCATION, must-pass word] `Berlin`
+- gen-094 [LOCATION, must-pass word] `Germany`
+- gen-095 [LOCATION, must-pass word] `Singapore`
+- gen-095 [LOCATION, must-pass word] `Dubai`
+- gen-095 [LOCATION, must-pass word] `Norway`
+- gen-096 [LOCATION, must-pass word] `Berlin`
+- gen-097 [DATE_TIME] `this week`
+- gen-097 [ORGANIZATION, must-pass word] `WhatsApp`
+- gen-098 [LOCATION, must-pass word] `New York`
+- gen-099 [LOCATION, must-pass word] `Paris`
+- gen-100 [LOCATION, must-pass word] `Kenya`
+- gen-102 [ORGANIZATION, must-pass word] `Kubernetes`
+- gen-104 [LOCATION, must-pass word] `Toronto`
+- gen-104 [LOCATION, must-pass word] `Madrid`
+- gen-104 [LOCATION, must-pass word] `Brazil`
+- gen-110 [PERSON, must-pass word] `Jira`
+- gen-112 [DATE_TIME] `14 之前完成`
+- gen-118 [DATE_TIME] `Quarterly`
+- gen-118 [LOCATION, must-pass word] `Norway`
+- gen-118 [LOCATION, must-pass word] `Vietnam`
+- gen-118 [URL] `http://www.example.com/deck/7.`
+- gen-121 [LOCATION, must-pass word] `Seoul`
+- gen-121 [URL] `http://www.example.com/deck/7.`
+- gen-122 [LOCATION, must-pass word] `Poland`
+- gen-125 [PERSON, must-pass word] `Jira`
+- gen-126 [ORGANIZATION, must-pass word] `Figma`
+- gen-127 [LOCATION, must-pass word] `Taipei`
+- gen-127 [DATE_TIME] `last year`
+- gen-133 [LOCATION, must-pass word] `Australia`
+- gen-135 [LOCATION, must-pass word] `Mumbai`
+- gen-135 [LOCATION, must-pass word] `Vietnam`
+- gen-136 [DATE_TIME] `Quarterly`
+- gen-136 [LOCATION, must-pass word] `India`
+- gen-136 [LOCATION, must-pass word] `Mexico`
+- gen-136 [LOCATION, must-pass word] `Zoom`
+- gen-136 [URL] `www.example.com/portal.`
+- gen-137 [LOCATION, must-pass word] `Norway`
+- gen-139 [PERSON, must-pass word] `Jira`
+- gen-142 [LOCATION, must-pass word] `Madrid`
+- gen-142 [ORGANIZATION] `Hotel`
+- gen-142 [URL] `https://docs.example.org/spec.`
+- gen-145 [LOCATION, must-pass word] `Singapore`
+- gen-146 [PERSON, must-pass word] `Jira`
+- gen-149 [ORGANIZATION, must-pass word] `Figma`
+- gen-151 [LOCATION, must-pass word] `Madrid`
+- gen-151 [ORGANIZATION] `Hotel`
+- gen-151 [URL] `https://www.example.com/plans/2026.`
+- gen-153 [LOCATION, must-pass word] `Portugal`
+- gen-154 [LOCATION, must-pass word] `Dubai`
+- gen-154 [DATE_TIME] `last year`
+- gen-155 [LOCATION, must-pass word] `Paris`
+- gen-155 [LOCATION, must-pass word] `Chicago`
+- gen-155 [LOCATION, must-pass word] `Germany`
+- gen-156 [LOCATION, must-pass word] `Singapore`
+- gen-157 [LOCATION, must-pass word] `Chicago`
+- gen-157 [ORGANIZATION] `Hotel`
+- gen-157 [URL] `www.example.com/portal.`
+- gen-159 [LOCATION, must-pass word] `Portugal`
+- gen-161 [PERSON, must-pass word] `Kubernetes`
+- gen-162 [LOCATION, must-pass word] `New York`
+- gen-163 [LOCATION, must-pass word] `Paris`
+- gen-164 [PERSON, must-pass word] `Zoom`
+- gen-165 [LOCATION, must-pass word] `Canada`
+- gen-167 [LOCATION, must-pass word] `France`
+- gen-171 [DATE_TIME, must-pass word] `the Kenya quarter`
+- gen-176 [LOCATION, must-pass word] `Sydney`
+- gen-178 [LOCATION, must-pass word] `London`
+- gen-178 [ORGANIZATION] `Hotel`
+- gen-178 [URL] `http://www.example.com/deck/7.`
+- gen-179 [ORGANIZATION, must-pass word] `Figma`
+- gen-180 [LOCATION, must-pass word] `Tokyo`
+- gen-180 [DATE_TIME, must-pass word] `the quarter`
+- gen-181 [LOCATION, must-pass word] `India`
+- gen-183 [LOCATION, must-pass word] `Taipei`
+- gen-184 [LOCATION, must-pass word] `Vietnam`
+- gen-186 [LOCATION, must-pass word] `Salesforce`
+- gen-187 [PERSON] `Intro`
+- gen-187 [LOCATION, must-pass word] `Taipei`
+- gen-187 [DATE_TIME] `last year`
+- gen-187 [ORGANIZATION] `Reach`
+- gen-188 [LOCATION, must-pass word] `Egypt`
+- gen-190 [LOCATION, must-pass word] `Sydney`
+- gen-190 [DATE_TIME] `last year`
+- gen-192 [LOCATION, must-pass word] `Poland`
+- gen-193 [DATE_TIME, must-pass word] `the attached quarter before March 14`
+- gen-195 [ORGANIZATION, must-pass word] `Figma`
+- gen-199 [ORGANIZATION, must-pass word] `WhatsApp`
+- gen-199 [LOCATION, must-pass word] `Paris`
+- gen-199 [LOCATION, must-pass word] `Poland`
+- gen-203 [LOCATION, must-pass word] `Mumbai`
+- gen-204 [LOCATION, must-pass word] `Mumbai`
+- gen-206 [LOCATION, must-pass word] `New York`
+- gen-206 [LOCATION, must-pass word] `Toronto`
+- gen-206 [LOCATION, must-pass word] `India`
+- gen-208 [LOCATION, must-pass word] `London`
+- gen-208 [LOCATION, must-pass word] `France`
+- gen-213 [LOCATION, must-pass word] `Singapore`
+- gen-214 [LOCATION, must-pass word] `Chicago`
+- gen-214 [LOCATION, must-pass word] `Chile`
+- gen-216 [LOCATION, must-pass word] `Poland`
+- gen-217 [LOCATION, must-pass word] `Dubai`
+- gen-217 [ORGANIZATION] `Hotel`
+- gen-217 [URL] `https://docs.example.org/spec.`
+- gen-219 [LOCATION, must-pass word] `New York`
+- gen-219 [LOCATION, must-pass word] `Chicago`
+- gen-219 [LOCATION, must-pass word] `Vietnam`
+- gen-223 [LOCATION, must-pass word] `New York`
+- gen-223 [DATE_TIME] `last year`
+- gen-223 [ORGANIZATION] `Reach`
+- gen-226 [LOCATION, must-pass word] `Norway`
+- gen-229 [DATE_TIME] `Quarterly`
+- gen-229 [LOCATION, must-pass word] `Mexico`
+- gen-229 [LOCATION, must-pass word] `Egypt`
+- gen-229 [LOCATION, must-pass word] `Kubernetes`
+- gen-229 [URL] `http://www.example.com/deck/7.`
+- gen-230 [ORGANIZATION, must-pass word] `Figma`
+- gen-231 [ORGANIZATION, must-pass word] `Slack`
+- gen-232 [DATE_TIME] `Quarterly`
+- gen-232 [LOCATION, must-pass word] `Brazil`
+- gen-232 [LOCATION, must-pass word] `Germany`
+- gen-232 [LOCATION, must-pass word] `Zoom`
+- gen-232 [URL] `https://docs.example.org/spec.`
+- gen-234 [LOCATION, must-pass word] `Australia`
+- gen-236 [ORGANIZATION, must-pass word] `Slack`
+- gen-238 [DATE_TIME] `this week`
+- gen-238 [ORGANIZATION, must-pass word] `Figma`
+- gen-239 [ORGANIZATION, must-pass word] `Paris 見，deadline`
+- gen-240 [LOCATION, must-pass word] `Madrid`
+- gen-240 [LOCATION, must-pass word] `Chicago`
+- gen-240 [LOCATION, must-pass word] `Kenya`
+- gen-241 [LOCATION, must-pass word] `London`
+- gen-247 [LOCATION, must-pass word] `Seoul`
+- gen-247 [LOCATION, must-pass word] `Norway`
+- gen-250 [LOCATION, must-pass word] `Sydney`
+- gen-250 [DATE_TIME] `last year`
+- gen-252 [ORGANIZATION, must-pass word] `WhatsApp`
+- gen-253 [LOCATION, must-pass word] `Hong Kong`
+- gen-254 [DATE_TIME, must-pass word] `the quarter`
+- gen-256 [DATE_TIME] `this week`
+- gen-256 [ORGANIZATION, must-pass word] `WhatsApp`
+- gen-259 [LOCATION, must-pass word] `Sydney`
+- gen-259 [LOCATION, must-pass word] `Mexico`
+- gen-267 [LOCATION, must-pass word] `Berlin`
+- gen-268 [LOCATION, must-pass word] `Kenya`
+- gen-270 [LOCATION, must-pass word] `Taipei`
+- gen-270 [LOCATION, must-pass word] `Seoul`
+- gen-270 [LOCATION, must-pass word] `Germany`
+- gen-271 [LOCATION, must-pass word] `Mexico`
+- gen-272 [ORGANIZATION, must-pass word] `Figma`
+- gen-273 [ORGANIZATION, must-pass word] `Salesforce`
+- gen-277 [DATE_TIME] `this week`
+- gen-282 [LOCATION, must-pass word] `Seoul`
+- gen-285 [LOCATION, must-pass word] `France`
+- gen-286 [PERSON] `Intro`
+- gen-286 [LOCATION, must-pass word] `Paris`
+- gen-286 [DATE_TIME] `last year`
+- gen-290 [LOCATION, must-pass word] `Berlin`
+- gen-293 [ORGANIZATION, must-pass word] `London 見，deadline`
+- gen-294 [ORGANIZATION, must-pass word] `Figma`
+- gen-295 [LOCATION, must-pass word] `Tokyo`
+- gen-297 [LOCATION, must-pass word] `Egypt`
+- gen-298 [DATE_TIME] `this week`
+- gen-302 [LOCATION, must-pass word] `Notion`
+- gen-304 [ORGANIZATION, must-pass word] `WhatsApp`
+- gen-304 [LOCATION, must-pass word] `London`
+- gen-304 [LOCATION, must-pass word] `Canada`
+- gen-305 [LOCATION, must-pass word] `Chile`
+- gen-306 [LOCATION, must-pass word] `France`
+- gen-307 [DATE_TIME, must-pass word] `a quarter`
+- gen-308 [LOCATION, must-pass word] `Mexico`
+- gen-310 [LOCATION, must-pass word] `Hong Kong`
+- gen-310 [ORGANIZATION] `Hotel`
+- gen-310 [URL] `https://www.example.com/plans/2026.`
+- gen-312 [LOCATION, must-pass word] `Chicago`
+- gen-312 [LOCATION, must-pass word] `Vietnam`
+- gen-314 [LOCATION, must-pass word] `Sydney`
+- gen-315 [LOCATION, must-pass word] `Vietnam`
+- gen-316 [DATE_TIME] `9 之前完成`
+- gen-318 [LOCATION, must-pass word] `Notion`
+- gen-319 [PERSON, must-pass word] `Jira`
+- gen-323 [ORGANIZATION, must-pass word] `WhatsApp`
+- gen-324 [LOCATION, must-pass word] `Berlin`
+- gen-324 [LOCATION, must-pass word] `Seoul`
+- gen-324 [LOCATION, must-pass word] `Portugal`
+- gen-325 [DATE_TIME] `this week`
+- gen-325 [ORGANIZATION, must-pass word] `Notion`
+- gen-326 [LOCATION, must-pass word] `Mumbai`
+- gen-326 [LOCATION, must-pass word] `Hong Kong`
+- gen-326 [LOCATION, must-pass word] `Kenya`
+- gen-329 [ORGANIZATION, must-pass word] `Mumbai 見，shipment`
+- gen-330 [LOCATION, must-pass word] `Mumbai`
+- gen-334 [ORGANIZATION, must-pass word] `WhatsApp`
+- gen-335 [PERSON] `Dads`
+- gen-337 [LOCATION, must-pass word] `Dubai`
+- gen-337 [ORGANIZATION] `Hotel`
+- gen-337 [URL] `http://www.example.com/deck/7.`
+- gen-340 [LOCATION, must-pass word] `Sydney`
+- gen-340 [LOCATION, must-pass word] `Germany`
+- gen-341 [LOCATION, must-pass word] `Madrid`
+- gen-342 [LOCATION, must-pass word] `Toronto`
+- gen-342 [DATE_TIME, must-pass word] `the quarter`
+- gen-346 [DATE_TIME] `Quarterly`
+- gen-346 [LOCATION, must-pass word] `Poland`
+- gen-346 [LOCATION, must-pass word] `Portugal`
+- gen-346 [ORGANIZATION, must-pass word] `WhatsApp`
+- gen-346 [URL] `http://www.example.com/deck/7.`
+- gen-348 [LOCATION, must-pass word] `Mumbai`
+- gen-348 [LOCATION, must-pass word] `Vietnam`
+- gen-349 [ORGANIZATION, must-pass word] `WhatsApp`
+- gen-350 [LOCATION, must-pass word] `Singapore`
+- gen-351 [LOCATION, must-pass word] `Australia`
+- gen-354 [LOCATION, must-pass word] `London`
+- gen-354 [LOCATION, must-pass word] `Chile`
+- gen-360 [PERSON, must-pass word] `Jira`
+- gen-361 [ORGANIZATION] `Rookhaven Bank Support`
+- gen-364 [DATE_TIME] `this week`
+- gen-364 [ORGANIZATION, must-pass word] `Figma`
+- gen-365 [PERSON, must-pass word] `Kubernetes`
+- gen-366 [LOCATION, must-pass word] `Toronto`
+- gen-367 [LOCATION, must-pass word] `Seoul`
+- gen-371 [LOCATION, must-pass word] `Hong Kong`
+- gen-379 [ORGANIZATION] `Candlewick Studios Support`
+- gen-381 [LOCATION, must-pass word] `Jira`
+- gen-382 [LOCATION, must-pass word] `Singapore`
+- gen-382 [LOCATION, must-pass word] `Poland`
+- gen-384 [LOCATION, must-pass word] `Kubernetes`
+- gen-388 [LOCATION, must-pass word] `Chicago`
+- gen-389 [LOCATION, must-pass word] `Hong Kong`
+- gen-389 [LOCATION, must-pass word] `Berlin`
+- gen-389 [LOCATION, must-pass word] `Germany`
+- gen-394 [LOCATION, must-pass word] `Berlin`
+- gen-397 [DATE_TIME] `this week`
+- gen-398 [PERSON, must-pass word] `Jira`
+- gen-399 [LOCATION, must-pass word] `Toronto`
+- gen-399 [LOCATION, must-pass word] `France`
+- gen-400 [LOCATION, must-pass word] `Canada`
+- gen-403 [LOCATION, must-pass word] `Chicago`
+- gen-403 [LOCATION, must-pass word] `Chile`
+- gen-404 [LOCATION, must-pass word] `Chicago`
+- gen-405 [LOCATION, must-pass word] `Madrid`
+- gen-406 [LOCATION, must-pass word] `Tokyo`
+- gen-406 [DATE_TIME] `last year`
+- gen-410 [ADDRESS] `[10:45]`
+- gen-410 [PERSON, must-pass word] `明天 Toronto 見，headcount 請帶著。`
+- gen-412 [LOCATION, must-pass word] `Paris`
+- gen-412 [ORGANIZATION] `Hotel`
+- gen-412 [URL] `http://www.example.com/deck/7.`
+- gen-413 [LOCATION, must-pass word] `Australia`
+- gen-414 [DATE_TIME, must-pass word] `the quarter`
+- gen-414 [LOCATION, must-pass word] `Brazil`
+- gen-415 [LOCATION, must-pass word] `Toronto`
+- gen-415 [ORGANIZATION] `Hotel`
+- gen-415 [URL] `https://www.example.com/plans/2026.`
+- gen-416 [LOCATION, must-pass word] `Notion`
+- gen-423 [LOCATION, must-pass word] `Vietnam`
+- gen-424 [ORGANIZATION] `Rookhaven Bank Support`
+- gen-425 [PERSON, must-pass word] `Zoom`
+- gen-430 [LOCATION, must-pass word] `Dubai`
+- gen-430 [DATE_TIME] `last year`
+- gen-434 [ORGANIZATION, must-pass word] `Slack`
+- gen-435 [LOCATION, must-pass word] `Seoul`
+- gen-442 [PERSON] `Intro`
+- gen-442 [LOCATION, must-pass word] `Hong Kong`
+- gen-442 [DATE_TIME] `last year`
+- gen-444 [LOCATION, must-pass word] `Paris`
+- gen-444 [LOCATION, must-pass word] `Australia`
+- gen-445 [DATE_TIME] `Quarterly`
+- gen-445 [LOCATION, must-pass word] `Australia`
+- gen-445 [LOCATION, must-pass word] `Norway`
+- gen-445 [URL] `https://www.example.com/plans/2026.`
+- gen-448 [LOCATION, must-pass word] `Australia`
+- gen-450 [LOCATION, must-pass word] `Vietnam`
+- gen-451 [LOCATION, must-pass word] `Sydney`
+- gen-451 [DATE_TIME] `last year`
+- gen-454 [LOCATION, must-pass word] `Vietnam`
+- gen-455 [LOCATION, must-pass word] `Norway`
+- gen-457 [ORGANIZATION] `Rookhaven Bank Support`
+- gen-460 [PERSON] `Intro`
+- gen-460 [LOCATION, must-pass word] `New York`
+- gen-460 [DATE_TIME] `last year`
+- gen-462 [DATE_TIME, must-pass word] `the Chile quarter`
+- gen-463 [PERSON, must-pass word] `Sydney`
+- gen-463 [PERSON, must-pass word] `Egypt`
+- gen-464 [LOCATION, must-pass word] `Chicago`
+- gen-465 [ORGANIZATION, must-pass word] `Slack`
+- gen-468 [LOCATION, must-pass word] `Madrid`
+- gen-470 [LOCATION, must-pass word] `Paris`
+- gen-472 [LOCATION, must-pass word] `Norway`
+- gen-473 [LOCATION, must-pass word] `Chile`
+- gen-474 [LOCATION, must-pass word] `Zoom`
+- gen-477 [LOCATION, must-pass word] `Hong Kong`
+- gen-480 [DATE_TIME, must-pass word] `the quarter`
+- gen-482 [LOCATION, must-pass word] `Toronto`
+- gen-487 [DATE_TIME, must-pass word] `the latest quarter`
+- gen-489 [LOCATION, must-pass word] `London`
+- gen-489 [LOCATION, must-pass word] `Poland`
+- gen-491 [LOCATION, must-pass word] `Taipei`
+- gen-492 [LOCATION, must-pass word] `Kubernetes`
+- gen-494 [LOCATION, must-pass word] `London`
+- gen-494 [LOCATION, must-pass word] `Taipei`
+- gen-494 [LOCATION, must-pass word] `Egypt`
+- gen-495 [LOCATION, must-pass word] `New York`
+- gen-496 [DATE_TIME] `9 之前完成`
+- gen-497 [LOCATION, must-pass word] `Taipei`
+- gen-497 [LOCATION, must-pass word] `Hong Kong`
+- gen-497 [LOCATION, must-pass word] `Mexico`
+- gen-498 [ORGANIZATION, must-pass word] `Figma`
+- gen-499 [ORGANIZATION, must-pass word] `Kubernetes`
+- ff-02 [DATE_TIME] `yesterday`
+- ff-02 [LOCATION, must-pass word] `Singapore`
+- ff-04 [LOCATION, must-pass word] `Germany`
+- ff-07 [LOCATION, must-pass word] `Taipei`
+- ff-09 [PERSON, must-pass word] `Salesforce`
+- ff-09 [ORGANIZATION, must-pass word] `Slack`
+- ff-09 [PERSON, must-pass word] `Jira`
+- ff-09 [LOCATION, must-pass word] `Chicago`
+- ff-12 [LOCATION, must-pass word] `Brazil`
+- ff-13 [LOCATION, must-pass word] `Rotterdam`
+- ff-17 [ORGANIZATION, must-pass word] `NDA`
+- ff-18 [DATE_TIME] `five working days`
+- ff-19 [PERSON] `Intro`
+- ff-19 [LOCATION, must-pass word] `London`
+- ff-19 [DATE_TIME] `last year`
+- ff-20 [ORGANIZATION] `Customer Care`
+- ff-21 [DATE_TIME] `Quarterly`
+- ff-21 [DATE_TIME, must-pass word] `quarterly`
+- ff-21 [ORGANIZATION, must-pass word] `Figma`
+- ff-21 [LOCATION, must-pass word] `Brazil`
+- ff-21 [LOCATION, must-pass word] `Canada`
+- ff-22 [DATE_TIME] `4471`
+- ff-25 [DATE_TIME] `three years`
+- ff-25 [LOCATION, must-pass word] `Hong Kong`
+- ff-28 [PERSON, must-pass word] `Notion`
+- ff-29 [PERSON] `Dad`
+- ff-31 [LOCATION, must-pass word] `Tokyo`
+- ff-33 [LOCATION, must-pass word] `Chicago`
+- ff-35 [ORGANIZATION] `AGAIN`
+- ff-37 [LOCATION, must-pass word] `Canada`
+- ff-39 [ADDRESS] `5521`
+- ff-40 [ORGANIZATION] `Mistral`
+- ff-40 [ORGANIZATION, must-pass word] `Slack`
+- ff-42 [LOCATION, must-pass word] `Dubai`
+- ff-42 [LOCATION, must-pass word] `Mumbai`
+- ff-44 [US_DRIVER_LICENSE, must-pass word] `Q3.`
+- ff-45 [LOCATION, must-pass word] `Brazil`
+- ff-45 [LOCATION, must-pass word] `Japan`
+- ff-45 [LOCATION, must-pass word] `Kenya`
+- ff-45 [LOCATION, must-pass word] `Paris`
+- ff-45 [LOCATION, must-pass word] `Berlin`
+- ff-46 [PERSON] `Mum`
+- ff-47 [ORGANIZATION] `CFO`
+- ff-47 [LOCATION, must-pass word] `Lagos`
+- ff-48 [LOCATION, must-pass word] `Chile`
+- ff-49 [PERSON, must-pass word] `Leeds`
+- ff-50 [LOCATION, must-pass word] `Poland`

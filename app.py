@@ -178,6 +178,82 @@ async def put_settings(value: Settings):
     return await get_settings()
 
 
+def latest_privacy_eval():
+    """Recall and precision (layered setup) from the newest eval/results/*_comparison*.json, or None."""
+    try:
+        files = sorted((storage.ROOT / 'eval' / 'results').glob('*_comparison*.json'), key=lambda p: (p.name[:10], p.stat().st_mtime))
+        if not files:
+            return None
+        report = json.loads(files[-1].read_text(encoding='utf-8'))
+        best = report['setups'].get('B') or report['setups']['A']
+        return {'recall_pct': best['recall_pct'], 'precision_pct': best['precision_pct'], 'date': report['date'],
+                'place_names': report.get('place_names')}
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):
+        return None
+
+
+def web_search_view(config=None):
+    """Everything the chat page and the Settings section need. Never includes the Brave key itself."""
+    import public_institutions
+    import web_search
+    config = config if config is not None else storage.settings()
+    return {'features': config['features'], 'web_search': config['web_search'],
+            'institution_names': config['institution_names'],
+            'institutions': public_institutions.effective_list(config['public_institutions_added'], config['public_institutions_removed']),
+            'engines': web_search.engine_status(),
+            'place_names': config.get('place_names', 'common_public'),
+            'privacy_eval': latest_privacy_eval()}
+
+
+class WebSearchSettings(BaseModel):
+    """Only the fields that are sent change. `institutions` is the whole list wanted; it is stored as changes to the defaults."""
+    feature_enabled: bool | None = None
+    enabled_for_new_chats: bool | None = None
+    engine: Literal['brave', 'ddgs'] | None = None
+    max_searches_per_message: int | None = Field(default=None, ge=1, le=5)
+    pages_per_search: int | None = Field(default=None, ge=0, le=4)
+    dates_in_queries: Literal['remove', 'years'] | None = None
+    terms_list_names: Literal['rerun', 'never'] | None = None
+    offer_hidden_rerun: bool | None = None
+    show_link_banner: bool | None = None
+    cost_per_search_usd: float | None = Field(default=None, ge=0, le=1)
+    planner_model: str | None = Field(default=None, max_length=200, pattern=r'^(\S+/\S+)?$')
+    institution_names: Literal['common_public', 'mask_all'] | None = None
+    institutions: list[str] | None = Field(default=None, max_length=storage.INSTITUTION_LIST_MAX)
+
+
+@app.get('/api/web-search/settings')
+async def get_web_search_settings():
+    return web_search_view()
+
+
+@app.put('/api/web-search/settings')
+async def put_web_search_settings(value: WebSearchSettings):
+    import public_institutions
+    async with chat_lock:
+        config = storage.settings()
+        changes = {}
+        if value.feature_enabled is not None:
+            changes['features'] = {**config['features'], 'web_search': value.feature_enabled}
+        options = {k: v for k, v in value.model_dump().items() if k in storage.WEB_SEARCH_DEFAULTS and v is not None}
+        if options:
+            changes['web_search'] = storage.clean_web_search({**config['web_search'], **options})
+        if value.institution_names is not None:
+            changes['institution_names'] = value.institution_names
+        if value.institutions is not None:
+            wanted = storage.clean_names(value.institutions)
+            defaults = {name.casefold() for name in public_institutions.DEFAULT_INSTITUTIONS}
+            wanted_keys = {name.casefold() for name in wanted}
+            changes['public_institutions_added'] = [n for n in wanted if n.casefold() not in defaults]
+            changes['public_institutions_removed'] = [n for n in public_institutions.DEFAULT_INSTITUTIONS if n.casefold() not in wanted_keys]
+        if changes:
+            try:
+                storage.save_settings_keys(**changes)
+            except OSError:
+                raise HTTPException(500, 'Could not save the web search settings.') from None
+    return web_search_view()
+
+
 class Favourite(BaseModel):
     model: str = Field(min_length=1, max_length=200, pattern=r'^\S+/\S+$')
     favourite: bool
