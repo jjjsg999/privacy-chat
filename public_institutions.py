@@ -38,11 +38,11 @@ def _clean(names):
     return [' '.join(str(name).split()) for name in names or () if isinstance(name, str) and str(name).strip()]
 
 
-def effective_list(added=(), removed=()):
+def effective_list(added=(), removed=(), defaults=DEFAULT_INSTITUTIONS):
     """Defaults + added - removed, de-duplicated (removal ignores case), in a stable order."""
     gone = {name.casefold() for name in _clean(removed)}
     result, seen = [], set()
-    for name in list(DEFAULT_INSTITUTIONS) + _clean(added):
+    for name in list(defaults) + _clean(added):
         key = name if _is_acronym(name) else name.casefold()
         if name.casefold() in gone or key in seen:
             continue
@@ -55,10 +55,10 @@ def _is_acronym(name):
     return not any(ch.islower() for ch in name)
 
 
-def pattern(names, bound_l, bound_r):
-    """One regex for the list: acronyms case-sensitive, full names ignoring case. None for an empty list."""
+def pattern(names, bound_l, bound_r, ignore_case=False):
+    """One regex for the list: acronyms case-sensitive (unless ignore_case), full names ignoring case. None if empty."""
     names = sorted(_clean(names), key=len, reverse=True)
     if not names:
         return None
-    alternatives = [re.escape(n) if _is_acronym(n) else '(?i:' + re.escape(n) + ')' for n in names]
+    alternatives = [re.escape(n) if _is_acronym(n) and not ignore_case else '(?i:' + re.escape(n) + ')' for n in names]
     return re.compile(bound_l + '(?:' + '|'.join(alternatives) + ')' + bound_r)

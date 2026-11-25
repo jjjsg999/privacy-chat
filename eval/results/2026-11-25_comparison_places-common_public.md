@@ -1,13 +1,13 @@
 # Privacy filter comparison (2026-11-25)
 
-**Verdict: ADOPT.** adopt if recall gain >= 2.0 points AND precision drop <= 5.0 points. Recall change +17.99 points, precision change +1.5 points.
+**Verdict: ADOPT.** adopt if recall gain >= 2.0 points AND precision drop <= 5.0 points. Recall change +17.99 points, precision change +1.08 points.
 
 Test set: 550 invented snippets (1323 must-mask values). Terms list: eval-only, 44 entries.
 
 | Setup | Recall % | Precision % | Covered / must-mask | True spans / counted spans | Run time (s, not scored) |
 |---|---|---|---|---|---|
-| A (standard) | 77.25 | 85.48 | 1022 / 1323 | 1107 / 1295 | 3.4 |
-| B (layered) | 95.24 | 86.98 | 1260 / 1323 | 1289 / 1482 | 54.8 |
+| A (standard) | 77.25 | 89.19 | 1022 / 1323 | 1106 / 1240 | 3.0 |
+| B (layered) | 95.24 | 90.27 | 1260 / 1323 | 1289 / 1428 | 45.1 |
 
 ## Recall by category
 
@@ -22,7 +22,7 @@ Test set: 550 invented snippets (1323 must-mask values). Terms list: eval-only, 
 
 ## Setup A (standard)
 
-Sanity check (covered value still verbatim in masked output): 0 violations. Must-pass words masked: 93. Spans excluded as inside neutral: 247.
+Sanity check (covered value still verbatim in masked output): 0 violations. Must-pass words masked: 77. Spans excluded as inside neutral: 106.
 
 ### Missed values (301)
 
@@ -328,14 +328,11 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - ff-49 [address] `9 Saltwick Road`
 - ff-49 [person] `Bridget`
 
-### False positives (188)
+### False positives (134)
 
 - gen-002 [LOCATION, must-pass word] `Notion`
 - gen-003 [ORGANIZATION, must-pass word] `Figma`
-- gen-004 [DATE_TIME] `last year`
 - gen-006 [ORGANIZATION, must-pass word] `Kubernetes`
-- gen-008 [DATE_TIME, must-pass word] `the quarter`
-- gen-013 [DATE_TIME] `this week`
 - gen-013 [ORGANIZATION, must-pass word] `Slack`
 - gen-015 [LOCATION, must-pass word] `Notion`
 - gen-019 [ORGANIZATION] `Candlewick Studios Support`
@@ -343,42 +340,29 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-025 [ORGANIZATION] `Hotel`
 - gen-025 [URL] `www.example.com/portal.`
 - gen-028 [DATE_TIME] `14 之前完成`
-- gen-036 [DATE_TIME, must-pass word] `the Japan quarter`
-- gen-037 [DATE_TIME, must-pass word] `the attached quarter before tomorrow morning`
 - gen-043 [PERSON] `Intro`
-- gen-043 [DATE_TIME] `last year`
 - gen-046 [PERSON] `Intro`
-- gen-046 [DATE_TIME] `last year`
 - gen-050 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-055 [ORGANIZATION] `Quarrier Hardware Support`
 - gen-057 [ORGANIZATION, must-pass word] `Figma`
 - gen-058 [PERSON] `Intro`
-- gen-058 [DATE_TIME] `last year`
 - gen-058 [ORGANIZATION] `Reach`
 - gen-061 [ORGANIZATION, must-pass word] `WhatsApp`
-- gen-070 [DATE_TIME] `Quarterly`
 - gen-070 [LOCATION, must-pass word] `Salesforce`
 - gen-070 [URL] `www.example.com/portal.`
-- gen-073 [DATE_TIME] `Quarterly`
 - gen-073 [LOCATION, must-pass word] `Zoom`
 - gen-073 [URL] `https://docs.example.org/spec.`
 - gen-076 [PERSON] `Intro`
-- gen-076 [DATE_TIME] `last year`
 - gen-084 [PERSON, must-pass word] `Jira`
-- gen-085 [DATE_TIME] `this week`
 - gen-085 [ORGANIZATION, must-pass word] `Slack`
-- gen-097 [DATE_TIME] `this week`
 - gen-097 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-102 [ORGANIZATION, must-pass word] `Kubernetes`
 - gen-110 [PERSON, must-pass word] `Jira`
 - gen-112 [DATE_TIME] `14 之前完成`
-- gen-118 [DATE_TIME] `Quarterly`
 - gen-118 [URL] `http://www.example.com/deck/7.`
 - gen-121 [URL] `http://www.example.com/deck/7.`
 - gen-125 [PERSON, must-pass word] `Jira`
 - gen-126 [ORGANIZATION, must-pass word] `Figma`
-- gen-127 [DATE_TIME] `last year`
-- gen-136 [DATE_TIME] `Quarterly`
 - gen-136 [LOCATION, must-pass word] `Zoom`
 - gen-136 [URL] `www.example.com/portal.`
 - gen-139 [PERSON, must-pass word] `Jira`
@@ -388,53 +372,37 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-149 [ORGANIZATION, must-pass word] `Figma`
 - gen-151 [ORGANIZATION] `Hotel`
 - gen-151 [URL] `https://www.example.com/plans/2026.`
-- gen-154 [DATE_TIME] `last year`
 - gen-157 [ORGANIZATION] `Hotel`
 - gen-157 [URL] `www.example.com/portal.`
 - gen-161 [PERSON, must-pass word] `Kubernetes`
 - gen-164 [PERSON, must-pass word] `Zoom`
-- gen-171 [DATE_TIME, must-pass word] `the Kenya quarter`
 - gen-178 [ORGANIZATION] `Hotel`
 - gen-178 [URL] `http://www.example.com/deck/7.`
 - gen-179 [ORGANIZATION, must-pass word] `Figma`
-- gen-180 [DATE_TIME, must-pass word] `the quarter`
 - gen-186 [LOCATION, must-pass word] `Salesforce`
 - gen-187 [PERSON] `Intro`
-- gen-187 [DATE_TIME] `last year`
 - gen-187 [ORGANIZATION] `Reach`
-- gen-190 [DATE_TIME] `last year`
-- gen-193 [DATE_TIME, must-pass word] `the attached quarter before March 14`
 - gen-195 [ORGANIZATION, must-pass word] `Figma`
 - gen-199 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-217 [ORGANIZATION] `Hotel`
 - gen-217 [URL] `https://docs.example.org/spec.`
-- gen-223 [DATE_TIME] `last year`
 - gen-223 [ORGANIZATION] `Reach`
-- gen-229 [DATE_TIME] `Quarterly`
 - gen-229 [LOCATION, must-pass word] `Kubernetes`
 - gen-229 [URL] `http://www.example.com/deck/7.`
 - gen-230 [ORGANIZATION, must-pass word] `Figma`
 - gen-231 [ORGANIZATION, must-pass word] `Slack`
-- gen-232 [DATE_TIME] `Quarterly`
 - gen-232 [LOCATION, must-pass word] `Zoom`
 - gen-232 [URL] `https://docs.example.org/spec.`
 - gen-236 [ORGANIZATION, must-pass word] `Slack`
-- gen-238 [DATE_TIME] `this week`
 - gen-238 [ORGANIZATION, must-pass word] `Figma`
 - gen-239 [ORGANIZATION, must-pass word] `Paris 見，deadline`
-- gen-250 [DATE_TIME] `last year`
 - gen-252 [ORGANIZATION, must-pass word] `WhatsApp`
-- gen-254 [DATE_TIME, must-pass word] `the quarter`
-- gen-256 [DATE_TIME] `this week`
 - gen-256 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-272 [ORGANIZATION, must-pass word] `Figma`
 - gen-273 [ORGANIZATION, must-pass word] `Salesforce`
-- gen-277 [DATE_TIME] `this week`
 - gen-286 [PERSON] `Intro`
-- gen-286 [DATE_TIME] `last year`
 - gen-293 [ORGANIZATION, must-pass word] `London 見，deadline`
 - gen-294 [ORGANIZATION, must-pass word] `Figma`
-- gen-298 [DATE_TIME] `this week`
 - gen-302 [LOCATION, must-pass word] `Notion`
 - gen-304 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-310 [ORGANIZATION] `Hotel`
@@ -443,71 +411,49 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-318 [LOCATION, must-pass word] `Notion`
 - gen-319 [PERSON, must-pass word] `Jira`
 - gen-323 [ORGANIZATION, must-pass word] `WhatsApp`
-- gen-325 [DATE_TIME] `this week`
 - gen-325 [ORGANIZATION, must-pass word] `Notion`
 - gen-329 [ORGANIZATION, must-pass word] `Mumbai 見，shipment`
 - gen-334 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-337 [ORGANIZATION] `Hotel`
 - gen-337 [URL] `http://www.example.com/deck/7.`
-- gen-342 [DATE_TIME, must-pass word] `the quarter`
-- gen-346 [DATE_TIME] `Quarterly`
 - gen-346 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-346 [URL] `http://www.example.com/deck/7.`
 - gen-349 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-360 [PERSON, must-pass word] `Jira`
 - gen-361 [ORGANIZATION] `Rookhaven Bank Support`
-- gen-364 [DATE_TIME] `this week`
 - gen-364 [ORGANIZATION, must-pass word] `Figma`
 - gen-365 [PERSON, must-pass word] `Kubernetes`
 - gen-373 [DATE_TIME] `Q3 之前完成。`
 - gen-379 [ORGANIZATION] `Candlewick Studios Support`
 - gen-381 [LOCATION, must-pass word] `Jira`
 - gen-384 [LOCATION, must-pass word] `Kubernetes`
-- gen-397 [DATE_TIME] `this week`
 - gen-398 [PERSON, must-pass word] `Jira`
-- gen-406 [DATE_TIME] `last year`
 - gen-412 [ORGANIZATION] `Hotel`
 - gen-412 [URL] `http://www.example.com/deck/7.`
-- gen-414 [DATE_TIME, must-pass word] `the quarter`
 - gen-415 [ORGANIZATION] `Hotel`
 - gen-415 [URL] `https://www.example.com/plans/2026.`
 - gen-416 [LOCATION, must-pass word] `Notion`
 - gen-424 [ORGANIZATION] `Rookhaven Bank Support`
 - gen-425 [PERSON, must-pass word] `Zoom`
-- gen-430 [DATE_TIME] `last year`
 - gen-434 [ORGANIZATION, must-pass word] `Slack`
 - gen-442 [PERSON] `Intro`
-- gen-442 [DATE_TIME] `last year`
-- gen-445 [DATE_TIME] `Quarterly`
 - gen-445 [URL] `https://www.example.com/plans/2026.`
-- gen-451 [DATE_TIME] `last year`
 - gen-457 [ORGANIZATION] `Rookhaven Bank Support`
 - gen-460 [PERSON] `Intro`
-- gen-460 [DATE_TIME] `last year`
-- gen-462 [DATE_TIME, must-pass word] `the Chile quarter`
 - gen-465 [ORGANIZATION, must-pass word] `Slack`
 - gen-474 [LOCATION, must-pass word] `Zoom`
-- gen-480 [DATE_TIME, must-pass word] `the quarter`
-- gen-487 [DATE_TIME, must-pass word] `the latest quarter`
 - gen-492 [LOCATION, must-pass word] `Kubernetes`
 - gen-496 [DATE_TIME] `9 之前完成`
 - gen-498 [ORGANIZATION, must-pass word] `Figma`
-- gen-499 [DATE_TIME] `this week`
 - gen-499 [ORGANIZATION, must-pass word] `Kubernetes`
-- ff-02 [DATE_TIME] `yesterday`
 - ff-09 [PERSON, must-pass word] `Salesforce`
 - ff-09 [ORGANIZATION, must-pass word] `Slack`
 - ff-09 [PERSON, must-pass word] `Jira`
 - ff-17 [ORGANIZATION, must-pass word] `NDA`
-- ff-18 [DATE_TIME] `five working days`
 - ff-19 [PERSON] `Intro`
-- ff-19 [DATE_TIME] `last year`
 - ff-20 [ORGANIZATION] `Customer Care`
-- ff-21 [DATE_TIME] `Quarterly`
-- ff-21 [DATE_TIME, must-pass word] `quarterly`
 - ff-21 [ORGANIZATION, must-pass word] `Figma`
 - ff-22 [DATE_TIME] `4471`
-- ff-25 [DATE_TIME] `three years`
 - ff-28 [PERSON, must-pass word] `Notion`
 - ff-29 [PERSON] `Dad`
 - ff-35 [ORGANIZATION] `AGAIN`
@@ -521,7 +467,7 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 
 ## Setup B (layered)
 
-Sanity check (covered value still verbatim in masked output): 0 violations. Must-pass words masked: 99. Spans excluded as inside neutral: 240.
+Sanity check (covered value still verbatim in masked output): 0 violations. Must-pass words masked: 82. Spans excluded as inside neutral: 99.
 
 ### Missed values (63)
 
@@ -589,14 +535,11 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - ff-49 [address] `61 Cormorant Wharf, flat 4`
 - ff-49 [address] `9 Saltwick Road`
 
-### False positives (193)
+### False positives (139)
 
 - gen-002 [LOCATION, must-pass word] `Notion`
 - gen-003 [ORGANIZATION, must-pass word] `Figma`
-- gen-004 [DATE_TIME] `last year`
 - gen-006 [ORGANIZATION, must-pass word] `Kubernetes`
-- gen-008 [DATE_TIME, must-pass word] `the quarter`
-- gen-013 [DATE_TIME] `this week`
 - gen-013 [ORGANIZATION, must-pass word] `Slack`
 - gen-015 [LOCATION, must-pass word] `Notion`
 - gen-019 [ORGANIZATION] `Candlewick Studios Support`
@@ -604,43 +547,30 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-025 [ORGANIZATION] `Hotel`
 - gen-025 [URL] `www.example.com/portal.`
 - gen-028 [DATE_TIME] `14 之前完成`
-- gen-036 [DATE_TIME, must-pass word] `the Japan quarter`
-- gen-037 [DATE_TIME, must-pass word] `the attached quarter before tomorrow morning`
 - gen-043 [PERSON] `Intro`
-- gen-043 [DATE_TIME] `last year`
 - gen-046 [PERSON] `Intro`
-- gen-046 [DATE_TIME] `last year`
 - gen-050 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-055 [ORGANIZATION] `Quarrier Hardware Support`
 - gen-057 [ORGANIZATION, must-pass word] `Figma`
 - gen-058 [PERSON] `Intro`
-- gen-058 [DATE_TIME] `last year`
 - gen-058 [ORGANIZATION] `Reach`
 - gen-061 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-062 [PERSON] `Dads`
-- gen-070 [DATE_TIME] `Quarterly`
 - gen-070 [LOCATION, must-pass word] `Salesforce`
 - gen-070 [URL] `www.example.com/portal.`
-- gen-073 [DATE_TIME] `Quarterly`
 - gen-073 [LOCATION, must-pass word] `Zoom`
 - gen-073 [URL] `https://docs.example.org/spec.`
 - gen-076 [PERSON] `Intro`
-- gen-076 [DATE_TIME] `last year`
 - gen-084 [PERSON, must-pass word] `Jira`
-- gen-085 [DATE_TIME] `this week`
 - gen-085 [ORGANIZATION, must-pass word] `Slack`
-- gen-097 [DATE_TIME] `this week`
 - gen-097 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-102 [ORGANIZATION, must-pass word] `Kubernetes`
 - gen-110 [PERSON, must-pass word] `Jira`
 - gen-112 [DATE_TIME] `14 之前完成`
-- gen-118 [DATE_TIME] `Quarterly`
 - gen-118 [URL] `http://www.example.com/deck/7.`
 - gen-121 [URL] `http://www.example.com/deck/7.`
 - gen-125 [PERSON, must-pass word] `Jira`
 - gen-126 [ORGANIZATION, must-pass word] `Figma`
-- gen-127 [DATE_TIME] `last year`
-- gen-136 [DATE_TIME] `Quarterly`
 - gen-136 [LOCATION, must-pass word] `Zoom`
 - gen-136 [URL] `www.example.com/portal.`
 - gen-139 [PERSON, must-pass word] `Jira`
@@ -650,130 +580,92 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-149 [ORGANIZATION, must-pass word] `Figma`
 - gen-151 [ORGANIZATION] `Hotel`
 - gen-151 [URL] `https://www.example.com/plans/2026.`
-- gen-154 [DATE_TIME] `last year`
 - gen-157 [ORGANIZATION] `Hotel`
 - gen-157 [URL] `www.example.com/portal.`
 - gen-161 [PERSON, must-pass word] `Kubernetes`
 - gen-164 [PERSON, must-pass word] `Zoom`
-- gen-171 [DATE_TIME, must-pass word] `the Kenya quarter`
 - gen-178 [ORGANIZATION] `Hotel`
 - gen-178 [URL] `http://www.example.com/deck/7.`
 - gen-179 [ORGANIZATION, must-pass word] `Figma`
-- gen-180 [DATE_TIME, must-pass word] `the quarter`
 - gen-186 [LOCATION, must-pass word] `Salesforce`
 - gen-187 [PERSON] `Intro`
-- gen-187 [DATE_TIME] `last year`
 - gen-187 [ORGANIZATION] `Reach`
-- gen-190 [DATE_TIME] `last year`
-- gen-193 [DATE_TIME, must-pass word] `the attached quarter before March 14`
 - gen-195 [ORGANIZATION, must-pass word] `Figma`
 - gen-199 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-217 [ORGANIZATION] `Hotel`
 - gen-217 [URL] `https://docs.example.org/spec.`
-- gen-223 [DATE_TIME] `last year`
 - gen-223 [ORGANIZATION] `Reach`
-- gen-229 [DATE_TIME] `Quarterly`
 - gen-229 [LOCATION, must-pass word] `Kubernetes`
 - gen-229 [URL] `http://www.example.com/deck/7.`
 - gen-230 [ORGANIZATION, must-pass word] `Figma`
 - gen-231 [ORGANIZATION, must-pass word] `Slack`
-- gen-232 [DATE_TIME] `Quarterly`
 - gen-232 [LOCATION, must-pass word] `Zoom`
 - gen-232 [URL] `https://docs.example.org/spec.`
 - gen-236 [ORGANIZATION, must-pass word] `Slack`
-- gen-238 [DATE_TIME] `this week`
 - gen-238 [ORGANIZATION, must-pass word] `Figma`
 - gen-239 [ORGANIZATION, must-pass word] `Paris 見，deadline`
-- gen-250 [DATE_TIME] `last year`
 - gen-252 [ORGANIZATION, must-pass word] `WhatsApp`
-- gen-254 [DATE_TIME, must-pass word] `the quarter`
-- gen-256 [DATE_TIME] `this week`
 - gen-256 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-272 [ORGANIZATION, must-pass word] `Figma`
 - gen-273 [ORGANIZATION, must-pass word] `Salesforce`
-- gen-277 [DATE_TIME] `this week`
 - gen-286 [PERSON] `Intro`
-- gen-286 [DATE_TIME] `last year`
 - gen-293 [ORGANIZATION, must-pass word] `London 見，deadline`
 - gen-294 [ORGANIZATION, must-pass word] `Figma`
-- gen-298 [DATE_TIME] `this week`
 - gen-302 [LOCATION, must-pass word] `Notion`
 - gen-304 [ORGANIZATION, must-pass word] `WhatsApp`
-- gen-307 [DATE_TIME, must-pass word] `a quarter`
 - gen-310 [ORGANIZATION] `Hotel`
 - gen-310 [URL] `https://www.example.com/plans/2026.`
 - gen-316 [DATE_TIME] `9 之前完成`
 - gen-318 [LOCATION, must-pass word] `Notion`
 - gen-319 [PERSON, must-pass word] `Jira`
 - gen-323 [ORGANIZATION, must-pass word] `WhatsApp`
-- gen-325 [DATE_TIME] `this week`
 - gen-325 [ORGANIZATION, must-pass word] `Notion`
 - gen-329 [ORGANIZATION, must-pass word] `Mumbai 見，shipment`
 - gen-334 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-335 [PERSON] `Dads`
 - gen-337 [ORGANIZATION] `Hotel`
 - gen-337 [URL] `http://www.example.com/deck/7.`
-- gen-342 [DATE_TIME, must-pass word] `the quarter`
-- gen-346 [DATE_TIME] `Quarterly`
 - gen-346 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-346 [URL] `http://www.example.com/deck/7.`
 - gen-349 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-360 [PERSON, must-pass word] `Jira`
 - gen-361 [ORGANIZATION] `Rookhaven Bank Support`
-- gen-364 [DATE_TIME] `this week`
 - gen-364 [ORGANIZATION, must-pass word] `Figma`
 - gen-365 [PERSON, must-pass word] `Kubernetes`
 - gen-379 [ORGANIZATION] `Candlewick Studios Support`
 - gen-381 [LOCATION, must-pass word] `Jira`
 - gen-384 [LOCATION, must-pass word] `Kubernetes`
-- gen-397 [DATE_TIME] `this week`
 - gen-398 [PERSON, must-pass word] `Jira`
-- gen-406 [DATE_TIME] `last year`
 - gen-410 [ADDRESS] `[10:45]`
 - gen-410 [PERSON, must-pass word] `明天 Toronto 見，headcount 請帶著。`
 - gen-412 [ORGANIZATION] `Hotel`
 - gen-412 [URL] `http://www.example.com/deck/7.`
-- gen-414 [DATE_TIME, must-pass word] `the quarter`
 - gen-415 [ORGANIZATION] `Hotel`
 - gen-415 [URL] `https://www.example.com/plans/2026.`
 - gen-416 [LOCATION, must-pass word] `Notion`
 - gen-424 [ORGANIZATION] `Rookhaven Bank Support`
 - gen-425 [PERSON, must-pass word] `Zoom`
-- gen-430 [DATE_TIME] `last year`
 - gen-434 [ORGANIZATION, must-pass word] `Slack`
 - gen-442 [PERSON] `Intro`
-- gen-442 [DATE_TIME] `last year`
-- gen-445 [DATE_TIME] `Quarterly`
 - gen-445 [URL] `https://www.example.com/plans/2026.`
-- gen-451 [DATE_TIME] `last year`
 - gen-457 [ORGANIZATION] `Rookhaven Bank Support`
 - gen-460 [PERSON] `Intro`
-- gen-460 [DATE_TIME] `last year`
-- gen-462 [DATE_TIME, must-pass word] `the Chile quarter`
 - gen-463 [PERSON, must-pass word] `Sydney`
 - gen-463 [PERSON, must-pass word] `Egypt`
 - gen-465 [ORGANIZATION, must-pass word] `Slack`
 - gen-474 [LOCATION, must-pass word] `Zoom`
-- gen-480 [DATE_TIME, must-pass word] `the quarter`
-- gen-487 [DATE_TIME, must-pass word] `the latest quarter`
 - gen-492 [LOCATION, must-pass word] `Kubernetes`
 - gen-496 [DATE_TIME] `9 之前完成`
 - gen-498 [ORGANIZATION, must-pass word] `Figma`
 - gen-499 [ORGANIZATION, must-pass word] `Kubernetes`
-- ff-02 [DATE_TIME] `yesterday`
 - ff-09 [PERSON, must-pass word] `Salesforce`
 - ff-09 [ORGANIZATION, must-pass word] `Slack`
 - ff-09 [PERSON, must-pass word] `Jira`
 - ff-17 [ORGANIZATION, must-pass word] `NDA`
-- ff-18 [DATE_TIME] `five working days`
 - ff-19 [PERSON] `Intro`
-- ff-19 [DATE_TIME] `last year`
 - ff-20 [ORGANIZATION] `Customer Care`
-- ff-21 [DATE_TIME] `Quarterly`
-- ff-21 [DATE_TIME, must-pass word] `quarterly`
 - ff-21 [ORGANIZATION, must-pass word] `Figma`
 - ff-22 [DATE_TIME] `4471`
-- ff-25 [DATE_TIME] `three years`
 - ff-28 [PERSON, must-pass word] `Notion`
 - ff-29 [PERSON] `Dad`
 - ff-35 [ORGANIZATION] `AGAIN`

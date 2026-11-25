@@ -11,13 +11,13 @@
   "setups": {
     "A": {
       "recall_pct": 77.25,
-      "precision_pct": 85.48,
+      "precision_pct": 89.19,
       "must_mask_values": 1323,
       "covered": 1022,
-      "spans_counted": 1295,
-      "spans_true": 1107,
-      "spans_excluded_inside_neutral": 247,
-      "must_pass_words_masked": 93,
+      "spans_counted": 1240,
+      "spans_true": 1106,
+      "spans_excluded_inside_neutral": 106,
+      "must_pass_words_masked": 77,
       "recall_by_category": {
         "account": {
           "must": 63,
@@ -1572,28 +1572,10 @@
           "must_pass_word": true
         },
         {
-          "snippet": "gen-004",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "gen-006",
           "value": "Kubernetes",
           "kind": "ORGANIZATION",
           "must_pass_word": true
-        },
-        {
-          "snippet": "gen-008",
-          "value": "the quarter",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
-        },
-        {
-          "snippet": "gen-013",
-          "value": "this week",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
         },
         {
           "snippet": "gen-013",
@@ -1638,39 +1620,15 @@
           "must_pass_word": false
         },
         {
-          "snippet": "gen-036",
-          "value": "the Japan quarter",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
-        },
-        {
-          "snippet": "gen-037",
-          "value": "the attached quarter before tomorrow morning",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
-        },
-        {
           "snippet": "gen-043",
           "value": "Intro",
           "kind": "PERSON",
           "must_pass_word": false
         },
         {
-          "snippet": "gen-043",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "gen-046",
           "value": "Intro",
           "kind": "PERSON",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-046",
-          "value": "last year",
-          "kind": "DATE_TIME",
           "must_pass_word": false
         },
         {
@@ -1699,12 +1657,6 @@
         },
         {
           "snippet": "gen-058",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-058",
           "value": "Reach",
           "kind": "ORGANIZATION",
           "must_pass_word": false
@@ -1717,12 +1669,6 @@
         },
         {
           "snippet": "gen-070",
-          "value": "Quarterly",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-070",
           "value": "Salesforce",
           "kind": "LOCATION",
           "must_pass_word": true
@@ -1731,12 +1677,6 @@
           "snippet": "gen-070",
           "value": "www.example.com/portal.",
           "kind": "URL",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-073",
-          "value": "Quarterly",
-          "kind": "DATE_TIME",
           "must_pass_word": false
         },
         {
@@ -1758,12 +1698,6 @@
           "must_pass_word": false
         },
         {
-          "snippet": "gen-076",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "gen-084",
           "value": "Jira",
           "kind": "PERSON",
@@ -1771,21 +1705,9 @@
         },
         {
           "snippet": "gen-085",
-          "value": "this week",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-085",
           "value": "Slack",
           "kind": "ORGANIZATION",
           "must_pass_word": true
-        },
-        {
-          "snippet": "gen-097",
-          "value": "this week",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
         },
         {
           "snippet": "gen-097",
@@ -1813,12 +1735,6 @@
         },
         {
           "snippet": "gen-118",
-          "value": "Quarterly",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-118",
           "value": "http://www.example.com/deck/7.",
           "kind": "URL",
           "must_pass_word": false
@@ -1840,18 +1756,6 @@
           "value": "Figma",
           "kind": "ORGANIZATION",
           "must_pass_word": true
-        },
-        {
-          "snippet": "gen-127",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-136",
-          "value": "Quarterly",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
         },
         {
           "snippet": "gen-136",
@@ -1908,12 +1812,6 @@
           "must_pass_word": false
         },
         {
-          "snippet": "gen-154",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "gen-157",
           "value": "Hotel",
           "kind": "ORGANIZATION",
@@ -1938,12 +1836,6 @@
           "must_pass_word": true
         },
         {
-          "snippet": "gen-171",
-          "value": "the Kenya quarter",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
-        },
-        {
           "snippet": "gen-178",
           "value": "Hotel",
           "kind": "ORGANIZATION",
@@ -1962,12 +1854,6 @@
           "must_pass_word": true
         },
         {
-          "snippet": "gen-180",
-          "value": "the quarter",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
-        },
-        {
           "snippet": "gen-186",
           "value": "Salesforce",
           "kind": "LOCATION",
@@ -1981,27 +1867,9 @@
         },
         {
           "snippet": "gen-187",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-187",
           "value": "Reach",
           "kind": "ORGANIZATION",
           "must_pass_word": false
-        },
-        {
-          "snippet": "gen-190",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-193",
-          "value": "the attached quarter before March 14",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
         },
         {
           "snippet": "gen-195",
@@ -2029,20 +1897,8 @@
         },
         {
           "snippet": "gen-223",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-223",
           "value": "Reach",
           "kind": "ORGANIZATION",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-229",
-          "value": "Quarterly",
-          "kind": "DATE_TIME",
           "must_pass_word": false
         },
         {
@@ -2071,12 +1927,6 @@
         },
         {
           "snippet": "gen-232",
-          "value": "Quarterly",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-232",
           "value": "Zoom",
           "kind": "LOCATION",
           "must_pass_word": true
@@ -2095,12 +1945,6 @@
         },
         {
           "snippet": "gen-238",
-          "value": "this week",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-238",
           "value": "Figma",
           "kind": "ORGANIZATION",
           "must_pass_word": true
@@ -2112,28 +1956,10 @@
           "must_pass_word": true
         },
         {
-          "snippet": "gen-250",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "gen-252",
           "value": "WhatsApp",
           "kind": "ORGANIZATION",
           "must_pass_word": true
-        },
-        {
-          "snippet": "gen-254",
-          "value": "the quarter",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
-        },
-        {
-          "snippet": "gen-256",
-          "value": "this week",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
         },
         {
           "snippet": "gen-256",
@@ -2154,21 +1980,9 @@
           "must_pass_word": true
         },
         {
-          "snippet": "gen-277",
-          "value": "this week",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "gen-286",
           "value": "Intro",
           "kind": "PERSON",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-286",
-          "value": "last year",
-          "kind": "DATE_TIME",
           "must_pass_word": false
         },
         {
@@ -2182,12 +1996,6 @@
           "value": "Figma",
           "kind": "ORGANIZATION",
           "must_pass_word": true
-        },
-        {
-          "snippet": "gen-298",
-          "value": "this week",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
         },
         {
           "snippet": "gen-302",
@@ -2239,12 +2047,6 @@
         },
         {
           "snippet": "gen-325",
-          "value": "this week",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-325",
           "value": "Notion",
           "kind": "ORGANIZATION",
           "must_pass_word": true
@@ -2271,18 +2073,6 @@
           "snippet": "gen-337",
           "value": "http://www.example.com/deck/7.",
           "kind": "URL",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-342",
-          "value": "the quarter",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
-        },
-        {
-          "snippet": "gen-346",
-          "value": "Quarterly",
-          "kind": "DATE_TIME",
           "must_pass_word": false
         },
         {
@@ -2313,12 +2103,6 @@
           "snippet": "gen-361",
           "value": "Rookhaven Bank Support",
           "kind": "ORGANIZATION",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-364",
-          "value": "this week",
-          "kind": "DATE_TIME",
           "must_pass_word": false
         },
         {
@@ -2358,22 +2142,10 @@
           "must_pass_word": true
         },
         {
-          "snippet": "gen-397",
-          "value": "this week",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "gen-398",
           "value": "Jira",
           "kind": "PERSON",
           "must_pass_word": true
-        },
-        {
-          "snippet": "gen-406",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
         },
         {
           "snippet": "gen-412",
@@ -2386,12 +2158,6 @@
           "value": "http://www.example.com/deck/7.",
           "kind": "URL",
           "must_pass_word": false
-        },
-        {
-          "snippet": "gen-414",
-          "value": "the quarter",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
         },
         {
           "snippet": "gen-415",
@@ -2424,12 +2190,6 @@
           "must_pass_word": true
         },
         {
-          "snippet": "gen-430",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "gen-434",
           "value": "Slack",
           "kind": "ORGANIZATION",
@@ -2442,27 +2202,9 @@
           "must_pass_word": false
         },
         {
-          "snippet": "gen-442",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-445",
-          "value": "Quarterly",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "gen-445",
           "value": "https://www.example.com/plans/2026.",
           "kind": "URL",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-451",
-          "value": "last year",
-          "kind": "DATE_TIME",
           "must_pass_word": false
         },
         {
@@ -2478,18 +2220,6 @@
           "must_pass_word": false
         },
         {
-          "snippet": "gen-460",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-462",
-          "value": "the Chile quarter",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
-        },
-        {
           "snippet": "gen-465",
           "value": "Slack",
           "kind": "ORGANIZATION",
@@ -2499,18 +2229,6 @@
           "snippet": "gen-474",
           "value": "Zoom",
           "kind": "LOCATION",
-          "must_pass_word": true
-        },
-        {
-          "snippet": "gen-480",
-          "value": "the quarter",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
-        },
-        {
-          "snippet": "gen-487",
-          "value": "the latest quarter",
-          "kind": "DATE_TIME",
           "must_pass_word": true
         },
         {
@@ -2533,21 +2251,9 @@
         },
         {
           "snippet": "gen-499",
-          "value": "this week",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-499",
           "value": "Kubernetes",
           "kind": "ORGANIZATION",
           "must_pass_word": true
-        },
-        {
-          "snippet": "ff-02",
-          "value": "yesterday",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
         },
         {
           "snippet": "ff-09",
@@ -2574,21 +2280,9 @@
           "must_pass_word": true
         },
         {
-          "snippet": "ff-18",
-          "value": "five working days",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "ff-19",
           "value": "Intro",
           "kind": "PERSON",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "ff-19",
-          "value": "last year",
-          "kind": "DATE_TIME",
           "must_pass_word": false
         },
         {
@@ -2599,18 +2293,6 @@
         },
         {
           "snippet": "ff-21",
-          "value": "Quarterly",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "ff-21",
-          "value": "quarterly",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
-        },
-        {
-          "snippet": "ff-21",
           "value": "Figma",
           "kind": "ORGANIZATION",
           "must_pass_word": true
@@ -2618,12 +2300,6 @@
         {
           "snippet": "ff-22",
           "value": "4471",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "ff-25",
-          "value": "three years",
           "kind": "DATE_TIME",
           "must_pass_word": false
         },
@@ -2691,13 +2367,13 @@
     },
     "B": {
       "recall_pct": 95.24,
-      "precision_pct": 86.98,
+      "precision_pct": 90.27,
       "must_mask_values": 1323,
       "covered": 1260,
-      "spans_counted": 1482,
+      "spans_counted": 1428,
       "spans_true": 1289,
-      "spans_excluded_inside_neutral": 240,
-      "must_pass_words_masked": 99,
+      "spans_excluded_inside_neutral": 99,
+      "must_pass_words_masked": 82,
       "recall_by_category": {
         "account": {
           "must": 63,
@@ -3062,28 +2738,10 @@
           "must_pass_word": true
         },
         {
-          "snippet": "gen-004",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "gen-006",
           "value": "Kubernetes",
           "kind": "ORGANIZATION",
           "must_pass_word": true
-        },
-        {
-          "snippet": "gen-008",
-          "value": "the quarter",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
-        },
-        {
-          "snippet": "gen-013",
-          "value": "this week",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
         },
         {
           "snippet": "gen-013",
@@ -3128,39 +2786,15 @@
           "must_pass_word": false
         },
         {
-          "snippet": "gen-036",
-          "value": "the Japan quarter",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
-        },
-        {
-          "snippet": "gen-037",
-          "value": "the attached quarter before tomorrow morning",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
-        },
-        {
           "snippet": "gen-043",
           "value": "Intro",
           "kind": "PERSON",
           "must_pass_word": false
         },
         {
-          "snippet": "gen-043",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "gen-046",
           "value": "Intro",
           "kind": "PERSON",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-046",
-          "value": "last year",
-          "kind": "DATE_TIME",
           "must_pass_word": false
         },
         {
@@ -3189,12 +2823,6 @@
         },
         {
           "snippet": "gen-058",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-058",
           "value": "Reach",
           "kind": "ORGANIZATION",
           "must_pass_word": false
@@ -3213,12 +2841,6 @@
         },
         {
           "snippet": "gen-070",
-          "value": "Quarterly",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-070",
           "value": "Salesforce",
           "kind": "LOCATION",
           "must_pass_word": true
@@ -3227,12 +2849,6 @@
           "snippet": "gen-070",
           "value": "www.example.com/portal.",
           "kind": "URL",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-073",
-          "value": "Quarterly",
-          "kind": "DATE_TIME",
           "must_pass_word": false
         },
         {
@@ -3254,12 +2870,6 @@
           "must_pass_word": false
         },
         {
-          "snippet": "gen-076",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "gen-084",
           "value": "Jira",
           "kind": "PERSON",
@@ -3267,21 +2877,9 @@
         },
         {
           "snippet": "gen-085",
-          "value": "this week",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-085",
           "value": "Slack",
           "kind": "ORGANIZATION",
           "must_pass_word": true
-        },
-        {
-          "snippet": "gen-097",
-          "value": "this week",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
         },
         {
           "snippet": "gen-097",
@@ -3309,12 +2907,6 @@
         },
         {
           "snippet": "gen-118",
-          "value": "Quarterly",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-118",
           "value": "http://www.example.com/deck/7.",
           "kind": "URL",
           "must_pass_word": false
@@ -3336,18 +2928,6 @@
           "value": "Figma",
           "kind": "ORGANIZATION",
           "must_pass_word": true
-        },
-        {
-          "snippet": "gen-127",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-136",
-          "value": "Quarterly",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
         },
         {
           "snippet": "gen-136",
@@ -3404,12 +2984,6 @@
           "must_pass_word": false
         },
         {
-          "snippet": "gen-154",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "gen-157",
           "value": "Hotel",
           "kind": "ORGANIZATION",
@@ -3434,12 +3008,6 @@
           "must_pass_word": true
         },
         {
-          "snippet": "gen-171",
-          "value": "the Kenya quarter",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
-        },
-        {
           "snippet": "gen-178",
           "value": "Hotel",
           "kind": "ORGANIZATION",
@@ -3458,12 +3026,6 @@
           "must_pass_word": true
         },
         {
-          "snippet": "gen-180",
-          "value": "the quarter",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
-        },
-        {
           "snippet": "gen-186",
           "value": "Salesforce",
           "kind": "LOCATION",
@@ -3477,27 +3039,9 @@
         },
         {
           "snippet": "gen-187",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-187",
           "value": "Reach",
           "kind": "ORGANIZATION",
           "must_pass_word": false
-        },
-        {
-          "snippet": "gen-190",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-193",
-          "value": "the attached quarter before March 14",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
         },
         {
           "snippet": "gen-195",
@@ -3525,20 +3069,8 @@
         },
         {
           "snippet": "gen-223",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-223",
           "value": "Reach",
           "kind": "ORGANIZATION",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-229",
-          "value": "Quarterly",
-          "kind": "DATE_TIME",
           "must_pass_word": false
         },
         {
@@ -3567,12 +3099,6 @@
         },
         {
           "snippet": "gen-232",
-          "value": "Quarterly",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-232",
           "value": "Zoom",
           "kind": "LOCATION",
           "must_pass_word": true
@@ -3591,12 +3117,6 @@
         },
         {
           "snippet": "gen-238",
-          "value": "this week",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-238",
           "value": "Figma",
           "kind": "ORGANIZATION",
           "must_pass_word": true
@@ -3608,28 +3128,10 @@
           "must_pass_word": true
         },
         {
-          "snippet": "gen-250",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "gen-252",
           "value": "WhatsApp",
           "kind": "ORGANIZATION",
           "must_pass_word": true
-        },
-        {
-          "snippet": "gen-254",
-          "value": "the quarter",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
-        },
-        {
-          "snippet": "gen-256",
-          "value": "this week",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
         },
         {
           "snippet": "gen-256",
@@ -3650,21 +3152,9 @@
           "must_pass_word": true
         },
         {
-          "snippet": "gen-277",
-          "value": "this week",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "gen-286",
           "value": "Intro",
           "kind": "PERSON",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-286",
-          "value": "last year",
-          "kind": "DATE_TIME",
           "must_pass_word": false
         },
         {
@@ -3680,12 +3170,6 @@
           "must_pass_word": true
         },
         {
-          "snippet": "gen-298",
-          "value": "this week",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "gen-302",
           "value": "Notion",
           "kind": "LOCATION",
@@ -3695,12 +3179,6 @@
           "snippet": "gen-304",
           "value": "WhatsApp",
           "kind": "ORGANIZATION",
-          "must_pass_word": true
-        },
-        {
-          "snippet": "gen-307",
-          "value": "a quarter",
-          "kind": "DATE_TIME",
           "must_pass_word": true
         },
         {
@@ -3741,12 +3219,6 @@
         },
         {
           "snippet": "gen-325",
-          "value": "this week",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-325",
           "value": "Notion",
           "kind": "ORGANIZATION",
           "must_pass_word": true
@@ -3782,18 +3254,6 @@
           "must_pass_word": false
         },
         {
-          "snippet": "gen-342",
-          "value": "the quarter",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
-        },
-        {
-          "snippet": "gen-346",
-          "value": "Quarterly",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "gen-346",
           "value": "WhatsApp",
           "kind": "ORGANIZATION",
@@ -3821,12 +3281,6 @@
           "snippet": "gen-361",
           "value": "Rookhaven Bank Support",
           "kind": "ORGANIZATION",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-364",
-          "value": "this week",
-          "kind": "DATE_TIME",
           "must_pass_word": false
         },
         {
@@ -3860,22 +3314,10 @@
           "must_pass_word": true
         },
         {
-          "snippet": "gen-397",
-          "value": "this week",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "gen-398",
           "value": "Jira",
           "kind": "PERSON",
           "must_pass_word": true
-        },
-        {
-          "snippet": "gen-406",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
         },
         {
           "snippet": "gen-410",
@@ -3900,12 +3342,6 @@
           "value": "http://www.example.com/deck/7.",
           "kind": "URL",
           "must_pass_word": false
-        },
-        {
-          "snippet": "gen-414",
-          "value": "the quarter",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
         },
         {
           "snippet": "gen-415",
@@ -3938,12 +3374,6 @@
           "must_pass_word": true
         },
         {
-          "snippet": "gen-430",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "gen-434",
           "value": "Slack",
           "kind": "ORGANIZATION",
@@ -3956,27 +3386,9 @@
           "must_pass_word": false
         },
         {
-          "snippet": "gen-442",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-445",
-          "value": "Quarterly",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "gen-445",
           "value": "https://www.example.com/plans/2026.",
           "kind": "URL",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-451",
-          "value": "last year",
-          "kind": "DATE_TIME",
           "must_pass_word": false
         },
         {
@@ -3990,18 +3402,6 @@
           "value": "Intro",
           "kind": "PERSON",
           "must_pass_word": false
-        },
-        {
-          "snippet": "gen-460",
-          "value": "last year",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "gen-462",
-          "value": "the Chile quarter",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
         },
         {
           "snippet": "gen-463",
@@ -4025,18 +3425,6 @@
           "snippet": "gen-474",
           "value": "Zoom",
           "kind": "LOCATION",
-          "must_pass_word": true
-        },
-        {
-          "snippet": "gen-480",
-          "value": "the quarter",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
-        },
-        {
-          "snippet": "gen-487",
-          "value": "the latest quarter",
-          "kind": "DATE_TIME",
           "must_pass_word": true
         },
         {
@@ -4064,12 +3452,6 @@
           "must_pass_word": true
         },
         {
-          "snippet": "ff-02",
-          "value": "yesterday",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "ff-09",
           "value": "Salesforce",
           "kind": "PERSON",
@@ -4094,21 +3476,9 @@
           "must_pass_word": true
         },
         {
-          "snippet": "ff-18",
-          "value": "five working days",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
           "snippet": "ff-19",
           "value": "Intro",
           "kind": "PERSON",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "ff-19",
-          "value": "last year",
-          "kind": "DATE_TIME",
           "must_pass_word": false
         },
         {
@@ -4119,18 +3489,6 @@
         },
         {
           "snippet": "ff-21",
-          "value": "Quarterly",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "ff-21",
-          "value": "quarterly",
-          "kind": "DATE_TIME",
-          "must_pass_word": true
-        },
-        {
-          "snippet": "ff-21",
           "value": "Figma",
           "kind": "ORGANIZATION",
           "must_pass_word": true
@@ -4138,12 +3496,6 @@
         {
           "snippet": "ff-22",
           "value": "4471",
-          "kind": "DATE_TIME",
-          "must_pass_word": false
-        },
-        {
-          "snippet": "ff-25",
-          "value": "three years",
           "kind": "DATE_TIME",
           "must_pass_word": false
         },
@@ -4213,11 +3565,11 @@
   "verdict": {
     "verdict": "ADOPT",
     "recall_gain_points": 17.99,
-    "precision_change_points": 1.5,
+    "precision_change_points": 1.08,
     "rule": "adopt if recall gain >= 2.0 points AND precision drop <= 5.0 points"
   },
   "run_seconds": {
-    "A": 3.4,
-    "B": 54.8
+    "A": 3.0,
+    "B": 45.1
   }
 }

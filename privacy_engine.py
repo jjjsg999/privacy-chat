@@ -11,7 +11,21 @@ import re
 from pathlib import Path
 
 import public_institutions
+import public_topics
 from public_places import PUBLIC_PLACES, is_public_place
+
+DATE_MODES = ('pass', 'mask')  # date_names: dates pass through (default) or are masked as DATE_TIME (the old behaviour)
+# spaCy also labels digit groups such as account numbers ("6602 1187 4093") as DATE_TIME. Only findings shaped like a
+# date pass: anything with a letter ("this week", "3 March 2026", "Q3"), a bare year, a numeric date or a time.
+_DATE_SHAPES = re.compile(r'(?:19|20)\d\d|\d{1,4}[-/.]\d{1,2}[-/.]\d{1,4}|\d{1,2}[-/.]\d{1,2}|\d{1,2}:\d{2}(?::\d{2})?(?:\s?[ap]\.?m\.?)?|'
+                          r'\d{1,2}(?:st|nd|rd|th)', re.I)
+
+
+def looks_like_date(text):
+    text = text.strip()
+    if re.search('[' + CJK + ']', text):  # spaCy can swallow a Chinese name into a date span: keep those masked
+        return False
+    return bool(re.search(r'[^\W\d_]', text)) or _DATE_SHAPES.fullmatch(text) is not None
 
 # Bump when masking behaviour changes in a way that should invalidate every cached masked text.
 PRIVACY_VERSION = '1'
@@ -226,11 +240,16 @@ def term_matches(value, terms):
 
 class PrivacyEngine:
     def __init__(self, analyzer=None, mode='standard', privacy_filter=None, place_names='common_public',
-                 institution_names='common_public', institutions=None):
+                 institution_names='common_public', institutions=None, date_names='pass', topic_names='common_public',
+                 topics=None, public_names=None):
         self.mode = mode
         self.place_names = place_names
         self.institution_names = institution_names
         self.institutions = public_institutions.effective_list() if institutions is None else institutions
+        self.date_names = date_names
+        self.topic_names = topic_names
+        self.topics = public_topics.effective_list() if topics is None else topics
+        self.public_names = public_names or []
         self._privacy_filter = privacy_filter
         if analyzer is None:
             import spacy.util
@@ -297,11 +316,64 @@ class PrivacyEngine:
         self._institutions = list(names or [])
         self._institution_re = public_institutions.pattern(self._institutions, BOUND_L, BOUND_R)
 
+    @property
+    def date_names(self):
+        return self._date_names
+
+    @date_names.setter
+    def date_names(self, value):
+        value = 'pass' if value is None else value
+        if value not in DATE_MODES:
+            raise ValueError(f'date_names must be one of {DATE_MODES}, got {value!r}')
+        self._date_names = value
+
+    @property
+    def topic_names(self):
+        return self._topic_names
+
+    @topic_names.setter
+    def topic_names(self, value):
+        value = 'common_public' if value is None else value
+        if value not in public_topics.MODES:
+            raise ValueError(f'topic_names must be one of {public_topics.MODES}, got {value!r}')
+        self._topic_names = value
+
+    @property
+    def topics(self):
+        return self._topics
+
+    @topics.setter
+    def topics(self, names):
+        self._topics = list(names or [])
+        self._topic_re = public_institutions.pattern(self._topics, BOUND_L, BOUND_R)
+
+    @property
+    def public_names(self):
+        return self._public_names
+
+    @public_names.setter
+    def public_names(self, names):
+        self._public_names = list(names or [])
+        self._public_name_re = public_institutions.pattern(self._public_names, BOUND_L, BOUND_R, ignore_case=True)
+
+    def _public_patterns(self):
+        """The public vocabulary in force: institutions and topics (unless mask_all) and the user's public names."""
+        found = []
+        if self.institution_names != 'mask_all' and self._institution_re is not None:
+            found.append(self._institution_re)
+        if self.topic_names != 'mask_all' and self._topic_re is not None:
+            found.append(self._topic_re)
+        if self._public_name_re is not None:
+            found.append(self._public_name_re)
+        return found
+
     def _public_institution_spans(self, text):
-        """[(start, end)] of public institution names in `text`, or [] when institution_names is mask_all."""
-        if self.institution_names == 'mask_all' or self._institution_re is None:
-            return []
-        return [(m.start(), m.end()) for m in self._institution_re.finditer(text)]
+        """[(start, end)] of public vocabulary in `text`: institutions, glossary topics and the user's public names."""
+        return [(m.start(), m.end()) for pattern in self._public_patterns() for m in pattern.finditer(text)]
+
+    def is_public(self, value):
+        """True if `value` is exactly an entry of the public vocabulary in force (for web text and the query check)."""
+        return any(pattern.fullmatch(value.strip()) for pattern in self._public_patterns())
 
     @staticmethod
     def _inside(start, end, spans):
@@ -309,11 +381,13 @@ class PrivacyEngine:
 
     def _detect(self, text):
         findings = self.analyzer.analyze(text=text, language='en')
+        if self.date_names == 'pass':  # dates are not private on their own; the terms list can still mask one
+            findings = [f for f in findings if not (f.entity_type == 'DATE_TIME' and looks_like_date(text[f.start:f.end]))]
         if self.place_names != 'mask_all':
             findings = [f for f in findings if not (f.entity_type == 'LOCATION' and is_public_place(text[f.start:f.end]))]
-        institutions = self._public_institution_spans(text)
-        if institutions:  # a finding inside a public institution's name (MAS, Bank of England) stays readable
-            findings = [f for f in findings if not self._inside(f.start, f.end, institutions)]
+        public = self._public_institution_spans(text)
+        if public:  # a finding inside public vocabulary (MAS, Digital Asset Custody, a public name) stays readable
+            findings = [f for f in findings if not self._inside(f.start, f.end, public)]
         return findings
 
     def fingerprint(self, terms_text=''):
@@ -328,6 +402,12 @@ class PrivacyEngine:
         parts.append('institutions:' + self.institution_names)
         if self.institution_names == 'common_public':
             parts.append(hashlib.sha256('\n'.join(sorted(self.institutions)).encode('utf-8')).hexdigest())
+        parts.append('dates:' + self.date_names)
+        parts.append('topics:' + self.topic_names)
+        if self.topic_names == 'common_public':
+            parts.append(hashlib.sha256('\n'.join(sorted(self.topics)).encode('utf-8')).hexdigest())
+        if self.public_names:
+            parts.append('public:' + hashlib.sha256('\n'.join(sorted(self.public_names)).encode('utf-8')).hexdigest())
         for package in ('presidio-analyzer', 'spacy', 'en-core-web-sm'):
             try:
                 parts.append(package + metadata.version(package))
@@ -424,8 +504,11 @@ class PrivacyEngine:
 
         text = TOKEN.sub(lambda m: allocate('LITERAL', m[0]), text or '')
         # Known values go first so a differently-cased mention ("ACME LTD") reuses the chat's token instead of a new one.
+        # Values that are public now (a date while dates pass, a name since treated as public) stay readable.
         known = sorted(((token, value) for token, value in token_map.items()
-                        if not token.startswith('LITERAL__') and isinstance(value, str) and value.strip()),
+                        if not token.startswith('LITERAL__') and isinstance(value, str) and value.strip()
+                        and not (self.date_names == 'pass' and token.startswith('DATE_TIME__'))
+                        and not self.is_public(value)),
                        key=lambda pair: len(pair[1]), reverse=True)
         if known:
             by_value = {}

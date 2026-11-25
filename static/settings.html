@@ -61,6 +61,23 @@
     <div class="settings-actions"><p id="status" role="status"></p><button class="primary" type="submit" id="save">Save settings</button></div>
   </form>
 
+  <section class="settings-card" id="privacy-vocab-card" aria-labelledby="pv-title"><h2 id="pv-title">Privacy vocabulary</h2>
+    <p class="hint">Words on these lists are public, so they are sent as written in every chat and search. Your terms list always wins: anything on it is masked.</p>
+    <div class="ws-group"><h3>Dates</h3>
+      <div class="ws-row"><div><label for="pv-dates">Dates</label><span class="hint">Dates such as "this week" or "March 2026" are not private on their own. Add a specific date to your terms list to mask it.</span></div><select id="pv-dates"><option value="pass">Not masked</option><option value="mask">Masked</option></select></div>
+    </div>
+    <div class="ws-group"><div class="ws-group-head"><h3>Topic glossary</h3><span class="hint">Regulatory and finance terms such as Digital Asset Custody, Basel III or KYC. Never people or companies.</span></div>
+      <div class="ws-row"><label for="pv-topic-mode">Topic glossary</label><select id="pv-topic-mode"><option value="common_public">Not masked</option><option value="mask_all">Masked like other words</option></select></div>
+      <div class="ws-row"><details><summary id="pv-topics-summary">Show the glossary</summary><ul id="pv-topics" class="ws-inst" aria-label="Topic glossary"></ul></details></div>
+      <div class="ws-row ws-add"><div><label for="pv-topic-new">Add a topic</label><input id="pv-topic-new" maxlength="120" placeholder="For example Sustainability-Linked Loan" autocomplete="off"></div><button type="button" id="pv-topic-add">Add</button></div>
+    </div>
+    <div class="ws-group"><div class="ws-group-head"><h3>Your public names</h3><span class="hint">People and companies you want sent as written, such as public figures. Added here or with "Always treat as public" on a search card.</span></div>
+      <div class="ws-row"><ul id="pv-names" class="ws-inst" aria-label="Your public names"></ul></div>
+      <div class="ws-row ws-add"><div><label for="pv-name-new">Add a public name</label><input id="pv-name-new" maxlength="120" autocomplete="off"></div><button type="button" id="pv-name-add">Add</button></div>
+    </div>
+    <p id="pv-status" role="status" aria-live="polite"></p>
+  </section>
+
   <section class="settings-card" id="web-search-card" aria-labelledby="ws-title"><h2 id="ws-title">Web search</h2>
     <label class="ws-check"><input type="checkbox" id="ws-feature"><span><strong>Turn on web search</strong><br><span class="hint">Shows the web search switch in web chats. Telegram and Adviser chats never search.</span></span></label>
     <div id="ws-settings" class="ws-settings" hidden>
@@ -78,7 +95,7 @@
           <div><strong>Countries and major cities</strong></div><div><span class="ws-chip ws-public">Sent as written</span></div><div id="ws-places-note">Follows your place-name setting (common public)</div>
           <div><strong>Public institutions</strong></div><div><span class="ws-chip ws-public">Sent as written</span></div><div>Regulators, central banks, exchanges, rating agencies. See the list below</div>
           <div><strong>Percentages, basis points, rule names</strong></div><div><span class="ws-chip ws-public">Sent as written</span></div><div>For example 25bp, CET1 4.5%, Basel III</div>
-          <div><strong><label for="ws-dates">Dates and years</label></strong></div><div><select id="ws-dates"><option value="remove">Removed (as today)</option><option value="years">Years sent, dates removed</option></select></div><div class="ws-warn-text">Open decision: dates are masked in chats today, so years drop out of queries</div>
+          <div><strong>Dates and years</strong></div><div><span class="ws-chip ws-public">Sent as written</span></div><div id="ws-dates-note">Dates are not masked (Dates setting under Privacy vocabulary)</div>
           <div><strong>Currency amounts</strong></div><div><span class="ws-chip ws-generic">Removed</span></div><div>For example S$180m. Never sent, even in a named search</div>
           <div><strong>People and companies found by the detector</strong></div><div><span class="ws-chip ws-generic">Removed</span></div><div>Search runs without it; one click reruns with it</div>
           <div><strong><label for="ws-terms">Names on your terms list</label></strong></div><div><select id="ws-terms"><option value="rerun">Removed · rerun to add</option><option value="never">Never searched by name</option></select></div><div>Search runs without it; one click reruns with it, unless set to Never</div>

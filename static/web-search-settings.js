@@ -32,7 +32,9 @@
     $('ws-pages').value = String(options.pages_per_search);
     $('ws-cost').textContent = `A Brave search costs about $${options.cost_per_search_usd} and counts toward your monthly limit. Each message reserves the cost of its maximum number of searches before it runs.`;
     $('ws-places-note').textContent = `Follows your place-name setting (${data.place_names === 'mask_all' ? 'mask all' : 'common public'})`;
-    $('ws-dates').value = options.dates_in_queries;
+    $('ws-dates-note').textContent = data.date_names === 'mask' ? 'Dates are masked in chats, so they are removed from queries (Dates setting under Privacy vocabulary)'
+      : 'Dates are not masked (Dates setting under Privacy vocabulary)';
+    showVocabulary();
     $('ws-terms').value = options.terms_list_names;
     $('ws-inst-mode').value = data.institution_names;
     $('ws-hidden-rerun').checked = Boolean(options.offer_hidden_rerun);
@@ -53,12 +55,53 @@
     }
   }
 
+  // Privacy vocabulary: dates, the topic glossary and your public names (always shown; they apply to every chat).
+  const vocabReport = (text, error = false) => { $('pv-status').textContent = text; $('pv-status').classList.toggle('error', error); };
+  async function saveVocabulary(change, done) {
+    try {
+      const response = await fetch('/api/web-search/settings', {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(change)});
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof result.detail === 'string' ? result.detail : 'Could not save. Try again.');
+      data = result; show(); vocabReport(done);
+    } catch (error) { vocabReport(error.message, true); show(); }
+  }
+  function chips(list, key, removedText) {
+    return data[key].map(name => {
+      const item = document.createElement('li'); item.append(name);
+      const remove = document.createElement('button'); remove.type = 'button'; remove.textContent = '×';
+      remove.setAttribute('aria-label', `Remove ${name}`);
+      remove.onclick = () => saveVocabulary({[key]: data[key].filter(n => n !== name)}, `${name} ${removedText}`);
+      item.append(remove); return item;
+    });
+  }
+  function showVocabulary() {
+    $('pv-dates').value = data.date_names;
+    $('pv-topic-mode').value = data.topic_names;
+    $('pv-topics-summary').textContent = `Show the glossary (${data.topics.length} terms)`;
+    $('pv-topics').replaceChildren(...chips(data.topics, 'topics', 'removed from the glossary.'));
+    $('pv-names').replaceChildren(...(data.public_names.length ? chips(data.public_names, 'public_names', 'will be masked again where the detector finds it.')
+      : [Object.assign(document.createElement('li'), {className: 'hint', textContent: 'None yet.'})]));
+  }
+  $('pv-dates').onchange = () => saveVocabulary({date_names: $('pv-dates').value}, $('pv-dates').value === 'pass' ? 'Dates are no longer masked.' : 'Dates are masked again.');
+  $('pv-topic-mode').onchange = () => saveVocabulary({topic_names: $('pv-topic-mode').value}, 'Saved.');
+  const addTo = (input, key) => () => {
+    const name = $(input).value.trim().replace(/\s+/g, ' ');
+    if (!name) return;
+    if (data[key].some(n => n.toLowerCase() === name.toLowerCase())) { vocabReport(`${name} is already on the list.`, true); return; }
+    $(input).value = '';
+    saveVocabulary({[key]: [...data[key], name]}, `${name} added.`);
+  };
+  for (const [input, button, key] of [['pv-topic-new', 'pv-topic-add', 'topics'], ['pv-name-new', 'pv-name-add', 'public_names']]) {
+    const add = addTo(input, key);
+    $(button).onclick = add;
+    $(input).onkeydown = event => { if (event.key === 'Enter') { event.preventDefault(); add(); } };
+  }
+
   const bind = (id, key, convert = value => value) => { $(id).onchange = () => save({[key]: convert($(id).value)}); };
   bind('ws-default', 'enabled_for_new_chats', value => value === 'true');
   bind('ws-engine', 'engine');
   bind('ws-max', 'max_searches_per_message', Number);
   bind('ws-pages', 'pages_per_search', Number);
-  bind('ws-dates', 'dates_in_queries');
   bind('ws-terms', 'terms_list_names');
   bind('ws-inst-mode', 'institution_names');
   $('ws-feature').onchange = () => save({feature_enabled: $('ws-feature').checked},

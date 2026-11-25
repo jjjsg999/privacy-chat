@@ -195,6 +195,7 @@ def latest_privacy_eval():
 def web_search_view(config=None):
     """Everything the chat page and the Settings section need. Never includes the Brave key itself."""
     import public_institutions
+    import public_topics
     import web_search
     config = config if config is not None else storage.settings()
     return {'features': config['features'], 'web_search': config['web_search'],
@@ -202,7 +203,29 @@ def web_search_view(config=None):
             'institutions': public_institutions.effective_list(config['public_institutions_added'], config['public_institutions_removed']),
             'engines': web_search.engine_status(),
             'place_names': config.get('place_names', 'common_public'),
+            'date_names': config['date_names'], 'topic_names': config['topic_names'],
+            'topics': public_topics.effective_list(config['public_topics_added'], config['public_topics_removed']),
+            'public_names': config['public_names'],
             'privacy_eval': latest_privacy_eval()}
+
+
+class PublicName(BaseModel):
+    name: str = Field(min_length=1, max_length=storage.INSTITUTION_NAME_MAX)
+
+
+@app.post('/api/public-names')
+async def add_public_name(value: PublicName):
+    """"Always treat <Name> as public": the name is no longer masked in any chat. The terms list still wins."""
+    name = ' '.join(value.name.split())
+    if not name:
+        raise HTTPException(422, 'Enter a name.')
+    async with chat_lock:
+        config = storage.settings()
+        try:
+            storage.save_settings_keys(public_names=storage.clean_names(config['public_names'] + [name]))
+        except OSError:
+            raise HTTPException(500, 'Could not save the name.') from None
+    return web_search_view()
 
 
 class WebSearchSettings(BaseModel):
@@ -212,7 +235,6 @@ class WebSearchSettings(BaseModel):
     engine: Literal['brave', 'ddgs'] | None = None
     max_searches_per_message: int | None = Field(default=None, ge=1, le=5)
     pages_per_search: int | None = Field(default=None, ge=0, le=4)
-    dates_in_queries: Literal['remove', 'years'] | None = None
     terms_list_names: Literal['rerun', 'never'] | None = None
     offer_hidden_rerun: bool | None = None
     show_link_banner: bool | None = None
@@ -220,6 +242,10 @@ class WebSearchSettings(BaseModel):
     planner_model: str | None = Field(default=None, max_length=200, pattern=r'^(\S+/\S+)?$')
     institution_names: Literal['common_public', 'mask_all'] | None = None
     institutions: list[str] | None = Field(default=None, max_length=storage.INSTITUTION_LIST_MAX)
+    date_names: Literal['pass', 'mask'] | None = None
+    topic_names: Literal['common_public', 'mask_all'] | None = None
+    topics: list[str] | None = Field(default=None, max_length=storage.INSTITUTION_LIST_MAX)
+    public_names: list[str] | None = Field(default=None, max_length=storage.INSTITUTION_LIST_MAX)
 
 
 @app.get('/api/web-search/settings')
@@ -246,6 +272,19 @@ async def put_web_search_settings(value: WebSearchSettings):
             wanted_keys = {name.casefold() for name in wanted}
             changes['public_institutions_added'] = [n for n in wanted if n.casefold() not in defaults]
             changes['public_institutions_removed'] = [n for n in public_institutions.DEFAULT_INSTITUTIONS if n.casefold() not in wanted_keys]
+        if value.date_names is not None:
+            changes['date_names'] = value.date_names
+        if value.topic_names is not None:
+            changes['topic_names'] = value.topic_names
+        if value.topics is not None:
+            import public_topics
+            wanted = storage.clean_names(value.topics)
+            defaults = {name.casefold() for name in public_topics.DEFAULT_TOPICS}
+            wanted_keys = {name.casefold() for name in wanted}
+            changes['public_topics_added'] = [n for n in wanted if n.casefold() not in defaults]
+            changes['public_topics_removed'] = [n for n in public_topics.DEFAULT_TOPICS if n.casefold() not in wanted_keys]
+        if value.public_names is not None:
+            changes['public_names'] = storage.clean_names(value.public_names)
         if changes:
             try:
                 storage.save_settings_keys(**changes)

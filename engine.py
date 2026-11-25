@@ -13,6 +13,7 @@ from uuid import uuid4
 import httpx
 import context_builder
 import public_institutions
+import public_topics
 import web_search
 from context_builder import ContextRefused
 from privacy_engine import parse_terms, StreamRehydrator
@@ -160,6 +161,10 @@ def apply_privacy_mode(privacy, config):
     privacy.institution_names = config.get('institution_names', 'common_public')
     privacy.institutions = public_institutions.effective_list(config.get('public_institutions_added'),
                                                               config.get('public_institutions_removed'))
+    privacy.date_names = config.get('date_names', 'pass')
+    privacy.topic_names = config.get('topic_names', 'common_public')
+    privacy.topics = public_topics.effective_list(config.get('public_topics_added'), config.get('public_topics_removed'))
+    privacy.public_names = config.get('public_names') or []
 
 
 def with_instructions(prompt, instructions):
@@ -968,7 +973,7 @@ async def web_turn(session, message, privacy, config, answer_tokens, new_masked=
             session['searches'].append(record)
             try:
                 checked = web_search.check_query(planned['query'], session['token_map'], terms,
-                                                 dates=opts['dates_in_queries'], terms_names=opts['terms_list_names'])
+                                                 terms_names=opts['terms_list_names'])
             except Exception:  # fail closed: any doubt about the query means it is not searched
                 record.update(status='failed', error='query check failed')
                 log.info('web search %s kind=%s status=failed (check)', record['id'], record['kind'])
@@ -1053,7 +1058,7 @@ async def rerun_search(session, search_id, hide_from_ai, privacy):
         raise SearchActionError('Hidden reruns are switched off in Settings.')
     try:
         checked = web_search.check_query(search['planner_query_masked'], session['token_map'], terms,
-                                         dates=opts['dates_in_queries'], terms_names=opts['terms_list_names'])
+                                         terms_names=opts['terms_list_names'])
     except Exception:
         raise SearchActionError('This search cannot be rerun safely.') from None
     if not checked['rerun_query']:

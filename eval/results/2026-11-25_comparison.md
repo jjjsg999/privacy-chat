@@ -1,13 +1,13 @@
 # Privacy filter comparison (2026-11-25)
 
-**Verdict: ADOPT.** adopt if recall gain >= 2.0 points AND precision drop <= 5.0 points. Recall change +17.99 points, precision change +2.82 points.
+**Verdict: ADOPT.** adopt if recall gain >= 2.0 points AND precision drop <= 5.0 points. Recall change +17.99 points, precision change +2.63 points.
 
 Test set: 550 invented snippets (1323 must-mask values). Terms list: eval-only, 44 entries.
 
 | Setup | Recall % | Precision % | Covered / must-mask | True spans / counted spans | Run time (s, not scored) |
 |---|---|---|---|---|---|
-| A (standard) | 77.25 | 72.21 | 1022 / 1323 | 1107 / 1533 | 3.2 |
-| B (layered) | 95.24 | 75.03 | 1260 / 1323 | 1289 / 1718 | 46.7 |
+| A (standard) | 77.25 | 74.83 | 1022 / 1323 | 1106 / 1478 | 3.0 |
+| B (layered) | 95.24 | 77.46 | 1260 / 1323 | 1289 / 1664 | 45.3 |
 
 ## Recall by category
 
@@ -22,7 +22,7 @@ Test set: 550 invented snippets (1323 must-mask values). Terms list: eval-only, 
 
 ## Setup A (standard)
 
-Sanity check (covered value still verbatim in masked output): 0 violations. Must-pass words masked: 331. Spans excluded as inside neutral: 247.
+Sanity check (covered value still verbatim in masked output): 0 violations. Must-pass words masked: 315. Spans excluded as inside neutral: 106.
 
 ### Missed values (301)
 
@@ -328,7 +328,7 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - ff-49 [address] `9 Saltwick Road`
 - ff-49 [person] `Bridget`
 
-### False positives (426)
+### False positives (372)
 
 - gen-000 [LOCATION, must-pass word] `Tokyo`
 - gen-000 [LOCATION, must-pass word] `Mumbai`
@@ -336,15 +336,12 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-002 [LOCATION, must-pass word] `Notion`
 - gen-003 [ORGANIZATION, must-pass word] `Figma`
 - gen-004 [LOCATION, must-pass word] `Taipei`
-- gen-004 [DATE_TIME] `last year`
 - gen-005 [LOCATION, must-pass word] `Mumbai`
 - gen-006 [ORGANIZATION, must-pass word] `Kubernetes`
-- gen-008 [DATE_TIME, must-pass word] `the quarter`
 - gen-010 [LOCATION, must-pass word] `Kenya`
 - gen-011 [LOCATION, must-pass word] `Sydney`
 - gen-011 [LOCATION, must-pass word] `Madrid`
 - gen-011 [LOCATION, must-pass word] `Portugal`
-- gen-013 [DATE_TIME] `this week`
 - gen-013 [ORGANIZATION, must-pass word] `Slack`
 - gen-015 [LOCATION, must-pass word] `Notion`
 - gen-019 [ORGANIZATION] `Candlewick Studios Support`
@@ -360,15 +357,11 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-032 [LOCATION, must-pass word] `Taipei`
 - gen-032 [LOCATION, must-pass word] `Chicago`
 - gen-032 [LOCATION, must-pass word] `Vietnam`
-- gen-036 [DATE_TIME, must-pass word] `the Japan quarter`
-- gen-037 [DATE_TIME, must-pass word] `the attached quarter before tomorrow morning`
 - gen-043 [PERSON] `Intro`
 - gen-043 [LOCATION, must-pass word] `New York`
-- gen-043 [DATE_TIME] `last year`
 - gen-045 [LOCATION, must-pass word] `Norway`
 - gen-046 [PERSON] `Intro`
 - gen-046 [LOCATION, must-pass word] `Hong Kong`
-- gen-046 [DATE_TIME] `last year`
 - gen-048 [LOCATION, must-pass word] `Berlin`
 - gen-050 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-052 [LOCATION, must-pass word] `Japan`
@@ -377,7 +370,6 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-057 [ORGANIZATION, must-pass word] `Figma`
 - gen-058 [PERSON] `Intro`
 - gen-058 [LOCATION, must-pass word] `Sydney`
-- gen-058 [DATE_TIME] `last year`
 - gen-058 [ORGANIZATION] `Reach`
 - gen-061 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-063 [LOCATION, must-pass word] `Brazil`
@@ -385,22 +377,18 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-069 [LOCATION, must-pass word] `Sydney`
 - gen-069 [LOCATION, must-pass word] `Singapore`
 - gen-069 [LOCATION, must-pass word] `Japan`
-- gen-070 [DATE_TIME] `Quarterly`
 - gen-070 [LOCATION, must-pass word] `France`
 - gen-070 [LOCATION, must-pass word] `Chile`
 - gen-070 [LOCATION, must-pass word] `Salesforce`
 - gen-070 [URL] `www.example.com/portal.`
-- gen-073 [DATE_TIME] `Quarterly`
 - gen-073 [LOCATION, must-pass word] `India`
 - gen-073 [LOCATION, must-pass word] `Kenya`
 - gen-073 [LOCATION, must-pass word] `Zoom`
 - gen-073 [URL] `https://docs.example.org/spec.`
 - gen-076 [PERSON] `Intro`
 - gen-076 [LOCATION, must-pass word] `Seoul`
-- gen-076 [DATE_TIME] `last year`
 - gen-077 [LOCATION, must-pass word] `India`
 - gen-084 [PERSON, must-pass word] `Jira`
-- gen-085 [DATE_TIME] `this week`
 - gen-085 [ORGANIZATION, must-pass word] `Slack`
 - gen-087 [LOCATION, must-pass word] `Chile`
 - gen-089 [LOCATION, must-pass word] `Berlin`
@@ -409,7 +397,6 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-095 [LOCATION, must-pass word] `Dubai`
 - gen-095 [LOCATION, must-pass word] `Norway`
 - gen-096 [LOCATION, must-pass word] `Berlin`
-- gen-097 [DATE_TIME] `this week`
 - gen-097 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-098 [LOCATION, must-pass word] `New York`
 - gen-099 [LOCATION, must-pass word] `Paris`
@@ -420,7 +407,6 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-104 [LOCATION, must-pass word] `Brazil`
 - gen-110 [PERSON, must-pass word] `Jira`
 - gen-112 [DATE_TIME] `14 之前完成`
-- gen-118 [DATE_TIME] `Quarterly`
 - gen-118 [LOCATION, must-pass word] `Norway`
 - gen-118 [LOCATION, must-pass word] `Vietnam`
 - gen-118 [URL] `http://www.example.com/deck/7.`
@@ -430,11 +416,9 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-125 [PERSON, must-pass word] `Jira`
 - gen-126 [ORGANIZATION, must-pass word] `Figma`
 - gen-127 [LOCATION, must-pass word] `Taipei`
-- gen-127 [DATE_TIME] `last year`
 - gen-133 [LOCATION, must-pass word] `Australia`
 - gen-135 [LOCATION, must-pass word] `Mumbai`
 - gen-135 [LOCATION, must-pass word] `Vietnam`
-- gen-136 [DATE_TIME] `Quarterly`
 - gen-136 [LOCATION, must-pass word] `India`
 - gen-136 [LOCATION, must-pass word] `Mexico`
 - gen-136 [LOCATION, must-pass word] `Zoom`
@@ -452,7 +436,6 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-151 [URL] `https://www.example.com/plans/2026.`
 - gen-153 [LOCATION, must-pass word] `Portugal`
 - gen-154 [LOCATION, must-pass word] `Dubai`
-- gen-154 [DATE_TIME] `last year`
 - gen-155 [LOCATION, must-pass word] `Paris`
 - gen-155 [LOCATION, must-pass word] `Chicago`
 - gen-155 [LOCATION, must-pass word] `Germany`
@@ -467,27 +450,22 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-164 [PERSON, must-pass word] `Zoom`
 - gen-165 [LOCATION, must-pass word] `Canada`
 - gen-167 [LOCATION, must-pass word] `France`
-- gen-171 [DATE_TIME, must-pass word] `the Kenya quarter`
 - gen-176 [LOCATION, must-pass word] `Sydney`
 - gen-178 [LOCATION, must-pass word] `London`
 - gen-178 [ORGANIZATION] `Hotel`
 - gen-178 [URL] `http://www.example.com/deck/7.`
 - gen-179 [ORGANIZATION, must-pass word] `Figma`
 - gen-180 [LOCATION, must-pass word] `Tokyo`
-- gen-180 [DATE_TIME, must-pass word] `the quarter`
 - gen-181 [LOCATION, must-pass word] `India`
 - gen-183 [LOCATION, must-pass word] `Taipei`
 - gen-184 [LOCATION, must-pass word] `Vietnam`
 - gen-186 [LOCATION, must-pass word] `Salesforce`
 - gen-187 [PERSON] `Intro`
 - gen-187 [LOCATION, must-pass word] `Taipei`
-- gen-187 [DATE_TIME] `last year`
 - gen-187 [ORGANIZATION] `Reach`
 - gen-188 [LOCATION, must-pass word] `Egypt`
 - gen-190 [LOCATION, must-pass word] `Sydney`
-- gen-190 [DATE_TIME] `last year`
 - gen-192 [LOCATION, must-pass word] `Poland`
-- gen-193 [DATE_TIME, must-pass word] `the attached quarter before March 14`
 - gen-195 [ORGANIZATION, must-pass word] `Figma`
 - gen-199 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-199 [LOCATION, must-pass word] `Paris`
@@ -510,24 +488,20 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-219 [LOCATION, must-pass word] `Chicago`
 - gen-219 [LOCATION, must-pass word] `Vietnam`
 - gen-223 [LOCATION, must-pass word] `New York`
-- gen-223 [DATE_TIME] `last year`
 - gen-223 [ORGANIZATION] `Reach`
 - gen-226 [LOCATION, must-pass word] `Norway`
-- gen-229 [DATE_TIME] `Quarterly`
 - gen-229 [LOCATION, must-pass word] `Mexico`
 - gen-229 [LOCATION, must-pass word] `Egypt`
 - gen-229 [LOCATION, must-pass word] `Kubernetes`
 - gen-229 [URL] `http://www.example.com/deck/7.`
 - gen-230 [ORGANIZATION, must-pass word] `Figma`
 - gen-231 [ORGANIZATION, must-pass word] `Slack`
-- gen-232 [DATE_TIME] `Quarterly`
 - gen-232 [LOCATION, must-pass word] `Brazil`
 - gen-232 [LOCATION, must-pass word] `Germany`
 - gen-232 [LOCATION, must-pass word] `Zoom`
 - gen-232 [URL] `https://docs.example.org/spec.`
 - gen-234 [LOCATION, must-pass word] `Australia`
 - gen-236 [ORGANIZATION, must-pass word] `Slack`
-- gen-238 [DATE_TIME] `this week`
 - gen-238 [ORGANIZATION, must-pass word] `Figma`
 - gen-239 [ORGANIZATION, must-pass word] `Paris 見，deadline`
 - gen-240 [LOCATION, must-pass word] `Madrid`
@@ -537,11 +511,8 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-247 [LOCATION, must-pass word] `Seoul`
 - gen-247 [LOCATION, must-pass word] `Norway`
 - gen-250 [LOCATION, must-pass word] `Sydney`
-- gen-250 [DATE_TIME] `last year`
 - gen-252 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-253 [LOCATION, must-pass word] `Hong Kong`
-- gen-254 [DATE_TIME, must-pass word] `the quarter`
-- gen-256 [DATE_TIME] `this week`
 - gen-256 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-259 [LOCATION, must-pass word] `Sydney`
 - gen-259 [LOCATION, must-pass word] `Mexico`
@@ -553,18 +524,15 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-271 [LOCATION, must-pass word] `Mexico`
 - gen-272 [ORGANIZATION, must-pass word] `Figma`
 - gen-273 [ORGANIZATION, must-pass word] `Salesforce`
-- gen-277 [DATE_TIME] `this week`
 - gen-282 [LOCATION, must-pass word] `Seoul`
 - gen-285 [LOCATION, must-pass word] `France`
 - gen-286 [PERSON] `Intro`
 - gen-286 [LOCATION, must-pass word] `Paris`
-- gen-286 [DATE_TIME] `last year`
 - gen-290 [LOCATION, must-pass word] `Berlin`
 - gen-293 [ORGANIZATION, must-pass word] `London 見，deadline`
 - gen-294 [ORGANIZATION, must-pass word] `Figma`
 - gen-295 [LOCATION, must-pass word] `Tokyo`
 - gen-297 [LOCATION, must-pass word] `Egypt`
-- gen-298 [DATE_TIME] `this week`
 - gen-302 [LOCATION, must-pass word] `Notion`
 - gen-304 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-304 [LOCATION, must-pass word] `London`
@@ -586,7 +554,6 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-324 [LOCATION, must-pass word] `Berlin`
 - gen-324 [LOCATION, must-pass word] `Seoul`
 - gen-324 [LOCATION, must-pass word] `Portugal`
-- gen-325 [DATE_TIME] `this week`
 - gen-325 [ORGANIZATION, must-pass word] `Notion`
 - gen-326 [LOCATION, must-pass word] `Mumbai`
 - gen-326 [LOCATION, must-pass word] `Hong Kong`
@@ -601,8 +568,6 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-340 [LOCATION, must-pass word] `Germany`
 - gen-341 [LOCATION, must-pass word] `Madrid`
 - gen-342 [LOCATION, must-pass word] `Toronto`
-- gen-342 [DATE_TIME, must-pass word] `the quarter`
-- gen-346 [DATE_TIME] `Quarterly`
 - gen-346 [LOCATION, must-pass word] `Poland`
 - gen-346 [LOCATION, must-pass word] `Portugal`
 - gen-346 [ORGANIZATION, must-pass word] `WhatsApp`
@@ -616,7 +581,6 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-354 [LOCATION, must-pass word] `Chile`
 - gen-360 [PERSON, must-pass word] `Jira`
 - gen-361 [ORGANIZATION] `Rookhaven Bank Support`
-- gen-364 [DATE_TIME] `this week`
 - gen-364 [ORGANIZATION, must-pass word] `Figma`
 - gen-365 [PERSON, must-pass word] `Kubernetes`
 - gen-366 [LOCATION, must-pass word] `Toronto`
@@ -633,7 +597,6 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-389 [LOCATION, must-pass word] `Berlin`
 - gen-389 [LOCATION, must-pass word] `Germany`
 - gen-394 [LOCATION, must-pass word] `Berlin`
-- gen-397 [DATE_TIME] `this week`
 - gen-398 [PERSON, must-pass word] `Jira`
 - gen-399 [LOCATION, must-pass word] `Toronto`
 - gen-399 [LOCATION, must-pass word] `France`
@@ -643,12 +606,10 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-404 [LOCATION, must-pass word] `Chicago`
 - gen-405 [LOCATION, must-pass word] `Madrid`
 - gen-406 [LOCATION, must-pass word] `Tokyo`
-- gen-406 [DATE_TIME] `last year`
 - gen-412 [LOCATION, must-pass word] `Paris`
 - gen-412 [ORGANIZATION] `Hotel`
 - gen-412 [URL] `http://www.example.com/deck/7.`
 - gen-413 [LOCATION, must-pass word] `Australia`
-- gen-414 [DATE_TIME, must-pass word] `the quarter`
 - gen-414 [LOCATION, must-pass word] `Brazil`
 - gen-415 [LOCATION, must-pass word] `Toronto`
 - gen-415 [ORGANIZATION] `Hotel`
@@ -658,29 +619,23 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-424 [ORGANIZATION] `Rookhaven Bank Support`
 - gen-425 [PERSON, must-pass word] `Zoom`
 - gen-430 [LOCATION, must-pass word] `Dubai`
-- gen-430 [DATE_TIME] `last year`
 - gen-434 [ORGANIZATION, must-pass word] `Slack`
 - gen-435 [LOCATION, must-pass word] `Seoul`
 - gen-442 [PERSON] `Intro`
 - gen-442 [LOCATION, must-pass word] `Hong Kong`
-- gen-442 [DATE_TIME] `last year`
 - gen-444 [LOCATION, must-pass word] `Paris`
 - gen-444 [LOCATION, must-pass word] `Australia`
-- gen-445 [DATE_TIME] `Quarterly`
 - gen-445 [LOCATION, must-pass word] `Australia`
 - gen-445 [LOCATION, must-pass word] `Norway`
 - gen-445 [URL] `https://www.example.com/plans/2026.`
 - gen-448 [LOCATION, must-pass word] `Australia`
 - gen-450 [LOCATION, must-pass word] `Vietnam`
 - gen-451 [LOCATION, must-pass word] `Sydney`
-- gen-451 [DATE_TIME] `last year`
 - gen-454 [LOCATION, must-pass word] `Vietnam`
 - gen-455 [LOCATION, must-pass word] `Norway`
 - gen-457 [ORGANIZATION] `Rookhaven Bank Support`
 - gen-460 [PERSON] `Intro`
 - gen-460 [LOCATION, must-pass word] `New York`
-- gen-460 [DATE_TIME] `last year`
-- gen-462 [DATE_TIME, must-pass word] `the Chile quarter`
 - gen-463 [LOCATION, must-pass word] `Sydney`
 - gen-463 [LOCATION, must-pass word] `Egypt`
 - gen-464 [LOCATION, must-pass word] `Chicago`
@@ -691,9 +646,7 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-473 [LOCATION, must-pass word] `Chile`
 - gen-474 [LOCATION, must-pass word] `Zoom`
 - gen-477 [LOCATION, must-pass word] `Hong Kong`
-- gen-480 [DATE_TIME, must-pass word] `the quarter`
 - gen-482 [LOCATION, must-pass word] `Toronto`
-- gen-487 [DATE_TIME, must-pass word] `the latest quarter`
 - gen-489 [LOCATION, must-pass word] `London`
 - gen-489 [LOCATION, must-pass word] `Poland`
 - gen-491 [LOCATION, must-pass word] `Taipei`
@@ -707,9 +660,7 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-497 [LOCATION, must-pass word] `Hong Kong`
 - gen-497 [LOCATION, must-pass word] `Mexico`
 - gen-498 [ORGANIZATION, must-pass word] `Figma`
-- gen-499 [DATE_TIME] `this week`
 - gen-499 [ORGANIZATION, must-pass word] `Kubernetes`
-- ff-02 [DATE_TIME] `yesterday`
 - ff-02 [LOCATION, must-pass word] `Singapore`
 - ff-04 [LOCATION, must-pass word] `Germany`
 - ff-07 [LOCATION, must-pass word] `Taipei`
@@ -720,18 +671,13 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - ff-12 [LOCATION, must-pass word] `Brazil`
 - ff-13 [LOCATION, must-pass word] `Rotterdam`
 - ff-17 [ORGANIZATION, must-pass word] `NDA`
-- ff-18 [DATE_TIME] `five working days`
 - ff-19 [PERSON] `Intro`
 - ff-19 [LOCATION, must-pass word] `London`
-- ff-19 [DATE_TIME] `last year`
 - ff-20 [ORGANIZATION] `Customer Care`
-- ff-21 [DATE_TIME] `Quarterly`
-- ff-21 [DATE_TIME, must-pass word] `quarterly`
 - ff-21 [ORGANIZATION, must-pass word] `Figma`
 - ff-21 [LOCATION, must-pass word] `Brazil`
 - ff-21 [LOCATION, must-pass word] `Canada`
 - ff-22 [DATE_TIME] `4471`
-- ff-25 [DATE_TIME] `three years`
 - ff-25 [LOCATION, must-pass word] `Hong Kong`
 - ff-28 [PERSON, must-pass word] `Notion`
 - ff-29 [PERSON] `Dad`
@@ -759,7 +705,7 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 
 ## Setup B (layered)
 
-Sanity check (covered value still verbatim in masked output): 0 violations. Must-pass words masked: 335. Spans excluded as inside neutral: 240.
+Sanity check (covered value still verbatim in masked output): 0 violations. Must-pass words masked: 318. Spans excluded as inside neutral: 99.
 
 ### Missed values (63)
 
@@ -827,7 +773,7 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - ff-49 [address] `61 Cormorant Wharf, flat 4`
 - ff-49 [address] `9 Saltwick Road`
 
-### False positives (429)
+### False positives (375)
 
 - gen-000 [LOCATION, must-pass word] `Tokyo`
 - gen-000 [LOCATION, must-pass word] `Mumbai`
@@ -835,15 +781,12 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-002 [LOCATION, must-pass word] `Notion`
 - gen-003 [ORGANIZATION, must-pass word] `Figma`
 - gen-004 [LOCATION, must-pass word] `Taipei`
-- gen-004 [DATE_TIME] `last year`
 - gen-005 [LOCATION, must-pass word] `Mumbai`
 - gen-006 [ORGANIZATION, must-pass word] `Kubernetes`
-- gen-008 [DATE_TIME, must-pass word] `the quarter`
 - gen-010 [LOCATION, must-pass word] `Kenya`
 - gen-011 [LOCATION, must-pass word] `Sydney`
 - gen-011 [LOCATION, must-pass word] `Madrid`
 - gen-011 [LOCATION, must-pass word] `Portugal`
-- gen-013 [DATE_TIME] `this week`
 - gen-013 [ORGANIZATION, must-pass word] `Slack`
 - gen-015 [LOCATION, must-pass word] `Notion`
 - gen-019 [ORGANIZATION] `Candlewick Studios Support`
@@ -859,15 +802,11 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-032 [LOCATION, must-pass word] `Taipei`
 - gen-032 [LOCATION, must-pass word] `Chicago`
 - gen-032 [LOCATION, must-pass word] `Vietnam`
-- gen-036 [DATE_TIME, must-pass word] `the Japan quarter`
-- gen-037 [DATE_TIME, must-pass word] `the attached quarter before tomorrow morning`
 - gen-043 [PERSON] `Intro`
 - gen-043 [LOCATION, must-pass word] `New York`
-- gen-043 [DATE_TIME] `last year`
 - gen-045 [LOCATION, must-pass word] `Norway`
 - gen-046 [PERSON] `Intro`
 - gen-046 [LOCATION, must-pass word] `Hong Kong`
-- gen-046 [DATE_TIME] `last year`
 - gen-048 [LOCATION, must-pass word] `Berlin`
 - gen-050 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-052 [LOCATION, must-pass word] `Japan`
@@ -876,7 +815,6 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-057 [ORGANIZATION, must-pass word] `Figma`
 - gen-058 [PERSON] `Intro`
 - gen-058 [LOCATION, must-pass word] `Sydney`
-- gen-058 [DATE_TIME] `last year`
 - gen-058 [ORGANIZATION] `Reach`
 - gen-061 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-062 [PERSON] `Dads`
@@ -885,22 +823,18 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-069 [LOCATION, must-pass word] `Sydney`
 - gen-069 [LOCATION, must-pass word] `Singapore`
 - gen-069 [LOCATION, must-pass word] `Japan`
-- gen-070 [DATE_TIME] `Quarterly`
 - gen-070 [LOCATION, must-pass word] `France`
 - gen-070 [LOCATION, must-pass word] `Chile`
 - gen-070 [LOCATION, must-pass word] `Salesforce`
 - gen-070 [URL] `www.example.com/portal.`
-- gen-073 [DATE_TIME] `Quarterly`
 - gen-073 [LOCATION, must-pass word] `India`
 - gen-073 [LOCATION, must-pass word] `Kenya`
 - gen-073 [LOCATION, must-pass word] `Zoom`
 - gen-073 [URL] `https://docs.example.org/spec.`
 - gen-076 [PERSON] `Intro`
 - gen-076 [LOCATION, must-pass word] `Seoul`
-- gen-076 [DATE_TIME] `last year`
 - gen-077 [LOCATION, must-pass word] `India`
 - gen-084 [PERSON, must-pass word] `Jira`
-- gen-085 [DATE_TIME] `this week`
 - gen-085 [ORGANIZATION, must-pass word] `Slack`
 - gen-087 [LOCATION, must-pass word] `Chile`
 - gen-089 [LOCATION, must-pass word] `Berlin`
@@ -909,7 +843,6 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-095 [LOCATION, must-pass word] `Dubai`
 - gen-095 [LOCATION, must-pass word] `Norway`
 - gen-096 [LOCATION, must-pass word] `Berlin`
-- gen-097 [DATE_TIME] `this week`
 - gen-097 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-098 [LOCATION, must-pass word] `New York`
 - gen-099 [LOCATION, must-pass word] `Paris`
@@ -920,7 +853,6 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-104 [LOCATION, must-pass word] `Brazil`
 - gen-110 [PERSON, must-pass word] `Jira`
 - gen-112 [DATE_TIME] `14 之前完成`
-- gen-118 [DATE_TIME] `Quarterly`
 - gen-118 [LOCATION, must-pass word] `Norway`
 - gen-118 [LOCATION, must-pass word] `Vietnam`
 - gen-118 [URL] `http://www.example.com/deck/7.`
@@ -930,11 +862,9 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-125 [PERSON, must-pass word] `Jira`
 - gen-126 [ORGANIZATION, must-pass word] `Figma`
 - gen-127 [LOCATION, must-pass word] `Taipei`
-- gen-127 [DATE_TIME] `last year`
 - gen-133 [LOCATION, must-pass word] `Australia`
 - gen-135 [LOCATION, must-pass word] `Mumbai`
 - gen-135 [LOCATION, must-pass word] `Vietnam`
-- gen-136 [DATE_TIME] `Quarterly`
 - gen-136 [LOCATION, must-pass word] `India`
 - gen-136 [LOCATION, must-pass word] `Mexico`
 - gen-136 [LOCATION, must-pass word] `Zoom`
@@ -952,7 +882,6 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-151 [URL] `https://www.example.com/plans/2026.`
 - gen-153 [LOCATION, must-pass word] `Portugal`
 - gen-154 [LOCATION, must-pass word] `Dubai`
-- gen-154 [DATE_TIME] `last year`
 - gen-155 [LOCATION, must-pass word] `Paris`
 - gen-155 [LOCATION, must-pass word] `Chicago`
 - gen-155 [LOCATION, must-pass word] `Germany`
@@ -967,27 +896,22 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-164 [PERSON, must-pass word] `Zoom`
 - gen-165 [LOCATION, must-pass word] `Canada`
 - gen-167 [LOCATION, must-pass word] `France`
-- gen-171 [DATE_TIME, must-pass word] `the Kenya quarter`
 - gen-176 [LOCATION, must-pass word] `Sydney`
 - gen-178 [LOCATION, must-pass word] `London`
 - gen-178 [ORGANIZATION] `Hotel`
 - gen-178 [URL] `http://www.example.com/deck/7.`
 - gen-179 [ORGANIZATION, must-pass word] `Figma`
 - gen-180 [LOCATION, must-pass word] `Tokyo`
-- gen-180 [DATE_TIME, must-pass word] `the quarter`
 - gen-181 [LOCATION, must-pass word] `India`
 - gen-183 [LOCATION, must-pass word] `Taipei`
 - gen-184 [LOCATION, must-pass word] `Vietnam`
 - gen-186 [LOCATION, must-pass word] `Salesforce`
 - gen-187 [PERSON] `Intro`
 - gen-187 [LOCATION, must-pass word] `Taipei`
-- gen-187 [DATE_TIME] `last year`
 - gen-187 [ORGANIZATION] `Reach`
 - gen-188 [LOCATION, must-pass word] `Egypt`
 - gen-190 [LOCATION, must-pass word] `Sydney`
-- gen-190 [DATE_TIME] `last year`
 - gen-192 [LOCATION, must-pass word] `Poland`
-- gen-193 [DATE_TIME, must-pass word] `the attached quarter before March 14`
 - gen-195 [ORGANIZATION, must-pass word] `Figma`
 - gen-199 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-199 [LOCATION, must-pass word] `Paris`
@@ -1010,24 +934,20 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-219 [LOCATION, must-pass word] `Chicago`
 - gen-219 [LOCATION, must-pass word] `Vietnam`
 - gen-223 [LOCATION, must-pass word] `New York`
-- gen-223 [DATE_TIME] `last year`
 - gen-223 [ORGANIZATION] `Reach`
 - gen-226 [LOCATION, must-pass word] `Norway`
-- gen-229 [DATE_TIME] `Quarterly`
 - gen-229 [LOCATION, must-pass word] `Mexico`
 - gen-229 [LOCATION, must-pass word] `Egypt`
 - gen-229 [LOCATION, must-pass word] `Kubernetes`
 - gen-229 [URL] `http://www.example.com/deck/7.`
 - gen-230 [ORGANIZATION, must-pass word] `Figma`
 - gen-231 [ORGANIZATION, must-pass word] `Slack`
-- gen-232 [DATE_TIME] `Quarterly`
 - gen-232 [LOCATION, must-pass word] `Brazil`
 - gen-232 [LOCATION, must-pass word] `Germany`
 - gen-232 [LOCATION, must-pass word] `Zoom`
 - gen-232 [URL] `https://docs.example.org/spec.`
 - gen-234 [LOCATION, must-pass word] `Australia`
 - gen-236 [ORGANIZATION, must-pass word] `Slack`
-- gen-238 [DATE_TIME] `this week`
 - gen-238 [ORGANIZATION, must-pass word] `Figma`
 - gen-239 [ORGANIZATION, must-pass word] `Paris 見，deadline`
 - gen-240 [LOCATION, must-pass word] `Madrid`
@@ -1037,11 +957,8 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-247 [LOCATION, must-pass word] `Seoul`
 - gen-247 [LOCATION, must-pass word] `Norway`
 - gen-250 [LOCATION, must-pass word] `Sydney`
-- gen-250 [DATE_TIME] `last year`
 - gen-252 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-253 [LOCATION, must-pass word] `Hong Kong`
-- gen-254 [DATE_TIME, must-pass word] `the quarter`
-- gen-256 [DATE_TIME] `this week`
 - gen-256 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-259 [LOCATION, must-pass word] `Sydney`
 - gen-259 [LOCATION, must-pass word] `Mexico`
@@ -1053,25 +970,21 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-271 [LOCATION, must-pass word] `Mexico`
 - gen-272 [ORGANIZATION, must-pass word] `Figma`
 - gen-273 [ORGANIZATION, must-pass word] `Salesforce`
-- gen-277 [DATE_TIME] `this week`
 - gen-282 [LOCATION, must-pass word] `Seoul`
 - gen-285 [LOCATION, must-pass word] `France`
 - gen-286 [PERSON] `Intro`
 - gen-286 [LOCATION, must-pass word] `Paris`
-- gen-286 [DATE_TIME] `last year`
 - gen-290 [LOCATION, must-pass word] `Berlin`
 - gen-293 [ORGANIZATION, must-pass word] `London 見，deadline`
 - gen-294 [ORGANIZATION, must-pass word] `Figma`
 - gen-295 [LOCATION, must-pass word] `Tokyo`
 - gen-297 [LOCATION, must-pass word] `Egypt`
-- gen-298 [DATE_TIME] `this week`
 - gen-302 [LOCATION, must-pass word] `Notion`
 - gen-304 [ORGANIZATION, must-pass word] `WhatsApp`
 - gen-304 [LOCATION, must-pass word] `London`
 - gen-304 [LOCATION, must-pass word] `Canada`
 - gen-305 [LOCATION, must-pass word] `Chile`
 - gen-306 [LOCATION, must-pass word] `France`
-- gen-307 [DATE_TIME, must-pass word] `a quarter`
 - gen-308 [LOCATION, must-pass word] `Mexico`
 - gen-310 [LOCATION, must-pass word] `Hong Kong`
 - gen-310 [ORGANIZATION] `Hotel`
@@ -1087,7 +1000,6 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-324 [LOCATION, must-pass word] `Berlin`
 - gen-324 [LOCATION, must-pass word] `Seoul`
 - gen-324 [LOCATION, must-pass word] `Portugal`
-- gen-325 [DATE_TIME] `this week`
 - gen-325 [ORGANIZATION, must-pass word] `Notion`
 - gen-326 [LOCATION, must-pass word] `Mumbai`
 - gen-326 [LOCATION, must-pass word] `Hong Kong`
@@ -1103,8 +1015,6 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-340 [LOCATION, must-pass word] `Germany`
 - gen-341 [LOCATION, must-pass word] `Madrid`
 - gen-342 [LOCATION, must-pass word] `Toronto`
-- gen-342 [DATE_TIME, must-pass word] `the quarter`
-- gen-346 [DATE_TIME] `Quarterly`
 - gen-346 [LOCATION, must-pass word] `Poland`
 - gen-346 [LOCATION, must-pass word] `Portugal`
 - gen-346 [ORGANIZATION, must-pass word] `WhatsApp`
@@ -1118,7 +1028,6 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-354 [LOCATION, must-pass word] `Chile`
 - gen-360 [PERSON, must-pass word] `Jira`
 - gen-361 [ORGANIZATION] `Rookhaven Bank Support`
-- gen-364 [DATE_TIME] `this week`
 - gen-364 [ORGANIZATION, must-pass word] `Figma`
 - gen-365 [PERSON, must-pass word] `Kubernetes`
 - gen-366 [LOCATION, must-pass word] `Toronto`
@@ -1134,7 +1043,6 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-389 [LOCATION, must-pass word] `Berlin`
 - gen-389 [LOCATION, must-pass word] `Germany`
 - gen-394 [LOCATION, must-pass word] `Berlin`
-- gen-397 [DATE_TIME] `this week`
 - gen-398 [PERSON, must-pass word] `Jira`
 - gen-399 [LOCATION, must-pass word] `Toronto`
 - gen-399 [LOCATION, must-pass word] `France`
@@ -1144,14 +1052,12 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-404 [LOCATION, must-pass word] `Chicago`
 - gen-405 [LOCATION, must-pass word] `Madrid`
 - gen-406 [LOCATION, must-pass word] `Tokyo`
-- gen-406 [DATE_TIME] `last year`
 - gen-410 [ADDRESS] `[10:45]`
 - gen-410 [PERSON, must-pass word] `明天 Toronto 見，headcount 請帶著。`
 - gen-412 [LOCATION, must-pass word] `Paris`
 - gen-412 [ORGANIZATION] `Hotel`
 - gen-412 [URL] `http://www.example.com/deck/7.`
 - gen-413 [LOCATION, must-pass word] `Australia`
-- gen-414 [DATE_TIME, must-pass word] `the quarter`
 - gen-414 [LOCATION, must-pass word] `Brazil`
 - gen-415 [LOCATION, must-pass word] `Toronto`
 - gen-415 [ORGANIZATION] `Hotel`
@@ -1161,29 +1067,23 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-424 [ORGANIZATION] `Rookhaven Bank Support`
 - gen-425 [PERSON, must-pass word] `Zoom`
 - gen-430 [LOCATION, must-pass word] `Dubai`
-- gen-430 [DATE_TIME] `last year`
 - gen-434 [ORGANIZATION, must-pass word] `Slack`
 - gen-435 [LOCATION, must-pass word] `Seoul`
 - gen-442 [PERSON] `Intro`
 - gen-442 [LOCATION, must-pass word] `Hong Kong`
-- gen-442 [DATE_TIME] `last year`
 - gen-444 [LOCATION, must-pass word] `Paris`
 - gen-444 [LOCATION, must-pass word] `Australia`
-- gen-445 [DATE_TIME] `Quarterly`
 - gen-445 [LOCATION, must-pass word] `Australia`
 - gen-445 [LOCATION, must-pass word] `Norway`
 - gen-445 [URL] `https://www.example.com/plans/2026.`
 - gen-448 [LOCATION, must-pass word] `Australia`
 - gen-450 [LOCATION, must-pass word] `Vietnam`
 - gen-451 [LOCATION, must-pass word] `Sydney`
-- gen-451 [DATE_TIME] `last year`
 - gen-454 [LOCATION, must-pass word] `Vietnam`
 - gen-455 [LOCATION, must-pass word] `Norway`
 - gen-457 [ORGANIZATION] `Rookhaven Bank Support`
 - gen-460 [PERSON] `Intro`
 - gen-460 [LOCATION, must-pass word] `New York`
-- gen-460 [DATE_TIME] `last year`
-- gen-462 [DATE_TIME, must-pass word] `the Chile quarter`
 - gen-463 [PERSON, must-pass word] `Sydney`
 - gen-463 [PERSON, must-pass word] `Egypt`
 - gen-464 [LOCATION, must-pass word] `Chicago`
@@ -1194,9 +1094,7 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-473 [LOCATION, must-pass word] `Chile`
 - gen-474 [LOCATION, must-pass word] `Zoom`
 - gen-477 [LOCATION, must-pass word] `Hong Kong`
-- gen-480 [DATE_TIME, must-pass word] `the quarter`
 - gen-482 [LOCATION, must-pass word] `Toronto`
-- gen-487 [DATE_TIME, must-pass word] `the latest quarter`
 - gen-489 [LOCATION, must-pass word] `London`
 - gen-489 [LOCATION, must-pass word] `Poland`
 - gen-491 [LOCATION, must-pass word] `Taipei`
@@ -1211,7 +1109,6 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - gen-497 [LOCATION, must-pass word] `Mexico`
 - gen-498 [ORGANIZATION, must-pass word] `Figma`
 - gen-499 [ORGANIZATION, must-pass word] `Kubernetes`
-- ff-02 [DATE_TIME] `yesterday`
 - ff-02 [LOCATION, must-pass word] `Singapore`
 - ff-04 [LOCATION, must-pass word] `Germany`
 - ff-07 [LOCATION, must-pass word] `Taipei`
@@ -1222,18 +1119,13 @@ Sanity check (covered value still verbatim in masked output): 0 violations. Must
 - ff-12 [LOCATION, must-pass word] `Brazil`
 - ff-13 [LOCATION, must-pass word] `Rotterdam`
 - ff-17 [ORGANIZATION, must-pass word] `NDA`
-- ff-18 [DATE_TIME] `five working days`
 - ff-19 [PERSON] `Intro`
 - ff-19 [LOCATION, must-pass word] `London`
-- ff-19 [DATE_TIME] `last year`
 - ff-20 [ORGANIZATION] `Customer Care`
-- ff-21 [DATE_TIME] `Quarterly`
-- ff-21 [DATE_TIME, must-pass word] `quarterly`
 - ff-21 [ORGANIZATION, must-pass word] `Figma`
 - ff-21 [LOCATION, must-pass word] `Brazil`
 - ff-21 [LOCATION, must-pass word] `Canada`
 - ff-22 [DATE_TIME] `4471`
-- ff-25 [DATE_TIME] `three years`
 - ff-25 [LOCATION, must-pass word] `Hong Kong`
 - ff-28 [PERSON, must-pass word] `Notion`
 - ff-29 [PERSON] `Dad`

@@ -58,6 +58,13 @@ def settings():
     result['institution_names'] = result.get('institution_names') if result.get('institution_names') in ('common_public', 'mask_all') else 'common_public'
     result['public_institutions_added'] = clean_names(result.get('public_institutions_added'))
     result['public_institutions_removed'] = clean_names(result.get('public_institutions_removed'))
+    # Dates are not masked ("pass"); "mask" restores masking them. The topic glossary and the user's public names
+    # pass through like places and institutions. The terms list always wins.
+    result['date_names'] = result.get('date_names') if result.get('date_names') in ('pass', 'mask') else 'pass'
+    result['topic_names'] = result.get('topic_names') if result.get('topic_names') in ('common_public', 'mask_all') else 'common_public'
+    result['public_topics_added'] = clean_names(result.get('public_topics_added'))
+    result['public_topics_removed'] = clean_names(result.get('public_topics_removed'))
+    result['public_names'] = clean_names(result.get('public_names'))
     return result
 
 
@@ -69,14 +76,13 @@ WEB_SEARCH_DEFAULTS = {
     'engine': 'brave',
     'max_searches_per_message': 3,
     'pages_per_search': 2,
-    'dates_in_queries': 'remove',
     'terms_list_names': 'rerun',
     'offer_hidden_rerun': True,
     'show_link_banner': True,
     'cost_per_search_usd': 0.005,
     'planner_model': '',
 }
-WEB_SEARCH_CHOICES = {'engine': ('brave', 'ddgs'), 'dates_in_queries': ('remove', 'years'), 'terms_list_names': ('rerun', 'never')}
+WEB_SEARCH_CHOICES = {'engine': ('brave', 'ddgs'), 'terms_list_names': ('rerun', 'never')}  # dates_in_queries: retired, ignored
 WEB_SEARCH_RANGES = {'max_searches_per_message': (1, 5), 'pages_per_search': (0, 4)}
 INSTITUTION_NAME_MAX, INSTITUTION_LIST_MAX = 120, 500
 
