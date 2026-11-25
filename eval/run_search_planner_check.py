@@ -14,6 +14,7 @@ import argparse
 import asyncio
 import json
 import os
+import re
 import time
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
@@ -31,7 +32,7 @@ LIMIT = 3
 
 
 def planner_request(conversation, limit=LIMIT):
-    prompt = engine.meeting_prompt('search_planner.md').replace('{max_queries}', str(limit))
+    prompt = engine.planner_prompt(limit)
     return [{'role': 'system', 'content': prompt}] + [{'role': m['role'], 'content': m['content']} for m in conversation]
 
 
@@ -46,6 +47,8 @@ def evaluate(case, reply, terms, seconds):
         row['error'] = str(exc)
         return row
     row.update(valid=True, queries=len(plan), over_limit=len(plan) > LIMIT)
+    this_year = datetime.now().year  # years older than this in a query usually mean the model guessed the date
+    row['stale_years'] = sorted({y for item in plan for y in re.findall(r'\b(?:19|20)\d\d\b', item['query']) if int(y) < this_year})
     for item in plan:
         row['invented'] += sorted(set(TOKEN.findall(item['query'])) - given)
         try:
@@ -100,6 +103,7 @@ def report(rows, model):
         print(f"- {row['case']}: {'valid' if row['valid'] else 'INVALID'} · {row['queries']} queries"
               f"{' (OVER LIMIT)' if row['over_limit'] else ''} · invented placeholders: {row['invented'] or 'none'}"
               f" · labels: {', '.join(row['labels']) or '-'} · {row['seconds']} s"
+              f"{' · stale years: ' + ', '.join(row['stale_years']) if row.get('stale_years') else ''}"
               f"{' · error: ' + row['error'] if row['error'] else ''}")
         for query in row.get('planned', []):
             print(f'    planner wrote: {query}')

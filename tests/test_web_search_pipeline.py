@@ -214,7 +214,15 @@ class Pipeline(unittest.TestCase):
         system = self.planner_calls[0][0]['content']
         self.assertIn('Return JSON only', system)
         self.assertIn('at most 3 queries', system)
+        from datetime import datetime
+        self.assertIn(f"Today's date is ", system)  # so timely queries do not use a stale year
+        self.assertIn(datetime.now().astimezone().date().isoformat(), system)
+        self.assertNotIn('{today}', system)
         self.assertIn('CLIENT__1', self.planner_calls[0][-1]['content'])
+
+    def test_planner_prompt_date_format(self):
+        from datetime import date
+        self.assertIn("Today's date is Wednesday 25 November 2026 (2026-11-25).", engine.planner_prompt(3, date(2026, 11, 25)))
 
     # --- rule 10: budget ---
 

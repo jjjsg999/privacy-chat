@@ -7,6 +7,8 @@ The conversation has been pseudonymized. Words written as an uppercase kind, two
 
 Write each query as you would want it if names were allowed: put the placeholder where the name would go. The application removes placeholders, money amounts and dates before anything is sent, and the user can rerun a search with the real name. So also make each query useful without its placeholders: add the sector, product, topic, regulator, place or rule it is about.
 
+Today's date is {today}. Do not put years or dates in queries unless the user's message itself asks about a specific year. For recent information write words such as "latest" or "current" instead; never add earlier years or a range of years.
+
 Good queries are short (3 to 10 words), specific and in plain search-engine style. Public institutions (regulators, central banks, exchanges, rating agencies), countries, cities, rules and standards (for example Basel III, CET1) can be written out normally.
 
 Search only when current, factual or external information would improve the answer: news, regulations, prices, public facts, documentation. Do not search for greetings, opinions, writing or editing tasks, maths, or questions the conversation already answers. Then return an empty list.

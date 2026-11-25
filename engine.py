@@ -5,6 +5,7 @@ import logging
 import re
 import zlib
 from contextlib import aclosing
+from datetime import datetime
 from decimal import Decimal
 from urllib.parse import urlsplit
 from uuid import uuid4
@@ -736,11 +737,21 @@ def parse_plan(text, limit):
     return plan
 
 
+def planner_prompt(limit, today=None):
+    """prompts/search_planner.md with the query limit and today's date (local time) filled in.
+
+    Without the date the model guesses the year from its training data and writes stale years into timely queries.
+    """
+    today = today or datetime.now().astimezone().date()
+    return (meeting_prompt('search_planner.md').replace('{max_queries}', str(limit))
+            .replace('{today}', f'{today:%A} {today.day} {today:%B %Y} ({today.isoformat()})'))
+
+
 def planner_messages(session, new_masked, privacy, config, terms, fingerprint, model, limit):
     """The masked conversation in lean mode, with the planner instructions. Raises ContextRefused if it cannot fit."""
     items = history_items(session, privacy, terms, fingerprint) + [{'role': 'user', 'text': new_masked, 'index': None}]
     length, known = context_length_for(model)
-    prompt = meeting_prompt('search_planner.md').replace('{max_queries}', str(limit))
+    prompt = planner_prompt(limit)
     built = context_builder.build_context(prompt, items, cap=context_builder.CAPS['lean'], context_length=length,
                                           context_length_known=known, out_reserve=min(PLANNER_MAX_TOKENS, max(256, length // 4)),
                                           mode='lean')
