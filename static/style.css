@@ -352,7 +352,13 @@ kbd{font:.8125rem ui-monospace,Consolas,monospace;border:1px solid var(--ctl);bo
 #artifact-pane{display:flex;flex-direction:column;position:fixed;inset:0;z-index:20;background:var(--paper);min-width:0}
 #artifact-pane[hidden]{display:none}
 @media(min-width:1100px){
-  #artifact-pane{position:static;flex:0 0 clamp(400px,44vw,780px);border-left:1px solid var(--line);z-index:auto}
+  #artifact-pane{position:relative;inset:auto;flex:0 0 var(--artifact-w,clamp(400px,44vw,780px));border-left:1px solid var(--line);z-index:auto}
+  #artifact-resizer{display:block;position:absolute;top:0;left:-4px;width:8px;height:100%;cursor:col-resize;z-index:5;touch-action:none}
+  #artifact-resizer:hover,#artifact-resizer:focus-visible,body.resizing #artifact-resizer{background:var(--ctl);outline:none}
+}
+#artifact-resizer{display:none}
+@media(min-width:1100px){
+  #artifact-resizer{display:block}
 }
 .artifact-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line)}
 .artifact-bar strong{flex:1 1 140px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -464,3 +470,4 @@ body:has(#artifact-pane:not([hidden])) #details,body:has(#artifact-pane:not([hid
 @media(max-width:999px){
   .crumb-space,.crumb-sep{display:none}
 }
+body.resizing #artifact-frame{pointer-events:none}
