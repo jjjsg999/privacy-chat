@@ -151,6 +151,51 @@ class TelegramSmokeTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(saved['mode'], 'meeting_ready')
         self.assertEqual(self.reply.call_args.args[0], 'Acme reply')
 
+    async def test_meeting_notice_first_analysis_before_title_and_title_from_the_analysis(self):
+        storage.atomic_write(storage.TERMS, 'CLIENT: Acme')
+        order = []
+        async def answer(messages, model):
+            token = re.search(r'CLIENT__\d+', messages[1]['content'])[0]  # echo the token the request really used
+            if messages[0]['content'].startswith('You name meetings'):
+                order.append(('title', len(self.reply.await_args_list)))
+                return token + ' launch review'
+            order.append(('analysis', len(self.reply.await_args_list)))
+            return token + ' should delay launch.'
+        self.complete.side_effect = answer
+        await self.send('/meeting')
+        self.reply.reset_mock()
+        with patch('telegram_transport.asyncio.sleep', new=AsyncMock()):
+            await self.send('Acme: we should delay the launch by a week.')
+            capture = self.transport.captures['123:123']
+            await capture['task']
+        replies = [call.args[0] for call in self.reply.await_args_list]
+        self.assertEqual(replies[0], 'Transcript received (9 words). Analysing now; a long meeting can take a minute or two.')
+        self.assertEqual(replies[1], 'Acme should delay launch.')
+        self.assertEqual(order, [('analysis', 1), ('title', 2)])  # the analysis is posted before the title call
+        title_request = json.dumps(self.complete.await_args_list[1].args[0])
+        self.assertIn('should delay launch', title_request)       # made from the analysis...
+        self.assertNotIn('RAW MEETING TRANSCRIPT', title_request)   # ...not by resending the transcript
+        self.assertNotIn('Acme', title_request)
+        saved = storage.load_session(capture['session']['id'])
+        self.assertEqual(saved['title'], 'Acme launch review')
+        self.assertTrue(saved['title_generated'])
+
+    async def test_meeting_title_failure_keeps_the_delivered_analysis(self):
+        async def answer(messages, model):
+            if messages[0]['content'].startswith('You name meetings'):
+                raise engine.ChatError('Unavailable')
+            return 'The analysis.'
+        self.complete.side_effect = answer
+        await self.send('/meeting')
+        with patch('telegram_transport.asyncio.sleep', new=AsyncMock()):
+            await self.send('A transcript')
+            capture = self.transport.captures['123:123']
+            await capture['task']
+        self.assertEqual(self.reply.call_args.args[0], 'The analysis.')
+        saved = storage.load_session(capture['session']['id'])
+        self.assertEqual((saved['title'], saved['mode']), ('Meeting intelligence', 'meeting_ready'))
+        self.assertEqual(self.transport.captures, {})
+
     async def test_new_during_a_running_analysis_discards_it_instead_of_waiting_and_posting_it(self):
         real_sleep = asyncio.sleep
         started, release = asyncio.Event(), asyncio.Event()

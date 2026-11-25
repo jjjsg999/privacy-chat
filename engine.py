@@ -301,7 +301,9 @@ def transcript_item(masked_transcript):
             'internal': True, 'parse': False, 'name': 'transcript'}
 
 
-async def analyze_meeting(session, transcript, privacy):
+async def analyze_meeting(session, transcript, privacy, title=True):
+    """Analyse a transcript and save the meeting. With title=False the title is left for title_meeting(), so a caller
+    can deliver the analysis first (Telegram does)."""
     config = storage.settings()
     apply_privacy_mode(privacy, config)
     terms = parse_terms(config['sensitive_terms'])
@@ -310,17 +312,42 @@ async def analyze_meeting(session, transcript, privacy):
     masked_transcript = privacy.tokenize(transcript, session['token_map'], terms)
     built = fit_context(system, [transcript_item(masked_transcript)], config, meeting_model(config), 6000, None, meeting=True)
     outbound = built['messages']
-    intelligence = privacy.rehydrate(await send_meeting(session, outbound, config, capture_diagnosis=True), session['token_map'])
+    masked_intelligence = await send_meeting(session, outbound, config, capture_diagnosis=True)
+    intelligence = privacy.rehydrate(masked_intelligence, session['token_map'])
     session.update(transcript=transcript, intelligence=intelligence, mode='meeting_ready',
                    meeting_role_revision=None, transcript_masked=cache_entry(transcript, masked_transcript, fingerprint),
                    messages=[{'role': 'user', 'content': transcript},
                              {'role': 'assistant', 'content': intelligence}])
+    if title:
+        await _name_meeting(session, masked_intelligence, privacy, config)
+    elif not session.get('title_generated'):
+        session['title'] = 'Meeting intelligence'  # replaced by title_meeting() once the title arrives
+    storage.save_session(session)
+    return storage.public_session(session)
+
+
+def _title_request(masked_intelligence):
+    # The title is made from the (masked) analysis, not the transcript: a far smaller request with the same gist.
+    return [{'role': 'system', 'content': 'You name meetings. Return only a concise meeting title, at most six words.'},
+            {'role': 'user', 'content': 'Meeting analysis:\n\n' + masked_intelligence}]
+
+
+async def _name_meeting(session, masked_intelligence, privacy, config):
     try:
-        title = privacy.rehydrate(await send_meeting(session, outbound + [{'role': 'user', 'content':
-            'Return only a concise meeting title, at most six words.'}], config), session['token_map'])
+        title = privacy.rehydrate(await send_meeting(session, _title_request(masked_intelligence), config), session['token_map'])
         session.update(title=clean_title(title), title_generated=True)
     except ChatError:
         session['title'] = 'Meeting intelligence'
+
+
+async def title_meeting(session, privacy):
+    """Name an analysed meeting that does not have a generated title yet, and save it. A title set meanwhile is kept."""
+    if session.get('title_generated') or not session.get('intelligence'):
+        return storage.public_session(session)
+    config = storage.settings()
+    apply_privacy_mode(privacy, config)
+    masked = privacy.tokenize(session['intelligence'], session['token_map'], parse_terms(config['sensitive_terms']))
+    await _name_meeting(session, masked, privacy, config)
     storage.save_session(session)
     return storage.public_session(session)
 

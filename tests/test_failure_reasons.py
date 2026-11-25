@@ -81,8 +81,9 @@ class FailureReasonTests(unittest.TestCase):
         failing = AsyncMock(side_effect=engine.ChatError('The model took too long to answer and the request timed out.'))
         with patch('telegram_transport.asyncio.sleep', new=AsyncMock()), patch.object(engine, 'analyze_meeting', failing):
             asyncio.run(transport.finish_capture('1:1', capture, update))
-        self.assertIn('Meeting processing or delivery failed', sent[0])
-        self.assertIn('Reason: The model took too long', sent[0])
+        self.assertIn('Transcript received (1 words)', sent[0])  # the notice comes first
+        self.assertIn('Meeting processing or delivery failed', sent[-1])
+        self.assertIn('Reason: The model took too long', sent[-1])
         self.assertIn('1:1', transport.captures)  # chunks stay for a retry
 
 

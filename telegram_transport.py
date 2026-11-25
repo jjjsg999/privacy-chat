@@ -47,6 +47,21 @@ async def reply(update, text):
         await update.effective_message.reply_text(''.join(chunk), parse_mode=None)
 
 
+async def keep_typing(update):
+    """Show "typing…" until cancelled. Telegram clears it after about five seconds, so it is renewed every four."""
+    while True:
+        try:
+            await update.effective_chat.send_action('typing')
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            pass  # only a courtesy indicator; never let it affect the analysis
+        await _typing_pause(4)
+
+
+_typing_pause = asyncio.sleep  # bound at import, so tests that stub asyncio.sleep cannot turn this into a busy loop
+
+
 class TelegramTransport:
     def __init__(self, privacy, lock, authorized):
         self.privacy, self.lock, self.authorized = privacy, lock, authorized
@@ -145,16 +160,24 @@ class TelegramTransport:
         await reply(update, 'Send the meeting transcript in one or more messages. I will analyze it after 5 seconds without another chunk. No /done is needed.')
 
     async def finish_capture(self, key, capture, update):
+        typing = None
         try:
             await asyncio.sleep(5)
+            if self.captures.get(key) is not capture:
+                return
+            # Masking a long transcript and the model's answer can take a minute or more; say so instead of going quiet.
+            words = len(' '.join(capture['chunks']).split())
+            await reply(update, f'Transcript received ({words:,} words). Analysing now; a long meeting can take a minute or two.')
+            typing = asyncio.create_task(keep_typing(update))
             async with self.lock:
                 if self.captures.get(key) is not capture:
                     return
-                result = await engine.analyze_meeting(capture['session'], '\n\n'.join(capture['chunks']), self.privacy)
+                result = await engine.analyze_meeting(capture['session'], '\n\n'.join(capture['chunks']), self.privacy, title=False)
                 path, mapping, _, _ = self.active(update)
                 mapping[key] = result['id']
                 storage.write_json(path, mapping)
                 del self.captures[key]
+            typing.cancel()
             await reply(update, result['intelligence'])
         except asyncio.CancelledError:
             raise
@@ -167,6 +190,19 @@ class TelegramTransport:
                 await reply(update, 'Meeting processing or delivery failed. Check Web for a saved result. If none exists, your chunks remain in memory; send another transcript chunk to retry, or /new to discard them.' + reason)
             except Exception:
                 log.error('Could not deliver meeting error notice.')
+            return
+        finally:
+            if typing:
+                typing.cancel()
+        # The title comes after the analysis has been delivered, so it no longer delays the reply. It is made from the
+        # analysis (a small request); a failure keeps the placeholder title "Meeting intelligence".
+        try:
+            async with self.lock:
+                await engine.title_meeting(storage.load_session(result['id']), self.privacy)
+        except asyncio.CancelledError:
+            raise
+        except Exception as exc:
+            log.error('Meeting title failed (%s).', type(exc).__name__)
 
     async def close(self):
         for task in self.tasks:
