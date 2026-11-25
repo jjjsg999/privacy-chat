@@ -54,7 +54,9 @@ Read `HANDOFF_PHASE2.md` first: it holds the current state, rationale, design ch
 
 Artifact safety: "Run scripts" starts off in any conversation that contains uploads (turning it on applies to that conversation only); meta refresh, `<base>` and resource-hint tags are stripped from HTML/SVG before display. Every frame load goes through `about:blank` first, because the frame does not reliably navigate straight to a new URL after `document.write`.
 
-Known limits: streamed replies stop at 16,000 output tokens (or the model's own maximum); a cut-off reply is flagged and offers "Regenerate compactly". With scripts on, an artifact script may still be able to navigate its own frame to an external address (CSP cannot block that; it could not be reproduced in the built-in browser, so treat it as possible). No encryption at rest; no web search, tool calling, skills or Memory.
+Known limits: streamed replies stop at 16,000 output tokens (or the model's own maximum); a cut-off reply is flagged and offers "Regenerate compactly". With scripts on, an artifact script may still be able to navigate its own frame to an external address (CSP cannot block that; it could not be reproduced in the built-in browser, so treat it as possible). No encryption at rest; no tool calling, skills or Memory.
+
+- Web search (web chats only, behind `features.web_search`, off by default; see `HANDOFF_PHASE3.md` section 12 and `HANDOFF_WEB_SEARCH.md`): a fixed pipeline (planner call on masked text, local query check, search, page reading, web-text masking, answer with `[n]` citations). Searches run without names; a real name reaches the search engine only through the rerun button. `public_institutions.py` keeps regulators, central banks, exchanges and rating agencies readable in chats too (`institution_names`). Telegram and Adviser never search.
 
 ## Local development
 

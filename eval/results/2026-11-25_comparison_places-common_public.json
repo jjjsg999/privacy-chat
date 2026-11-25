@@ -4217,7 +4217,7 @@
     "rule": "adopt if recall gain >= 2.0 points AND precision drop <= 5.0 points"
   },
   "run_seconds": {
-    "A": 2.7,
-    "B": 27.7
+    "A": 3.4,
+    "B": 54.8
   }
 }
