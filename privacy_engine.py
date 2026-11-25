@@ -483,6 +483,24 @@ class PrivacyEngine:
             text = text[:start] + allocate(kind, text[start:end]) + text[end:]
         return text
 
+    def mask_as_written(self, text, token_map, terms):
+        """"Send as written": only the terms list is applied (and placeholder-shaped text reserved), never the
+        detectors and never earlier masked values, so names go out as typed. The terms list still wins."""
+        def allocate(kind, value):
+            return allocate_token(token_map, kind, value, text)
+
+        text = TOKEN.sub(lambda m: allocate('LITERAL', m[0]), text or '')
+        if terms:
+            pattern, lookup = terms_pattern(terms)
+            parts, cursor = [], 0
+            for token_match in TOKEN.finditer(text):
+                parts.append(pattern.sub(lambda m: allocate(lookup[m.lastgroup], m[0]), text[cursor:token_match.start()]))
+                parts.append(token_match[0])
+                cursor = token_match.end()
+            parts.append(pattern.sub(lambda m: allocate(lookup[m.lastgroup], m[0]), text[cursor:]))
+            text = ''.join(parts)
+        return text
+
     def mask_web_text(self, text, token_map, terms):
         """Mask public web text against what this chat already protects, and nothing more.
 

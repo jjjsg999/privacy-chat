@@ -92,12 +92,15 @@ def _contains(text, value):
     return re.search(BOUND_L + re.escape(value) + BOUND_R, text, re.I) is not None
 
 
-def check_query(query, token_map, terms, *, dates='remove', terms_names='rerun'):
-    """Check one planner query. Returns {kind, sent_query, rerun_query, removed, rerun_names, rerun_withheld}.
+def check_query(query, token_map, terms, *, dates='remove', terms_names='rerun', allowed=None):
+    """Check one planner query. Returns {kind, sent_query, rerun_query, removed, rerun_names, rerun_extras, rerun_withheld}.
 
     kind: public (nothing removed) | generic (something removed, 2+ meaningful words left) | skipped (too little left).
     sent_query never contains a real value from the token map, a terms-list entry or a currency amount; any doubt
-    raises CheckError (fail closed: the caller must not search).
+    raises CheckError (fail closed: the caller must not search). `allowed(token, value)` names token-map values that
+    are public now (a date while dates pass, a name treated as public) and so may appear as written.
+    rerun_query ("Rerun unmasked") restores every placeholder and keeps currency amounts; only terms-list names stay out
+    when terms_names is "never". rerun_names lists the restored names; rerun_extras the restored dates and amounts.
     """
     if not isinstance(query, str) or not query.strip() or len(query) > QUERY_MAX:
         raise CheckError('unreadable query')
@@ -105,9 +108,10 @@ def check_query(query, token_map, terms, *, dates='remove', terms_names='rerun')
         raise CheckError('unreadable token map')
     if dates not in ('remove', 'years') or terms_names not in ('rerun', 'never'):
         raise CheckError('unknown setting')
-    removed, names, seen = [], [], set()
+    removed, names, extras, seen = [], [], [], set()
     sent, rerun, cursor, withheld = [], [], 0, False
     allowed_years = set()
+    allowed = allowed or (lambda token, value: False)
     for match in TOKEN.finditer(query):
         sent.append(query[cursor:match.start()])
         rerun.append(query[cursor:match.start()])
@@ -124,6 +128,9 @@ def check_query(query, token_map, terms, *, dates='remove', terms_names='rerun')
                 allowed_years.add(value.strip())
                 continue
             entry = {'display': value, 'token': token, 'kind': kind, 'source': 'date'}
+            rerun.append(value)
+            if token not in {e['token'] for e in extras}:
+                extras.append(entry)
         else:
             source = 'terms' if term_matches(value, terms) else 'detector'
             entry = {'display': value, 'token': token, 'kind': kind, 'source': source}
@@ -140,12 +147,14 @@ def check_query(query, token_map, terms, *, dates='remove', terms_names='rerun')
     rerun.append(query[cursor:])
     sent_text = ''.join(sent)
     for amount in AMOUNT_RE.finditer(sent_text):
-        removed.append({'display': amount[0].strip(), 'token': None, 'kind': 'AMOUNT', 'source': 'amount'})
-    sent_query = _collapse(AMOUNT_RE.sub(' ', sent_text))
-    rerun_query = _collapse(AMOUNT_RE.sub(' ', ''.join(rerun)))  # amounts never leave, not even in a named search
+        entry = {'display': amount[0].strip(), 'token': None, 'kind': 'AMOUNT', 'source': 'amount'}
+        removed.append(entry)
+        extras.append(entry)
+    sent_query = _collapse(AMOUNT_RE.sub(' ', sent_text))  # amounts never leave in an ordinary search
+    rerun_query = _collapse(''.join(rerun))                  # "Rerun unmasked" sends them, after the user's click
     # Defence in depth: the planner only sees masked text, so no real value can be in what it wrote. If one is, stop.
     for token, value in token_map.items():
-        if token.startswith('LITERAL__') or not value.strip() or value.strip() in allowed_years:
+        if token.startswith('LITERAL__') or not value.strip() or value.strip() in allowed_years or allowed(token, value):
             continue
         if _contains(sent_query, value):
             raise CheckError('mismatch')
@@ -157,10 +166,10 @@ def check_query(query, token_map, terms, *, dates='remove', terms_names='rerun')
         kind = 'generic'
     else:
         kind = 'skipped'
-    if kind == 'public' or not names or rerun_query == sent_query:
-        rerun_query, names = None, []
+    if kind == 'public' or not (names or extras) or rerun_query == sent_query:
+        rerun_query, names, extras = None, [], []
     return {'kind': kind, 'sent_query': sent_query, 'rerun_query': rerun_query, 'removed': removed,
-            'rerun_names': names, 'rerun_withheld': withheld and rerun_query is None}
+            'rerun_names': names, 'rerun_extras': extras, 'rerun_withheld': withheld}
 
 
 # ---------------------------------------------------------------- engines

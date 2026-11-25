@@ -181,6 +181,100 @@ class StatusTests(PipelineBase):
         self.assertNotIn(engine.WEB_SEARCH_OFF_LINE, self.answers[-1][0]['content'])
 
 
+class RerunTurnTests(PipelineBase):
+    """One "Rerun unmasked" for every search of a message, with one new answer."""
+
+    def chat_with_three_searches(self):
+        session = self.new_chat()
+        self.planner_replies = [plan('CLIENT__1 event news', 'CLIENT__1 incident', 'CLIENT__1 biography timeline')]
+        self.send(session, f'What happened to {CANARY}?')
+        storage.save_session(session)
+        return session
+
+    def test_one_click_reruns_all_and_answers_once(self):
+        session = self.chat_with_three_searches()
+        turn = session['searches'][0]['turn']
+        self.assertEqual([s['kind'] for s in session['searches']], ['skipped', 'skipped', 'generic'])
+        before_answers, before_queries = len(self.answers), len(self.engine_queries)
+        events = self.stream(engine.rerun_turn(session, turn, False, self.privacy))
+        self.assertEqual(self.engine_queries[before_queries:], [f'{CANARY} event news', f'{CANARY} incident', f'{CANARY} biography timeline'])
+        self.assertEqual(len(self.answers), before_answers + 1)  # one answer for all three
+        self.assertEqual(sum(1 for m in session['messages'] if m.get('event') == 'rerun'), 1)
+        self.assertEqual(len(session['revealed_names']), 1)  # the same name, recorded once
+        self.assertEqual(events[-1]['type'], 'done')
+        self.assertNotIn(CANARY, json.dumps(self.answers[-1]))
+        with self.assertRaises(engine.SearchActionError):
+            self.stream(engine.rerun_turn(session, turn, False, self.privacy))
+
+    def test_identical_reruns_are_sent_once(self):
+        session = self.new_chat()
+        self.planner_replies = [plan('CLIENT__1 news', 'CLIENT__1 news')]
+        self.send(session, f'News on {CANARY}?')
+        self.stream(engine.rerun_turn(session, session['searches'][0]['turn'], True, self.privacy))
+        self.assertEqual(self.engine_queries, [f'{CANARY} news'])
+        self.assertTrue(all(s.get('rerun_by') for s in session['searches'][:2]))
+
+    def test_the_endpoint_streams_the_rerun(self):
+        session = self.chat_with_three_searches()
+        app.app.state.privacy = self.privacy
+
+        async def go():
+            response = await app.rerun_turn(session['id'], session['searches'][0]['turn'], app.Rerun(hide_from_ai=True))
+            return [json.loads(line) async for line in response.body_iterator]
+        events = asyncio.run(go())
+        self.assertEqual([e['type'] for e in events].count('search_done'), 3)
+        self.assertEqual(events[-1]['type'], 'done')
+
+
+class SendAsWrittenTests(PipelineBase):
+    EMAIL = 'nell.quarry@example.com'  # the fake detector masks e-mail addresses
+
+    def post(self, **fields):
+        app.app.state.privacy = self.privacy
+
+        async def go():
+            response = await app.chat_stream(app.StreamMessage(**fields))
+            return [json.loads(line) async for line in response.body_iterator]
+        return asyncio.run(go())
+
+    def test_detectors_skipped_terms_still_applied(self):
+        self.planner_replies = [plan(f'{self.EMAIL} news')]
+        events = self.post(message=f'Search for {self.EMAIL} and {CANARY}', web_search=True, send_as_written=True)
+        sent = self.answers[-1][-1]['content']
+        self.assertIn(self.EMAIL, sent)          # no detectors
+        self.assertNotIn(CANARY, sent)           # the terms list still applies
+        self.assertIn(self.EMAIL, self.planner_calls[0][-1]['content'])  # the planner sees the exact words
+        saved = storage.load_session(events[0]['session_id'])
+        user = saved['messages'][0]
+        self.assertTrue(user['sent_as_written'])
+        self.assertTrue(user['masked']['sent_as_written'])
+        self.assertEqual(saved['searches'][0]['kind'], 'public')
+
+    def test_only_the_explicit_field_sets_it(self):
+        self.post(message=f'Write to {self.EMAIL}')
+        self.assertNotIn(self.EMAIL, self.answers[-1][-1]['content'])
+
+    def test_attachments_are_still_masked(self):
+        self.post(message='Read this', send_as_written=True,
+                  attachments=[{'name': 'note.txt', 'kind': 'exact', 'text': f'Contact {self.EMAIL}'}])
+        sent = self.answers[-1][-1]['content']
+        self.assertIn('Read this', sent)
+        self.assertNotIn(self.EMAIL, sent)
+
+    def test_survives_re_masking_edit_and_branch(self):
+        events = self.post(message=f'Note {self.EMAIL}', send_as_written=True)
+        session_id = events[0]['session_id']
+        storage.atomic_write(storage.TERMS, f'CLIENT: {CANARY}\nPROJECT: Halyard')  # new fingerprint: history is re-masked
+        self.post(session_id=session_id, message='And Halyard?')
+        self.assertIn(self.EMAIL, self.answers[-1][1]['content'])  # still as written after re-masking
+        branch = storage.branch_session(session_id, 1)
+        self.assertTrue(branch['messages'][0]['sent_as_written'])
+        self.post(session_id=session_id, message=f'Note {self.EMAIL} again', edit_index=0)
+        saved = storage.load_session(session_id)
+        self.assertTrue(saved['messages'][0]['sent_as_written'])
+        self.assertIn(self.EMAIL, self.answers[-1][-1]['content'])
+
+
 class NewChatPathTests(PipelineBase):
     """Regression: the first message of a new web chat, through the real /api/chat/stream handler."""
 

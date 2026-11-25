@@ -312,10 +312,13 @@ class Pipeline(PipelineBase):
 
     def test_rerun_with_name_links_and_answers(self):
         session, search = self.generic_chat()
-        self.assertEqual(search['rerun_query'], f'{CANARY} price increase logistics')
+        self.assertEqual(self.engine_queries, ['price increase logistics'])  # the ordinary search: no name, no amount
+        self.assertEqual(search['rerun_query'], f'{CANARY} S$180m price increase logistics')
         before = len(self.answers)
         events = self.stream(engine.rerun_search(session, search['id'], False, self.privacy))
-        self.assertEqual(self.engine_queries[-1], f'{CANARY} price increase logistics')  # amounts never leave
+        self.assertEqual(self.engine_queries[-1], f'{CANARY} S$180m price increase logistics')  # "Rerun unmasked": all restored
+        amount = next(r for r in session['revealed_names'] if r['kind'] == 'amount')
+        self.assertEqual((amount['display'], amount['token'], amount['sent_to']), ('S$180m', None, ['search_engine', 'model']))
         named = session['searches'][-1]
         self.assertEqual((named['kind'], named['parent'], named['status']), ('named', search['id'], 'done'))
         self.assertEqual(session['revealed_names'][0]['sent_to'], ['search_engine', 'model'])
@@ -338,7 +341,7 @@ class Pipeline(PipelineBase):
         self.stream(engine.rerun_search(session, search['id'], True, self.privacy))
         hidden = session['searches'][-1]
         self.assertEqual(hidden['kind'], 'named_hidden')
-        self.assertEqual(self.engine_queries[-1], f'{CANARY} price increase logistics')  # rule 2: no amount, hidden too
+        self.assertEqual(self.engine_queries[-1], f'{CANARY} S$180m price increase logistics')  # unmasked, after the click
         self.assertEqual(len(self.answers), before)
         self.assertEqual(session['revealed_names'][0]['sent_to'], ['search_engine'])
         self.assertFalse(session['has_linked_names'])
@@ -357,14 +360,17 @@ class Pipeline(PipelineBase):
         self.assertEqual(session['messages'][-2]['event'], 'send_to_model')
         self.assertNotIn(CANARY, json.dumps(self.answers[-1]))
 
-    def test_terms_names_never_means_no_rerun(self):
+    def test_terms_names_never_keeps_the_name_out_of_reruns(self):
         self.settings({'terms_list_names': 'never'})
         session, search = self.generic_chat()
-        self.assertIsNone(search['rerun_query'])
         self.assertTrue(search['rerun_withheld'])
+        self.assertEqual(search['rerun_query'], 'S$180m price increase logistics')  # only the amount comes back
+        self.stream(engine.rerun_search(session, search['id'], False, self.privacy))
+        self.assertNotIn(CANARY, json.dumps(self.engine_queries))
+        name_only, nothing = self.generic_chat('CLIENT__1 price increase logistics')
+        self.assertIsNone(nothing['rerun_query'])
         with self.assertRaises(engine.SearchActionError):
-            self.stream(engine.rerun_search(session, search['id'], False, self.privacy))
-        self.assertEqual(len(self.engine_queries), 1)
+            self.stream(engine.rerun_search(name_only, nothing['id'], False, self.privacy))
 
     def test_rerun_budget_refusal_sends_nothing(self):
         session, search = self.generic_chat()

@@ -574,3 +574,17 @@ h3.ws-alert{color:var(--ws-named)}
 .ws-check{display:flex!important;align-items:flex-start;gap:10px;font-weight:400!important}
 .ws-check input{width:18px;height:18px;margin:2px 0 0;flex:none}
 @media(max-width:759px){.ws-table{grid-template-columns:minmax(0,1fr)}.ws-table>.ws-th{display:none}.ws-head .ws-meta{margin-left:0}}
+/* Web search fixes: one rerun bar per message, "Always treat as public", "Send as written". */
+.ws-rerun-bar{margin:0;border:1px solid var(--ws-named-line);border-radius:10px;font-size:.875rem}
+.ws-rerun-bar .ws-would{flex-direction:column;align-items:stretch;gap:4px}
+.ws-rerun-bar .ws-would .ws-query{background:var(--card);border:1px solid var(--line);padding:6px 10px}
+.ws-consequence{margin:0}
+.ws-public-links{display:flex;flex-wrap:wrap;gap:4px 14px}
+.ws-link{min-height:28px;padding:0;border:0;background:transparent;color:var(--green);text-decoration:underline;font-size:.8125rem}
+.saw-bar{order:1;display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;min-width:0}
+.saw-bar[hidden]{display:none}
+#saw-toggle{min-height:36px;padding:4px 10px;font-size:.875rem}
+#saw-toggle.on{color:var(--ws-named);background:var(--ws-named-bg);border-color:var(--ws-named-line);font-weight:650}
+.saw-warn{flex-basis:100%;font-size:.8125rem;color:var(--ws-named)}
+.saw-warn[hidden]{display:none}
+.saw-chip{color:var(--ws-named);background:var(--ws-named-bg);border-color:var(--ws-named-line)}

@@ -163,6 +163,7 @@ function render(session, options = {}) {
       note.textContent = [message.model, message.stopped ? 'stopped early' : ''].filter(Boolean).join(' · ');
       label.append(note);
     }
+    if (message.sent_as_written) { const chip = document.createElement('span'); chip.className = 'pin-badge saw-chip'; chip.textContent = 'Sent as written'; label.append(chip); }
     if (message.pinned) { article.classList.add('pinned'); const badge = document.createElement('span'); badge.className = 'pin-badge'; badge.textContent = 'Pinned'; label.append(badge); }
     if (session.session_type === 'meeting' && index === 0 && message.role === 'user') {
       const transcript = document.createElement('details'); transcript.className = 'meeting-panel';
@@ -244,6 +245,7 @@ function render(session, options = {}) {
   pane.sync(session?.id);
   renderDetails(session);
   ws.sync(session);
+  $('saw-bar').hidden = session?.session_type === 'meeting';
 }
 const lastContextIndex = messages => { for (let i = messages.length - 1; i >= 0; i--) if (messages[i].role === 'assistant' && messages[i].context) return i; return -1; };
 // The "Conversation details" panel. All text is set with textContent; pins and artifact buttons reuse the chat's own handlers.
@@ -278,6 +280,10 @@ function renderDetails(session) {
     li.append(button); return li;
   }) : [emptyItem('No artifacts yet.')]));
   ws.renderDetails(session);
+  const written = messages.map((m, index) => ({m, index})).filter(({m}) => m.role === 'user' && m.sent_as_written);
+  $('d-saw').hidden = !written.length;
+  $('d-saw-h').textContent = `Sent as written · ${written.length}`;
+  $('d-saw-list').replaceChildren(...written.map(({index}) => { const li = document.createElement('li'); li.textContent = snippetOf(session, index); return li; }));
 }
 // Copy on every message; Edit on your messages and Branch on replies, for normal saved chats only.
 function messageActions(session, message, index, article) {
@@ -586,7 +592,7 @@ async function streamTurn(message, files = [], editIndex = null) {
   try {
     const response = await fetch('/api/chat/stream', {method: 'POST', headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({session_id: previous?.id || null, message, attachments: files, ...(previous ? {} : {space}), ...(editIndex === null ? {} : {edit_index: editIndex}),
-        ...(searchChoice === null ? {} : {web_search: searchChoice})}),
+        ...(searchChoice === null ? {} : {web_search: searchChoice}), ...(sendAsWritten && editIndex === null ? {send_as_written: true} : {})}),
       signal: controller.signal});
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
@@ -695,6 +701,15 @@ async function runAction(url, payload) {
   }
   await refreshSessions().catch(error => status(error.message, true));
 }
+// "Send as written": skips the detectors for the next message only (the terms list still applies). Off after each send.
+let sendAsWritten = false;
+function setSendAsWritten(on) {
+  sendAsWritten = on;
+  $('saw-toggle').setAttribute('aria-pressed', String(on));
+  $('saw-toggle').classList.toggle('on', on);
+  $('saw-warn').hidden = !on;
+}
+$('saw-toggle').onclick = () => setSendAsWritten(!sendAsWritten);
 let attachments = [];
 let uploadLimits = {max_attachments: 5};
 function renderAttachments() {
@@ -767,6 +782,7 @@ $('composer').onsubmit = async event => {
   try {
     const result = await streamTurn(message, files);
     if (result.saved) { $('message').value = ''; attachments = []; renderAttachments(); }
+    setSendAsWritten(false);  // "Send as written" applies to one message only
   } catch (error) { status(error.message, true); }
   finally {
     busy = false; $('send').disabled = false; $('attach').disabled = false; $('new-chat').disabled = false; $('message').disabled = false;

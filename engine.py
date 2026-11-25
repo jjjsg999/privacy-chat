@@ -176,19 +176,33 @@ def cache_entry(text, masked, fingerprint):
     return {'fp': fingerprint, 'c': zlib.crc32(text.encode('utf-8')), 'text': masked}
 
 
-def cached_mask(holder, key, text, privacy, token_map, terms, fingerprint):
+def cached_mask(holder, key, text, privacy, token_map, terms, fingerprint, masker=None):
     """Masked form of `text`, kept in holder[key] while the fingerprint (terms + detector setup) is unchanged.
 
     A changed fingerprint (a term was added, the detector setting changed) re-masks once. Re-masking reuses
-    the session token map, so placeholders stay stable.
+    the session token map, so placeholders stay stable. `masker` replaces tokenize (used for "Send as written").
     """
     entry = holder.get(key)
     if (isinstance(entry, dict) and entry.get('fp') == fingerprint and isinstance(entry.get('text'), str)
             and entry.get('c') == zlib.crc32(text.encode('utf-8'))):
         return entry['text']
-    masked = privacy.tokenize(text, token_map, terms)
+    masked = masker(text) if masker else privacy.tokenize(text, token_map, terms)
     holder[key] = cache_entry(text, masked, fingerprint)
+    if masker:
+        holder[key]['sent_as_written'] = True
     return masked
+
+
+def mask_message(text, message, privacy, token_map, terms):
+    """Mask a user message. With message['sent_as_written'] the typed part gets the terms list only (no detectors);
+    attached file text is always masked normally."""
+    if not (message or {}).get('sent_as_written'):
+        return privacy.tokenize(text, token_map, terms)
+    typed = message.get('typed', text) if message.get('attachments') else text
+    if not text.startswith(typed):
+        typed = text
+    rest = text[len(typed):]
+    return privacy.mask_as_written(typed, token_map, terms) + (privacy.tokenize(rest, token_map, terms) if rest else '')
 
 
 def context_mode(config, meeting):
@@ -232,6 +246,9 @@ def history_items(session, privacy, terms, fingerprint, first=0):
         m = session['messages'][index]
         if m.get('event'):
             text = event_masked_text(m, privacy, session['token_map'], terms)
+        elif m.get('sent_as_written'):
+            text = cached_mask(m, 'masked', m['content'], privacy, session['token_map'], terms, fingerprint,
+                               masker=lambda t, m=m: mask_message(t, m, privacy, session['token_map'], terms))
         else:
             text = cached_mask(m, 'masked', m['content'], privacy, session['token_map'], terms, fingerprint)
         if m['role'] == 'user' and with_sources and m.get('id') in with_sources:
@@ -638,16 +655,21 @@ async def stream_chat(session, message, privacy, extra=None):
     config = storage.settings()
     apply_privacy_mode(privacy, config)
     turn = {}
+    written = None  # "Send as written": the typed text gets the terms list only (set only by the request's explicit field)
+    if (extra or {}).get('sent_as_written'):
+        written = mask_message(message, extra, privacy, session['token_map'], parse_terms(config['sensitive_terms']))
     if web_search_active(session, config, 'web'):
         yield {'type': 'start', 'session_id': session['id']}
-        async with aclosing(web_turn(session, message, privacy, config, STREAM_MAX_TOKENS)) as events:
+        async with aclosing(web_turn(session, message, privacy, config, STREAM_MAX_TOKENS, new_masked=written)) as events:
             async for event in events:
                 if event['type'] == 'turn':
                     turn = event
                 else:
                     yield event
     built, entry = chat_context(session, message, privacy, config, channel='web', artifacts=True,
-                                new_masked=turn.get('new_masked'), sources=turn.get('sources'), status=turn.get('status'))
+                                new_masked=turn.get('new_masked', written), sources=turn.get('sources'), status=turn.get('status'))
+    if written is not None:
+        entry['sent_as_written'] = True
     failed = False
     if not turn:
         yield {'type': 'start', 'session_id': session['id']}
@@ -973,14 +995,15 @@ async def web_turn(session, message, privacy, config, answer_tokens, new_masked=
             session['searches'].append(record)
             try:
                 checked = web_search.check_query(planned['query'], session['token_map'], terms,
-                                                 terms_names=opts['terms_list_names'])
+                                                 terms_names=opts['terms_list_names'], allowed=public_allowance(privacy))
             except Exception:  # fail closed: any doubt about the query means it is not searched
                 record.update(status='failed', error='query check failed')
                 log.info('web search %s kind=%s status=failed (check)', record['id'], record['kind'])
                 yield {'type': 'search_done', 'search': storage.public_search(record)}
                 continue
             record.update(kind=checked['kind'], sent_query=checked['sent_query'], rerun_query=checked['rerun_query'],
-                          removed=checked['removed'], rerun_names=checked['rerun_names'], rerun_withheld=checked['rerun_withheld'])
+                          removed=checked['removed'], rerun_names=checked['rerun_names'], rerun_extras=checked['rerun_extras'],
+                          rerun_withheld=checked['rerun_withheld'])
             if checked['kind'] == 'skipped':
                 record['status'] = 'skipped'
                 yield {'type': 'search_skipped', 'search': storage.public_search(record)}
@@ -1012,7 +1035,7 @@ def find_search(session, search_id):
 
 
 def update_linked(session):
-    session['has_linked_names'] = any('model' in r.get('sent_to', []) for r in session.get('revealed_names') or [])
+    session['has_linked_names'] = any('model' in r.get('sent_to', []) and r.get('token') for r in session.get('revealed_names') or [])
 
 
 async def _answer_event(session, event, query, turn, event_id, privacy, config):
@@ -1040,10 +1063,38 @@ async def _answer_event(session, event, query, turn, event_id, privacy, config):
         yield {'type': 'done', 'session': storage.public_session(session)}
 
 
-async def rerun_search(session, search_id, hide_from_ai, privacy):
-    """Rerun a Generic or Skipped search with the real names. Reached only from the rerun button (POST .../rerun).
+def eligible_for_rerun(search):
+    return (search.get('kind') in ('generic', 'skipped') and search.get('status') in ('done', 'skipped')
+            and not search.get('rerun_by') and bool(search.get('planner_query_masked')))
 
-    hide_from_ai=False: the results are masked and answered by the model (the placeholder becomes linked).
+
+def public_allowance(privacy):
+    """Token-map values that are public now and may appear in a query as written (see web_search.check_query)."""
+    return lambda token, value: (privacy.date_names == 'pass' and token.startswith('DATE_TIME__')) or privacy.is_public(value)
+
+
+async def rerun_search(session, search_id, hide_from_ai, privacy):
+    """One search's "Rerun unmasked" (POST .../searches/{id}/rerun). Same as rerun_turn for a single search."""
+    async with aclosing(rerun_searches(session, [find_search(session, search_id)], hide_from_ai, privacy)) as events:
+        async for item in events:
+            yield item
+
+
+async def rerun_turn(session, turn_id, hide_from_ai, privacy):
+    """"Rerun unmasked" for every Generic or Skipped search of one message, with one new answer
+    (POST .../turns/{turn}/rerun). Reached only from the rerun bar under that message's search cards."""
+    searches = [s for s in session.get('searches') or [] if s.get('turn') == turn_id and eligible_for_rerun(s)]
+    if not searches:
+        raise SearchActionError('There is nothing to rerun for this message.')
+    async with aclosing(rerun_searches(session, searches, hide_from_ai, privacy)) as events:
+        async for item in events:
+            yield item
+
+
+async def rerun_searches(session, searches, hide_from_ai, privacy):
+    """Rerun searches unmasked: every placeholder restored, currency amounts kept. The user's click is the consent.
+
+    hide_from_ai=False: the results are masked and answered by the model in one reply (the placeholders become linked).
     hide_from_ai=True: the results are shown to the user only; no model call.
     """
     config = storage.settings()
@@ -1051,57 +1102,78 @@ async def rerun_search(session, search_id, hide_from_ai, privacy):
     opts = config['web_search']
     terms = parse_terms(config['sensitive_terms'])
     yield {'type': 'start', 'session_id': session['id']}
-    search = find_search(session, search_id)
-    if search.get('kind') not in ('generic', 'skipped') or search.get('status') not in ('done', 'skipped') or search.get('rerun_by'):
+    if any(not eligible_for_rerun(s) for s in searches):
         raise SearchActionError('This search cannot be rerun.')
     if hide_from_ai and not opts['offer_hidden_rerun']:
         raise SearchActionError('Hidden reruns are switched off in Settings.')
-    try:
-        checked = web_search.check_query(search['planner_query_masked'], session['token_map'], terms,
-                                         terms_names=opts['terms_list_names'])
-    except Exception:
-        raise SearchActionError('This search cannot be rerun safely.') from None
-    if not checked['rerun_query']:
-        raise SearchActionError('There is no name to add to this search.')
+    plans, seen_queries = [], {}
+    for search in searches:
+        try:
+            checked = web_search.check_query(search['planner_query_masked'], session['token_map'], terms,
+                                             terms_names=opts['terms_list_names'], allowed=public_allowance(privacy))
+        except Exception:
+            raise SearchActionError('This search cannot be rerun safely.') from None
+        if checked['rerun_query']:
+            plans.append((search, checked, seen_queries.get(checked['rerun_query'].casefold())))
+            seen_queries.setdefault(checked['rerun_query'].casefold(), search)
+    if not plans:
+        raise SearchActionError('There is nothing to add to this search.')
     engine_name = web_search.active_engine(opts)
     unit = search_unit_cost(config, engine_name)
+    to_run = [p for p in plans if p[2] is None]  # identical reruns of one message are sent once
     try:
         headroom = Decimal(0)
         if not hide_from_ai:
-            size = sum(len(m['content']) for m in session['messages']) + 6 * web_search.TEXT_CAPS['full'] * 4
+            size = sum(len(m['content']) for m in session['messages']) + 6 * web_search.TEXT_CAPS['full'] * 4 * len(to_run)
             headroom = await _estimate([{'role': 'user', 'content': 'x' * size}], config['model'], STREAM_MAX_TOKENS)
-        reservation = monthly_budget.reserve_fixed(unit, f'web-search/{engine_name}', 'web_search', headroom)
+        reservation = monthly_budget.reserve_fixed(unit * len(to_run), f'web-search/{engine_name}', 'web_search', headroom)
     except (dev_budget.BudgetError, ChatError, OSError):
         raise SearchActionError('Search skipped: monthly limit reached') from None
-    names = {n['token'] for n in checked['rerun_names']}
-    # A linked rerun is shown with the reply to its own event message; a hidden one stays with the original turn.
-    record = new_search(search['turn'], search['turn'] if hide_from_ai else f'm_{uuid4().hex[:16]}', kind='named_hidden' if hide_from_ai else 'named', parent=search['id'],
-                        engine=engine_name, planner_query_masked=search['planner_query_masked'], sent_query=checked['rerun_query'],
-                        removed=[r for r in checked['removed'] if r.get('token') not in names], rerun_names=checked['rerun_names'])
-    session['searches'].append(record)
-    search['rerun_by'] = record['id']
-    yield {'type': 'search_started', 'search': storage.public_search(record)}
-    try:
-        await execute_search(session, record, checked['rerun_query'], privacy, terms, config, engine_name, mask=not hide_from_ai)
-    finally:
-        _settle(reservation, unit if record['status'] == 'done' else Decimal(0))
-    if record['status'] == 'done':
-        record['cost_usd'] = float(unit)
-    linked = not hide_from_ai and record['status'] == 'done'
-    at = storage.now()
+    turn = searches[0]['turn']
+    # A linked rerun is shown with the reply to its own event message; a hidden one stays with the original message.
+    event_id = turn if hide_from_ai else f'm_{uuid4().hex[:16]}'
+    records, used, at = [], Decimal(0), storage.now()
     session.setdefault('revealed_names', [])
-    for name in checked['rerun_names']:  # the name left this machine (sent to the engine), whatever the outcome
-        session['revealed_names'].append({'token': name['token'], 'display': name['display'], 'kind': name['kind'],
-                                          'source': name['source'], 'at': at, 'search_id': record['id'],
-                                          'sent_to': ['search_engine'] + (['model'] if linked else [])})
+    try:
+        for search, checked, duplicate_of in plans:
+            if duplicate_of is not None:
+                search['rerun_by'] = duplicate_of['rerun_by']
+                continue
+            restored = {n['token'] for n in checked['rerun_names']} | {e['token'] for e in checked['rerun_extras'] if e.get('token')}
+            record = new_search(search['turn'], event_id, kind='named_hidden' if hide_from_ai else 'named', parent=search['id'],
+                                engine=engine_name, planner_query_masked=search['planner_query_masked'], sent_query=checked['rerun_query'],
+                                removed=[r for r in checked['removed'] if r.get('token') not in restored and r.get('source') != 'amount'],
+                                rerun_names=checked['rerun_names'], rerun_extras=checked['rerun_extras'])
+            session['searches'].append(record)
+            search['rerun_by'] = record['id']
+            records.append((record, checked))
+            yield {'type': 'search_started', 'search': storage.public_search(record)}
+            await execute_search(session, record, checked['rerun_query'], privacy, terms, config, engine_name, mask=not hide_from_ai)
+            if record['status'] == 'done':
+                record['cost_usd'] = float(unit)
+                used += unit
+            yield {'type': 'search_done', 'search': storage.public_search(record)}
+    finally:
+        _settle(reservation, used)
+    linked = not hide_from_ai and any(r['status'] == 'done' for r, _ in records)
+    recorded = set()
+    for record, checked in records:  # what left this machine (sent to the engine), whatever the outcome
+        for item in checked['rerun_names'] + checked['rerun_extras']:
+            key = (item.get('token') or item['display'], item['source'])
+            if key in recorded:
+                continue
+            recorded.add(key)
+            kind = 'amount' if item['source'] == 'amount' else ('date' if item['source'] == 'date' else item['kind'])
+            session['revealed_names'].append({'token': item.get('token'), 'display': item['display'], 'kind': kind,
+                                              'source': item['source'], 'at': at, 'search_id': record['id'],
+                                              'sent_to': ['search_engine'] + (['model'] if linked and record['status'] == 'done' else [])})
     update_linked(session)
     storage.save_session(session)
-    yield {'type': 'search_done', 'search': storage.public_search(record)}
     if not linked:
         yield {'type': 'done', 'session': storage.public_session(session)}
         return
-    async with aclosing(_answer_event(session, 'rerun', checked['rerun_query'], search['turn'], record['event_id'],
-                                      privacy, config)) as events:
+    query = ' | '.join(r['sent_query'] for r, _ in records)
+    async with aclosing(_answer_event(session, 'rerun', query, turn, event_id, privacy, config)) as events:
         async for item in events:
             yield item
 

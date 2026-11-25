@@ -539,6 +539,7 @@ class StreamMessage(BaseModel):
     space: str | None = Field(default=None, max_length=100)  # for a new chat; an unknown id falls back to Work
     edit_index: int | None = Field(default=None, ge=0)  # replace this user message (and everything after it)
     web_search: bool | None = None  # for a new chat: the composer's web search switch
+    send_as_written: bool = False  # "Send as written": skip the detectors for this message only (web chats)
 
 
 def check_attachment_limits(files):
@@ -576,7 +577,10 @@ def apply_edit(session, index, typed):
         raise HTTPException(422, 'Please enter a message.')
     session['messages'] = messages[:index]
     storage.prune_searches(session)  # searches tied to the removed turns go with them
-    return message, ({'typed': typed, 'attachments': meta} if meta else None)
+    extra = {'typed': typed, 'attachments': meta} if meta else None
+    if old.get('sent_as_written'):  # edit-and-resend keeps "Send as written"
+        extra = {**(extra or {}), 'sent_as_written': True}
+    return message, extra
 
 
 @app.post('/api/upload')
@@ -623,6 +627,8 @@ async def chat_stream(value: StreamMessage):
                 current = read_session(value.session_id) if value.session_id else new_chat(value.space, value.web_search)
                 if editing:
                     message, extra = apply_edit(current, value.edit_index, typed)
+                if value.send_as_written and current.get('session_type', 'chat') == 'chat':
+                    extra = {**(extra or {}), 'sent_as_written': True}
             except HTTPException as exc:
                 yield line({'type': 'error', 'message': exc.detail, 'saved': False})
                 return
@@ -681,6 +687,12 @@ def search_action(session_id, run):
 async def rerun_search(session_id: str, search_id: str, value: Rerun):
     """Rerun a search with the real names (the user's click is the consent). hide_from_ai keeps the results from the model."""
     return search_action(session_id, lambda current: engine.rerun_search(current, search_id, value.hide_from_ai, app.state.privacy))
+
+
+@app.post('/api/sessions/{session_id}/turns/{turn_id}/rerun')
+async def rerun_turn(session_id: str, turn_id: str, value: Rerun):
+    """"Rerun unmasked" for every search of one message, with one new answer (or none when hidden from AI)."""
+    return search_action(session_id, lambda current: engine.rerun_turn(current, turn_id, value.hide_from_ai, app.state.privacy))
 
 
 @app.post('/api/sessions/{session_id}/searches/{search_id}/send-to-model')

@@ -53,9 +53,11 @@ class CheckTests(unittest.TestCase):
         result = check('CLIENT__2 S$180m facility refinancing logistics sector')
         self.assertEqual(result['kind'], 'generic')
         self.assertEqual(result['sent_query'], 'facility refinancing logistics sector')
-        self.assertEqual(result['rerun_query'], 'Quillmere Freight facility refinancing logistics sector')
+        # "Rerun unmasked" restores everything: the name and the amount, exactly as the planner wrote them.
+        self.assertEqual(result['rerun_query'], 'Quillmere Freight S$180m facility refinancing logistics sector')
         self.assertEqual([(r['display'], r['source']) for r in result['removed']], [('Quillmere Freight', 'terms'), ('S$180m', 'amount')])
         self.assertEqual([n['token'] for n in result['rerun_names']], ['CLIENT__2'])
+        self.assertEqual([e['display'] for e in result['rerun_extras']], ['S$180m'])
 
     def test_source_detection(self):
         result = check('ORG__4 credit rating bond issue')
@@ -69,16 +71,23 @@ class CheckTests(unittest.TestCase):
         self.assertEqual(result['sent_query'], 'bank credit rating outlook')
         self.assertIsNone(result['rerun_query'])
 
-    def test_amounts_never_reach_the_rerun(self):
+    def test_amounts_never_leave_in_an_ordinary_search_but_return_in_a_rerun(self):
         result = check('CLIENT__2 SGD 180m loan pricing banks')
-        self.assertNotIn('180', result['rerun_query'])
         self.assertNotIn('180', result['sent_query'])
+        self.assertIn('SGD 180m', result['rerun_query'])
+        amounts_only = check('SGD 180m loan pricing banks')
+        self.assertEqual(amounts_only['rerun_query'], 'SGD 180m loan pricing banks')  # an amount alone is worth a rerun
 
     def test_dates_removed_by_default(self):
         result = check('CLIENT__2 annual report DATE_TIME__3 results')
         self.assertNotIn('2025', result['sent_query'])
-        self.assertNotIn('2025', result['rerun_query'])
+        self.assertIn('2025', result['rerun_query'])  # leftover date placeholders are restored by a rerun
         self.assertIn('date', [r['source'] for r in result['removed']])
+
+    def test_public_values_may_appear_as_written(self):
+        allowed = lambda token, value: value == 'Orla Venn'  # e.g. a name since treated as public
+        result = check_query('orla venn interview latest', dict(MAP), TERMS, allowed=allowed)
+        self.assertEqual((result['kind'], result['sent_query']), ('public', 'orla venn interview latest'))
 
     def test_years_setting_sends_bare_years_only(self):
         result = check('bank results DATE_TIME__3 DATE_TIME__5 outlook', dates='years')
@@ -97,6 +106,8 @@ class CheckTests(unittest.TestCase):
         only_terms = check('CLIENT__2 bond issue rating', terms_names='never')
         self.assertIsNone(only_terms['rerun_query'])
         self.assertTrue(only_terms['rerun_withheld'])
+        with_amount = check('CLIENT__2 S$5m bond issue rating', terms_names='never')
+        self.assertEqual(with_amount['rerun_query'], 'S$5m bond issue rating')  # the name stays out, the amount returns
 
     def test_repeated_placeholder_is_listed_once(self):
         result = check('CLIENT__2 vs CLIENT__2 peers logistics')

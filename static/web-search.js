@@ -7,7 +7,7 @@ let config = null;             // GET /api/web-search/settings
 let newChatSearch = false;     // the composer switch before a new chat is saved
 let hooks = {};                // {api, status, getCurrent, render, isBusy, runAction}
 
-const LABELS = {public: 'Public', generic: 'Generic', skipped: 'Skipped', named: 'Named', named_hidden: 'Named'};
+const LABELS = {public: 'Public', generic: 'Generic', skipped: 'Skipped', named: 'Unmasked', named_hidden: 'Unmasked'};
 const SOURCE_TEXT = {terms: 'your terms list', detector: 'found by the detector', amount: 'currency amount', date: 'date', unknown: 'unknown placeholder'};
 const ICONS = {
   globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
@@ -104,7 +104,7 @@ async function toggleChat() {
 
 function linkedNames(session) {
   const seen = new Map();
-  for (const r of session?.revealed_names || []) if ((r.sent_to || []).includes('model') && !seen.has(r.token)) seen.set(r.token, r);
+  for (const r of session?.revealed_names || []) if (r.token && (r.sent_to || []).includes('model') && !seen.has(r.token)) seen.set(r.token, r);
   return [...seen.values()];
 }
 function renderBanner(session) {
@@ -141,6 +141,8 @@ export function cards(session, searches) {
   const wrap = el('div', 'ws-cards');
   const planned = searches.filter(s => !s.parent);  // "Search i of n" counts the searches planned for the message, not reruns
   searches.forEach(search => wrap.append(card(session, search, planned.indexOf(search), planned.length)));
+  const bar = rerunBar(planned);  // one bar for the whole message: one click reruns every search unmasked
+  if (bar) wrap.append(bar);
   return wrap;
 }
 
@@ -153,7 +155,7 @@ function card(session, search, position, count) {
   const meta = [];
   if (search.status === 'running') {
     head.append(chip('Searching…', 'running', 'globe'));
-    if (search.sent_query) { box.append(head, el('div', 'ws-label', 'Exact query sent'), queryBox(search.sent_query, named ? search.rerun_names : [])); return box; }
+    if (search.sent_query) { box.append(head, el('div', 'ws-label', 'Exact query sent'), queryBox(search.sent_query, named ? restored(search) : [])); return box; }
     box.append(head); return box;
   }
   if (search.status === 'budget') {
@@ -165,9 +167,9 @@ function card(session, search, position, count) {
   } else if (search.kind === 'skipped') {
     head.append(chip('Skipped', 'generic', 'hidden'), el('span', 'ws-explain', 'Not run: too little left without names'));
   } else if (hidden) {
-    head.append(chip('Named', 'named', 'person'), chip('Hidden from AI', 'muted', 'eye'));
+    head.append(chip('Unmasked', 'named', 'person'), chip('Hidden from AI', 'muted', 'eye'));
   } else if (search.kind === 'named') {
-    head.append(chip('Named', 'named', 'person'), el('span', 'ws-explain', `Sent to ${engineName(search.engine)} and the chat model`));
+    head.append(chip('Unmasked', 'named', 'person'), el('span', 'ws-explain', `Sent unmasked to ${engineName(search.engine)} and the chat model`));
   } else if (search.kind === 'public') {
     head.append(chip('Public', 'public', 'globe'), el('span', 'ws-explain', 'Sent as written — no names in this query'));
   } else {
@@ -181,7 +183,7 @@ function card(session, search, position, count) {
     head.append(el('span', 'ws-meta', meta.join(' · ')));
   }
   box.append(head);
-  if (search.sent_query && search.status !== 'skipped') box.append(el('div', 'ws-label', 'Exact query sent'), queryBox(search.sent_query, named ? search.rerun_names : []));
+  if (search.sent_query && search.status !== 'skipped') box.append(el('div', 'ws-label', 'Exact query sent'), queryBox(search.sent_query, named ? restored(search) : []));
   const removed = (search.removed || []);
   const foot = el('div', 'ws-foot');
   if (removed.length) {
@@ -196,7 +198,7 @@ function card(session, search, position, count) {
   }
   if (named && search.status === 'done') {
     const revealed = (session.revealed_names || []).filter(r => r.search_id === search.id);
-    if (!hidden && revealed.length) foot.append(el('span', 'ws-meta', `Rerun by you at ${time(revealed[0].at)} · name from ${SOURCE_TEXT[revealed[0].source] || revealed[0].source}`));
+    if (!hidden && revealed.length) foot.append(el('span', 'ws-meta', `Rerun unmasked by you at ${time(revealed[0].at)}`));
   }
   if (!hidden && search.sources?.length) {
     const links = el('div', 'ws-links');
@@ -205,39 +207,73 @@ function card(session, search, position, count) {
   }
   if (foot.childNodes.length) box.append(foot);
   if (hidden && search.status === 'done') box.append(hiddenResults(search));
-  const rerun = rerunArea(search);
-  if (rerun) box.append(rerun);
   return box;
 }
 
-function rerunArea(search) {
-  if (!['generic', 'skipped'].includes(search.kind) || !['done', 'skipped'].includes(search.status) || search.rerun_by) return null;
-  if (!search.rerun_query) {
-    if (!search.rerun_withheld) return null;
+// Everything a rerun restores (names, dates and currency amounts), for highlighting.
+const restored = search => [...(search.rerun_names || []), ...(search.rerun_extras || [])];
+const rerunnable = search => ['generic', 'skipped'].includes(search.kind) && ['done', 'skipped'].includes(search.status) && !search.rerun_by;
+
+// One bar under a message's search cards: what a rerun would send, and one click to rerun every search unmasked.
+function rerunBar(searches) {
+  const ready = searches.filter(s => rerunnable(s) && s.rerun_query);
+  const withheld = searches.some(s => rerunnable(s) && s.rerun_withheld);
+  if (!ready.length && !withheld) return null;
+  const area = el('div', 'ws-rerun ws-rerun-bar');
+  if (ready.length) {
+    const head = el('div', 'ws-label', ready.length > 1 ? `A rerun would send (${ready.length} searches)` : 'A rerun would send');
+    const list = el('div', 'ws-would');
+    for (const search of ready) list.append(queryBox(search.rerun_query, restored(search)));
+    const row = el('div', 'ws-actions');
+    const turn = ready[0].turn;
+    const url = () => `/api/sessions/${encodeURIComponent(hooks.getCurrent().id)}/turns/${encodeURIComponent(turn)}/rerun`;
+    const main = el('button', 'ws-rerun-btn'); main.type = 'button';
+    main.append(icon('rerun', 13), 'Rerun unmasked');
+    main.onclick = () => action(url(), {hide_from_ai: false});
+    row.append(main);
+    if (options().offer_hidden_rerun !== false) {
+      const hide = el('button', 'ws-secondary', 'Rerun unmasked, hide from AI'); hide.type = 'button';
+      hide.onclick = () => action(url(), {hide_from_ai: true});
+      row.append(hide);
+    }
+    const names = [];
+    for (const search of ready) for (const n of search.rerun_names || []) if (!names.some(x => x.token === n.token)) names.push(n);
+    const consequence = el('p', 'ws-meta ws-consequence');
+    consequence.append(`A rerun sends the full query, names, dates and amounts included, to ${engineName(ready[0].engine)}`);
+    if (names.length) {
+      consequence.append(' and links ');
+      names.forEach((n, i) => { if (i) consequence.append(i === names.length - 1 ? ' and ' : ', '); consequence.append(el('span', 'mono', n.token), ` to ${n.display}`); });
+      consequence.append(' in this chat.');
+    } else consequence.append('.');
+    area.append(head, list, row, consequence);
+    const detected = [];
+    for (const search of ready) for (const n of search.rerun_names || []) if (n.source === 'detector' && !detected.some(x => x.token === n.token)) detected.push(n);
+    if (detected.length) {
+      const publicRow = el('div', 'ws-public-links');
+      for (const n of detected) {
+        const link = el('button', 'ws-link', `Always treat ${n.display} as public`); link.type = 'button';
+        link.onclick = () => treatAsPublic(n.display, url());
+        publicRow.append(link);
+      }
+      area.append(publicRow);
+    }
+  }
+  if (withheld) {
     const note = el('p', 'ws-note'); note.append('Names on your terms list are never searched by name (');
     const link = el('a', null, 'Settings'); link.href = '/settings#web-search-card'; note.append(link, ').');
-    const area = el('div', 'ws-rerun'); area.append(note); return area;
+    area.append(note);
   }
-  const names = search.rerun_names || [];
-  const area = el('div', 'ws-rerun');
-  const line = el('div', 'ws-would'); line.append(el('span', 'ws-label', 'A rerun would send'), queryBox(search.rerun_query, names));
-  const row = el('div', 'ws-actions');
-  const main = el('button', 'ws-rerun-btn'); main.type = 'button';
-  main.append(icon('rerun', 13), names.length === 1 ? `Rerun with ${names[0].display}` : 'Rerun with names');
-  main.onclick = () => action(`/api/sessions/${encodeURIComponent(hooks.getCurrent().id)}/searches/${encodeURIComponent(search.id)}/rerun`, {hide_from_ai: false});
-  row.append(main);
-  if (options().offer_hidden_rerun !== false) {
-    const hide = el('button', 'ws-secondary', 'Rerun with name, hide from AI'); hide.type = 'button';
-    hide.onclick = () => action(`/api/sessions/${encodeURIComponent(hooks.getCurrent().id)}/searches/${encodeURIComponent(search.id)}/rerun`, {hide_from_ai: true});
-    row.append(hide);
-  }
-  const consequence = el('span', 'ws-meta');
-  consequence.append(`A rerun sends the ${names.length === 1 ? 'name' : 'names'} to ${engineName(search.engine)} and links `);
-  names.forEach((n, i) => { if (i) consequence.append(i === names.length - 1 ? ' and ' : ', '); consequence.append(el('span', 'mono', n.token), ` to ${n.display}`); });
-  consequence.append(' in this chat.');
-  row.append(consequence);
-  area.append(line, row);
   return area;
+}
+
+// "Always treat <Name> as public": the name is no longer masked in any chat; then offer the rerun.
+async function treatAsPublic(name, rerunUrl) {
+  if (hooks.isBusy()) { hooks.status('Wait for the current reply to finish first.', true); return; }
+  try {
+    config = {...config, ...(await hooks.api('/api/public-names', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({name})}))};
+  } catch (error) { hooks.status(error.message, true); return; }
+  hooks.status(`${name} is now treated as public in every chat. Your terms list still wins.`);
+  if (window.confirm(`${name} will no longer be masked. Rerun this message's searches unmasked now?`)) action(rerunUrl, {hide_from_ai: false});
 }
 
 function hiddenResults(search) {
@@ -313,7 +349,7 @@ export function linkCitations(element, session) {
 // Markdown export: one line per search after the reply it belongs to.
 export function exportLines(session, messageId) {
   return searchesFor(session, messageId).filter(s => s.sent_query).map(s => {
-    const label = s.kind === 'named_hidden' ? 'Named, hidden from AI' : (LABELS[s.kind] || s.kind);
+    const label = s.kind === 'named_hidden' ? 'Unmasked, hidden from AI' : (LABELS[s.kind] || s.kind);
     const sources = (s.sources || []).map(src => `[${src.n}]`).join(' ');
     return `Web search (${label}): \`${s.sent_query}\`${s.status === 'done' ? (sources ? ` — sources ${sources}` : '') : ` — ${s.status}`}`;
   });
@@ -335,7 +371,7 @@ export function renderDetails(session) {
     const top = el('div', 'ws-d-top');
     const kind = s.status === 'failed' ? 'failed' : s.status === 'budget' ? 'muted' : (s.kind === 'named_hidden' ? 'named' : s.kind === 'skipped' ? 'generic' : s.kind);
     top.append(chip(s.status === 'failed' ? 'Failed' : s.status === 'budget' ? 'Budget' : (LABELS[s.kind] || s.kind), kind));
-    if (['generic', 'skipped'].includes(s.kind) && s.rerun_query && !s.rerun_by) top.append(el('span', 'ws-meta', 'Rerun available'));
+    if (rerunnable(s) && s.rerun_query) top.append(el('span', 'ws-meta', 'Rerun available'));
     if (s.kind === 'named_hidden') top.append(el('span', 'ws-meta', 'Hidden from AI'));
     top.append(el('span', 'ws-meta ws-time', time(s.created_at)));
     item.append(top, el('div', 'ws-d-query mono', s.sent_query || '(not run)'));
@@ -348,17 +384,18 @@ export function renderDetails(session) {
   const revealed = session.revealed_names || [];
   $('d-ws-names-h').textContent = `Names revealed · ${revealed.length}`;
   $('d-ws-names-h').classList.toggle('ws-alert', revealed.length > 0);
-  const rerunAvailable = searches.some(s => ['generic', 'skipped'].includes(s.kind) && s.rerun_query && !s.rerun_by);
+  const rerunAvailable = searches.some(s => rerunnable(s) && s.rerun_query);
   $('d-ws-names').replaceChildren(...(revealed.length ? revealed.map(r => {
     const linked = (r.sent_to || []).includes('model');
     const item = el('li', `ws-d-name${linked ? ' linked' : ''}`);
-    const top = el('div', 'ws-d-top'); top.append(el('strong', null, r.display), el('span', 'mono', r.token), el('span', `ws-badge${linked ? ' on' : ''}`, linked ? 'Linked in this chat' : 'Not linked'));
+    const top = el('div', 'ws-d-top'); top.append(el('strong', null, r.display), ...(r.token ? [el('span', 'mono', r.token)] : []),
+      el('span', `ws-badge${linked ? ' on' : ''}`, !r.token ? (linked ? 'Sent to the chat model' : 'Not sent to the model') : linked ? 'Linked in this chat' : 'Not linked'));
     const grid = el('dl', 'ws-d-grid');
     const search = (session.searches || []).find(s => s.id === r.search_id);
     const hiddenOrigin = search?.parent && !linked;
-    grid.append(el('dt', null, 'When'), el('dd', null, `${time(r.at)} · ${hiddenOrigin ? 'rerun, hidden from AI' : 'rerun with name'}`),
+    grid.append(el('dt', null, 'When'), el('dd', null, `${time(r.at)} · ${hiddenOrigin ? 'rerun unmasked, hidden from AI' : 'rerun unmasked'}`),
       el('dt', null, 'Sent to'), el('dd', null, linked ? `${engineName(search?.engine || 'brave')}, chat model` : `${engineName(search?.engine || 'brave')} only`),
-      el('dt', null, 'Source'), el('dd', null, r.source === 'terms' ? 'Your terms list' : 'Found by the detector'));
+      el('dt', null, 'Source'), el('dd', null, {terms: 'Your terms list', amount: 'Currency amount', date: 'Date'}[r.source] || 'Found by the detector'));
     item.append(top, grid); return item;
   }) : [Object.assign(el('li', 'd-empty'), {textContent: rerunAvailable ? 'None. Searches run without names first; a name is sent only when you rerun with it.' : 'None. Every name in this chat is still masked.'})]));
   $('d-ws-names-foot').hidden = !revealed.length;
